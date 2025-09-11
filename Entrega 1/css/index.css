@@ -1,3 +1,26 @@
+.carrito-dropdown {
+    position: absolute;
+    top: 70px;
+    right: 40px;
+    min-width: 340px;
+    max-width: 95vw;
+    background: linear-gradient(90deg, #95d59d 0%, #52b776 100%);
+    border-radius: 1rem;
+    z-index: 1050;
+    color: #fff;
+    box-shadow: 0 8px 32px rgba(64,145,93,0.13);
+    animation: fadeInCart 0.2s;
+}
+.carrito-header {
+    border-bottom: 1px solid #b7e4ba;
+}
+.carrito-body {
+    min-height: 80px;
+}
+@keyframes fadeInCart {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 footer {
     background: linear-gradient(90deg, #95d59d 0%, #52b776 100%) !important;
     color: #fff;
