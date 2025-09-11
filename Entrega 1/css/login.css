@@ -1,0 +1,31 @@
+.icono-login {
+    width: 96px !important;
+    height: 96px !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    object-fit: contain;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+body {
+    background: linear-gradient(135deg, #95d59d 0%, #f8fafc 100%);
+}
+.card {
+    border-radius: 1.5rem;
+    border: none;
+}
+.card img {
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.btn-primary {
+    background: linear-gradient(90deg, #b7e4ba 0%, #60a5fa 100%);
+    border: none;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #60a5fa 0%, #6366f1 100%);
+}

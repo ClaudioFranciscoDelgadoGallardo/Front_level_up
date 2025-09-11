@@ -1,0 +1,108 @@
+footer {
+    background: linear-gradient(90deg, #95d59d 0%, #52b776 100%) !important;
+    color: #fff;
+}
+footer a {
+    color: #fff !important;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+footer a:hover {
+    color: #40915d !important;
+    text-decoration: underline;
+}
+footer .text-muted {
+    color: #e6f4ea !important;
+}
+.logo-navbar {
+    width: 60px !important;
+    height: 60px !important;
+    margin-right: 1rem;
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    object-fit: contain;
+}
+body {
+    background: linear-gradient(135deg, #b7e4ba 0%, #f8fafc 100%);
+    min-height: 100vh;
+}
+
+.navbar {
+    background: linear-gradient(90deg, #74c691 0%, #52b776 100%) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.navbar .navbar-brand {
+    font-weight: bold;
+    color: #fff !important;
+    letter-spacing: 1px;
+    font-size: 2rem;
+}
+
+.navbar .nav-link {
+    color: #b7e4ba !important;
+    font-weight: 500;
+    transition: color 0.2s;
+    font-size: 1.1rem;
+}
+.navbar .nav-link.active, .navbar .nav-link:hover {
+    color: #fff !important;
+}
+.btn-outline-dark {
+    border-color: #52b776;
+    color: #40915d;
+    background: #fff;
+    transition: all 0.2s;
+}
+.btn-outline-dark:hover {
+    background: #52b776;
+    color: #fff;
+    border-color: #40915d;
+}
+.btn-outline-info {
+    border-color: #74c691;
+    color: #40915d;
+    background: #fff;
+    transition: all 0.2s;
+}
+.btn-outline-info:hover {
+    background: #74c691;
+    color: #fff;
+    border-color: #40915d;
+}
+.hero-section {
+    margin-top: 70px;
+    text-align: center;
+    padding: 2rem 0 3rem 0;
+    background: rgba(255,255,255,0.7);
+    border-radius: 2rem;
+    box-shadow: 0 4px 24px rgba(64,145,93,0.07);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hero-section h1 {
+    font-size: 3.2rem;
+    color: #40915d;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+.hero-section p {
+    color: #40915d;
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+.hero-section .btn-primary {
+    background: linear-gradient(90deg, #52b776 0%, #40915d 100%);
+    border: none;
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 1.1rem;
+    padding: 0.75rem 2.5rem;
+    box-shadow: 0 2px 8px rgba(64,145,93,0.10);
+}
+.hero-section .btn-primary:hover {
+    background: linear-gradient(90deg, #40915d 0%, #52b776 100%);
+}
