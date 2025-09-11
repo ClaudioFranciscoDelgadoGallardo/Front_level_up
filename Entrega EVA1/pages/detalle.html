@@ -17,7 +17,10 @@
 <body>
   <header>
     <div class="container header-content">
-      <a href="../index.html" class="logo">LEVEL-UP GAMER</a>
+      <a href="../index.html" class="logo d-flex align-items-center">
+        <img src="../assets/icons/icono.png" alt="Level Up" width="56" height="56" class="me-2">
+        LEVEL-UP GAMER
+      </a>
       <ul class="nav-menu">
         <li><a href="../index.html">Inicio</a></li>
         <li><a href="productos.html">Productos</a></li>
@@ -26,8 +29,24 @@
         <li><a href="registro.html">Registro</a></li>
         <li><a href="login.html">Login</a></li>
       </ul>
+      <div class="d-flex align-items-center ms-auto">
+        <a href="#" class="me-3 d-flex align-items-center" title="Carrito">
+          <img src="../assets/icons/carrito.png" alt="Carrito" width="32" height="32" id="carrito-icon">
+        </a>
+        <span id="cart-mini" class="text-white"></span>
+      </div>
     </div>
   </header>
+
+  <div id="carrito-dropdown" class="carrito-dropdown shadow-lg" style="display:none; position:absolute; right:2rem; top:4.5rem; min-width:320px; background:#222; border-radius:10px; z-index:1000;">
+    <div class="carrito-header d-flex justify-content-between align-items-center p-3 border-bottom">
+      <span class="fw-bold">Carrito de compras</span>
+      <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" id="cerrar-carrito"></button>
+    </div>
+    <div class="carrito-body p-3" id="carrito-body">
+      <p class="text-center text-muted mb-0">No hay productos en el carrito.</p>
+    </div>
+  </div>
 
   <main class="container">
     <h2 class="section-title">Detalle del producto</h2>
@@ -39,8 +58,8 @@
       <div class="row align-items-start">
         <div class="col-md-6 d-flex flex-column align-items-start mb-3 mb-md-0">
           <div class="mb-2">
-            <a href="../pages/Foter/Contacto.html" class="text-decoration-none mx-3 footer-label">Contacto</a>
-            <a href="../pages/Foter/Nosotros.html" class="text-decoration-none mx-3 footer-label">Nosotros</a>
+            <a href="contacto.html" class="text-decoration-none mx-3 footer-label">Contacto</a>
+            <a href="nosotros.html" class="text-decoration-none mx-3 footer-label">Nosotros</a>
           </div>
           <ul class="text-dark small mt-2 ms-3 list-unstyled mb-0">
             <li><strong>Email:</strong> contacto@levelup.com</li>
@@ -79,7 +98,90 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       renderDetalle("detalle");
+      renderMiniCart();
     });
+    const carritoIcon = document.getElementById('carrito-icon');
+    const carritoDropdown = document.getElementById('carrito-dropdown');
+    const cerrarCarrito = document.getElementById('cerrar-carrito');
+    const carritoBody = document.getElementById('carrito-body');
+    function quitarDelCarrito(codigo) {
+      let cart = readCart();
+      cart = cart.filter(x => x.codigo !== codigo);
+      writeCart(cart);
+      renderCarritoDropdown();
+      renderMiniCart();
+    }
+    function renderCarritoDropdown() {
+      const {items, subtotal, desc, total} = calcularTotales();
+      if(items.length === 0) {
+        carritoBody.innerHTML = '<p class="text-center text-muted mb-0">No hay productos en el carrito.</p>';
+        return;
+      }
+      carritoBody.innerHTML = `
+        <ul class="list-group mb-2">
+          ${items.map(it => `<li class="list-group-item bg-dark text-white d-flex justify-content-between align-items-center">
+            <span>${it.nombre} <span class="badge bg-secondary ms-2">x${it.qty}</span></span>
+            <span>$${it.subtotal.toLocaleString('es-CL')}</span>
+            <button class="btn btn-sm btn-danger ms-2 quitar-item" data-codigo="${it.codigo}">&times;</button>
+          </li>`).join('')}
+        </ul>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span>Subtotal:</span>
+          <span>$${subtotal.toLocaleString('es-CL')}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span>Descuento:</span>
+          <span>-$${desc.toLocaleString('es-CL')}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="fw-bold">Total:</span>
+          <span class="fw-bold">$${total.toLocaleString('es-CL')}</span>
+        </div>
+        <button class="btn btn-success w-100 mt-2" id="btn-pagar">Pagar</button>
+      `;
+      carritoBody.querySelectorAll('.quitar-item').forEach(btn => {
+        btn.addEventListener('click', function() {
+          quitarDelCarrito(this.getAttribute('data-codigo'));
+        });
+      });
+      const btnPagar = carritoBody.querySelector('#btn-pagar');
+      if(btnPagar){
+        btnPagar.addEventListener('click', function(){
+          alert('¡Gracias por tu compra! (Simulación de pago)');
+          writeCart([]);
+          renderCarritoDropdown();
+          renderMiniCart();
+        });
+      }
+    }
+    function toggleCarritoDropdown(show) {
+      if(show) {
+        renderCarritoDropdown();
+        carritoDropdown.style.display = 'block';
+      } else {
+        carritoDropdown.style.display = 'none';
+      }
+    }
+    if(carritoIcon && carritoDropdown && cerrarCarrito) {
+      carritoIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleCarritoDropdown(carritoDropdown.style.display !== 'block');
+      });
+      cerrarCarrito.addEventListener('click', function() {
+        toggleCarritoDropdown(false);
+      });
+      document.addEventListener('click', function(e) {
+        if (!carritoDropdown.contains(e.target) && e.target !== carritoIcon) {
+          toggleCarritoDropdown(false);
+        }
+      });
+    }
+    const origAddToCart = window.addToCart;
+    window.addToCart = function(codigo, qty=1) {
+      origAddToCart(codigo, qty);
+      renderCarritoDropdown();
+      renderMiniCart();
+    }
   </script>
 </body>
 </html>

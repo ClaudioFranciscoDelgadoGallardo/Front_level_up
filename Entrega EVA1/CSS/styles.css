@@ -1,3 +1,11 @@
+.products .card, .products .card * {
+  color: #fff !important;
+}
+.productos-table th,
+.productos-table td,
+.productos-table {
+  color: #fff !important;
+}
 footer strong,
 footer .fw-bold,
 footer .footer-label {
@@ -29,7 +37,6 @@ footer .fw-bold, footer strong {
 footer .text-muted {
   color: var(--muted) !important;
 }
-/* Footer layout fix: igualar orden y alineación a IndexAnt */
 .footer .row {
   display: flex;
   flex-wrap: wrap;
@@ -57,7 +64,6 @@ footer .text-muted {
   margin-bottom: 0 !important;
   padding-left: 1.5rem;
 }
-/* Forzar alineación de columnas del footer */
 .footer .col-md-6.align-items-start {
   align-items: flex-start !important;
   text-align: left;
@@ -66,7 +72,6 @@ footer .text-muted {
   align-items: flex-end !important;
   text-align: right;
 }
-/* Centrado vertical de íconos y textos en el footer */
 .footer-social, .footer-whatsapp {
   display: flex;
   align-items: center;

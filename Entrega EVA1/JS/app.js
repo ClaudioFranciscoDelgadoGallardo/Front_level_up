@@ -119,4 +119,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
   bindLoginForm();
   bindRegistroForm();
   bindContactoForm();
+  // Mostrar productos si existe el contenedor
+  if(document.getElementById("listado-productos")) {
+    renderProductos("listado-productos");
+    if(typeof renderMiniCart === 'function') renderMiniCart();
+  }
 });
