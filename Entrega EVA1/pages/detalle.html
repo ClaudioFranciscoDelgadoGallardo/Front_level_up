@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detalle - Level-Up Gamer</title>
+
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+ 
+  <link rel="stylesheet" href="../css/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="container header-content">
+      <a href="../index.html" class="logo">LEVEL-UP GAMER</a>
+      <ul class="nav-menu">
+        <li><a href="../index.html">Inicio</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="nosotros.html">Nosotros</a></li>
+        <li><a href="contacto.html">Contacto</a></li>
+        <li><a href="registro.html">Registro</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 class="section-title">Detalle del producto</h2>
+    <div id="detalle"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Level-Up Gamer</p>
+  </footer>
+
+  
+  <script src="../js/data.js"></script>
+  <script src="../js/validators.js"></script>
+  <script src="../js/regions.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderDetalle("detalle");
+    });
+  </script>
+</body>
+</html>
+

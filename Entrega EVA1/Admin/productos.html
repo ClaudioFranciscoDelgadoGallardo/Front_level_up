@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Productos</title>
+
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <header>
+    <div class="container header-content">
+      <a href="../index.html" class="logo">LEVEL-UP GAMER</a>
+      <ul class="nav-menu">
+        <li><a href="../index.html">Home (Tienda)</a></li>
+        <li><a href="home.html">Admin Home</a></li>
+        <li><a href="productos.html">Productos</a></li>
+        <li><a href="usuarios.html">Usuarios</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2 class="section-title">Listado de Productos</h2>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>JM001</td>
+          <td>Catan</td>
+          <td>Juegos de Mesa</td>
+          <td>$29.990</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>AC001</td>
+          <td>Control Xbox Series X</td>
+          <td>Accesorios</td>
+          <td>$59.990</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>CO001</td>
+          <td>PlayStation 5</td>
+          <td>Consolas</td>
+          <td>$549.990</td>
+          <td>5</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:1rem">
+      <a class="btn btn-primary" href="productos-nuevo.html">Nuevo Producto</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Level-Up Gamer</p>
+  </footer>
+
+  
+  <script src="../js/data.js"></script>
+  <script src="../js/validators.js"></script>
+  <script src="../js/regions.js"></script>
+  <script src="../js/cart.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
