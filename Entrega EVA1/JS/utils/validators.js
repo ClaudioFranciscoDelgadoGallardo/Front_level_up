@@ -1,5 +1,5 @@
 
-const EMAIL_DOMINIOS = ["duoc.cl","profesor.duoc.cl","gmail.com"];
+const EMAIL_DOMINIOS = ["duoc.cl","profesor.duoc.cl","gmail.com","levelup.com"];
 
 function emailPermitido(email){
   const e = (email||"").toLowerCase().trim();
