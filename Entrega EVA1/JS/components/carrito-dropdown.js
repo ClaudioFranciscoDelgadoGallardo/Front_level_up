@@ -37,17 +37,15 @@
       </div>
       <button class="btn btn-success w-100 mt-2" id="btn-pagar">Pagar</button>
     `;
-    // Botones quitar
     carritoBody.querySelectorAll('.quitar-item').forEach(btn => {
       btn.addEventListener('click', function() {
         quitarDelCarrito(this.getAttribute('data-codigo'));
       });
     });
-    // Botón pagar
     const btnPagar = carritoBody.querySelector('#btn-pagar');
     if(btnPagar){
       btnPagar.addEventListener('click', function(){
-        alert('¡Gracias por tu compra! (Simulación de pago)');
+        mostrarNotificacion('¡Gracias por tu compra! (Simulación de pago)', 'success');
         writeCart([]);
         renderCarritoDropdown();
         renderMiniCart();
