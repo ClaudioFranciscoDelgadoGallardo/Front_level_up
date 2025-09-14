@@ -28,11 +28,34 @@ function renderDetalle(containerId){
   if(!el) return;
   const params = new URLSearchParams(location.search);
   const codigo = params.get("codigo");
-  const p = PRODUCTOS.find(x=>x.codigo===codigo);
+  // Buscar en PRODUCTOS y en productos de localStorage
+  let productosLS = [];
+  try { productosLS = JSON.parse(localStorage.getItem('productos') || '[]'); } catch(_){}
+  let p = PRODUCTOS.find(x=>x.codigo===codigo);
+  if(!p) {
+    p = productosLS.find(x=>x.codigo===codigo);
+    // Adaptar estructura si es necesario
+    if(p) {
+      p = {
+        ...p,
+        img: p.imagen,
+        desc: p.descripcion
+      };
+    }
+  }
   if(!p){ el.innerHTML = "<p>No se encontró el producto.</p>"; return; }
+  // Manejar imagen local (base64) si corresponde
+  let imgSrc = p.img;
+  if(imgSrc && imgSrc.startsWith('local-img:')) {
+    const codigo = imgSrc.replace('local-img:', '');
+    let imgs = {};
+    try { imgs = JSON.parse(localStorage.getItem('imagenes_productos') || '{}'); } catch(_){}
+    imgSrc = imgs[codigo] || '../assets/imgs/placeholder.jpg';
+  }
+  if(!imgSrc) imgSrc = '../assets/imgs/placeholder.jpg';
   el.innerHTML = `
     <article class="card">
-      <img src="${p.img || '../assets/imgs/placeholder.jpg'}" alt="${p.nombre}" class="producto-img mb-2" style="max-width:220px;max-height:160px;object-fit:contain;display:block;margin:auto;"/>
+      <img src="${imgSrc}" alt="${p.nombre}" class="producto-img mb-2" style="max-width:220px;max-height:160px;object-fit:contain;display:block;margin:auto;"/>
       <h3>${p.nombre}</h3>
       <p class="label">${p.categoria}</p>
       <p>${p.desc||""}</p>
@@ -40,7 +63,7 @@ function renderDetalle(containerId){
       <p style="margin-top:.5rem">
         <label for="qty">Cantidad:</label>
         <input id="qty" type="number" min="1" value="1" style="max-width:100px"/>
-        <button id="btnAdd" class="btn">Añadir al carrito</button>
+        <button id="btnAdd" class="btn btn-outline-success px-4">Añadir al carrito</button>
       </p>
     </article>
   `;

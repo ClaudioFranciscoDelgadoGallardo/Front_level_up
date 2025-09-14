@@ -2,9 +2,32 @@
 // Lógica para manejar el formulario de nuevo producto, incluyendo imagen local y pop-up de éxito
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Declarar variables solo una vez
+  const params = new URLSearchParams(window.location.search);
+  const codigoEditar = params.get('codigo');
   const form = document.getElementById('form-nuevo-producto');
   const inputImagen = document.getElementById('imagen');
   const inputImagenLocal = document.getElementById('imagenLocal');
+
+  if (codigoEditar) {
+    let productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    const prod = productos.find(p => p.codigo === codigoEditar);
+    if (prod) {
+      form.codigo.value = prod.codigo;
+      form.codigo.readOnly = true;
+      form.nombre.value = prod.nombre;
+      form.categoria.value = prod.categoria;
+      form.precio.value = prod.precio;
+      form.stock.value = prod.stock;
+      form.descripcion.value = prod.descripcion || '';
+      if (prod.imagen && prod.imagen.startsWith('http')) {
+        inputImagen.value = prod.imagen;
+      }
+      // Si es local-img, no se puede previsualizar el file input
+    }
+    document.querySelector('h2.section-title').textContent = 'Editar Producto';
+    form.querySelector('button[type="submit"]').textContent = 'Guardar Cambios';
+  }
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -26,11 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Validar código único
     let productos = JSON.parse(localStorage.getItem('productos') || '[]');
-    if (productos.some(p => p.codigo === codigo)) {
-      mostrarPopUp('Ya existe un producto con ese código. Usa un código único.', 'error');
-      return;
+
+    if (!codigoEditar) {
+      // Alta: Validar código único
+      if (productos.some(p => p.codigo === codigo)) {
+        mostrarPopUp('Ya existe un producto con ese código. Usa un código único.', 'error');
+        return;
+      }
     }
 
     // Si se seleccionó imagen local, la guardamos en localStorage simulando assets/imgs
@@ -42,13 +68,24 @@ document.addEventListener('DOMContentLoaded', () => {
       imagenFinal = `local-img:${codigo}`;
     } else if (imagenUrl) {
       imagenFinal = imagenUrl;
+    } else if (codigoEditar) {
+      // Si no se cambia la imagen, mantener la anterior
+      const prodAnt = productos.find(p => p.codigo === codigo);
+      if (prodAnt) imagenFinal = prodAnt.imagen;
     }
 
-    // Guardar producto en localStorage
-    productos.push({ codigo, nombre, categoria, precio, stock, descripcion, imagen: imagenFinal });
+    if (codigoEditar) {
+      // Edición: actualizar producto existente
+      productos = productos.map(p =>
+        p.codigo === codigo ? { codigo, nombre, categoria, precio, stock, descripcion, imagen: imagenFinal } : p
+      );
+    } else {
+      // Alta: agregar nuevo producto
+      productos.push({ codigo, nombre, categoria, precio, stock, descripcion, imagen: imagenFinal });
+    }
     localStorage.setItem('productos', JSON.stringify(productos));
 
-    mostrarPopUp('¡Producto agregado correctamente!', 'success', () => {
+    mostrarPopUp(codigoEditar ? '¡Producto actualizado correctamente!' : '¡Producto agregado correctamente!', 'success', () => {
       window.location.href = 'admin-productos.html';
     });
   });

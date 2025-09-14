@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <span class="badge bg-secondary mb-2">${prod.categoria}</span>
         <span class="fw-bold text-success mb-2">$${prod.precio.toLocaleString('es-CL')}</span>
         <p class="mb-2 text-center" style="max-width:320px">${prod.desc || ''}</p>
-        <button class="btn btn-primary" onclick="addToCart('${prod.codigo}')">Agregar al carrito</button>
+  <button class="btn btn-success" onclick="addToCart('${prod.codigo}')">Agregar al carrito</button>
       </div>
     </div>
   `).join('');
