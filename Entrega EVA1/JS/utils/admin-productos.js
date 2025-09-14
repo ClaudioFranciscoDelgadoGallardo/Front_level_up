@@ -8,8 +8,18 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderProductos() {
   const tbody = document.getElementById('tabla-productos');
   tbody.innerHTML = '';
-  let productos = JSON.parse(localStorage.getItem('productos') || '[]');
+  let productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
   let imgs = JSON.parse(localStorage.getItem('imagenes_productos') || '{}');
+  let productosBase = (window.PRODUCTOS || []).map(p => ({
+    codigo: p.codigo,
+    nombre: p.nombre,
+    categoria: p.categoria,
+    precio: p.precio,
+    stock: p.stock,
+    descripcion: p.desc,
+    imagen: p.img
+  }));
+  let productos = [...productosBase, ...productosLS.filter(p => !productosBase.some(b => b.codigo === p.codigo))];
 
   if (productos.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary">No hay productos registrados.</td></tr>';
@@ -35,6 +45,7 @@ function renderProductos() {
         <td>${prod.stock}</td>
         <td>
           <button class="btn btn-danger btn-sm btn-eliminar-producto" data-codigo="${prod.codigo}">Eliminar</button>
+          <a class="btn btn-primary btn-sm ms-2" href="admin-productos-nuevo.html?codigo=${encodeURIComponent(prod.codigo)}">Editar</a>
         </td>
       </tr>
     `;

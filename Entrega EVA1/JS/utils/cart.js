@@ -6,11 +6,19 @@ function readCart(){ try{ return JSON.parse(localStorage.getItem(KEY_CART)||"[]"
 function writeCart(cart){ localStorage.setItem(KEY_CART, JSON.stringify(cart||[])); }
 
 function addToCart(codigo, qty=1){
-  const p = PRODUCTOS.find(x=>x.codigo===codigo);
+  // Buscar en PRODUCTOS y en productos de localStorage
+  let productosLS = [];
+  try { productosLS = JSON.parse(localStorage.getItem('productos') || '[]'); } catch(_){}
+  let p = PRODUCTOS.find(x=>x.codigo===codigo);
+  if(!p) {
+    p = productosLS.find(x=>x.codigo===codigo);
+    // Si el producto de localStorage tiene diferente estructura, adaptarlo
+    if(p && !p.precio && p.precio !== 0) p.precio = 0;
+  }
   if(!p) return;
   const cart = readCart();
   const idx = cart.findIndex(x=>x.codigo===codigo);
-  const maxQty = Math.max(0, p.stock);
+  const maxQty = Math.max(0, p.stock || 0);
   if(idx>=0){ cart[idx].qty = Math.max(1, Math.min(cart[idx].qty + qty, maxQty||qty)); }
   else { cart.push({codigo:codigo, qty: Math.max(1, Math.min(qty, maxQty||qty)), precio: p.precio}); }
   writeCart(cart);
