@@ -73,17 +73,17 @@ function mostrarPopUpConfirm(mensaje, onConfirm) {
     modal.tabIndex = -1;
     modal.innerHTML = `
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header bg-warning text-dark">
+        <div class="modal-content bg-dark text-white border border-success" style="box-shadow: 0 0 16px #39ff14;">
+          <div class="modal-header border-bottom border-success">
             <h5 class="modal-title">Confirmar</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body">
             <p id="modalPopUpConfirmMensaje"></p>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-danger" id="btnConfirmarEliminar">Eliminar</button>
+          <div class="modal-footer border-top border-success">
+            <button type="button" class="btn btn-outline-success" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-success" id="btnConfirmarEliminar" style="background:#39ff14;border:none;color:#111;">Eliminar</button>
           </div>
         </div>
       </div>

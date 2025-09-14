@@ -74,16 +74,16 @@ function mostrarPopUp(mensaje, tipo = 'success', callback) {
     modal.tabIndex = -1;
     modal.innerHTML = `
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header ${tipo === 'success' ? 'bg-success' : 'bg-danger'} text-white">
-            <h5 class="modal-title">${tipo === 'success' ? 'Éxito' : 'Error'}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <div class="modal-content bg-dark text-white border border-success" style="box-shadow: 0 0 16px #39ff14;">
+          <div class="modal-header border-bottom border-success" style="background:#111;">
+            <h5 class="modal-title" id="modalPopUpTitle"></h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
           </div>
           <div class="modal-body">
             <p id="modalPopUpMensaje"></p>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-${tipo === 'success' ? 'success' : 'danger'}" data-bs-dismiss="modal">Aceptar</button>
+          <div class="modal-footer border-top border-success">
+            <button type="button" class="btn btn-success" style="background:#39ff14;border:none;color:#111;" data-bs-dismiss="modal">Aceptar</button>
           </div>
         </div>
       </div>
@@ -91,6 +91,7 @@ function mostrarPopUp(mensaje, tipo = 'success', callback) {
     document.body.appendChild(modal);
   }
   document.getElementById('modalPopUpMensaje').textContent = mensaje;
+  document.getElementById('modalPopUpTitle').textContent = (tipo === 'error') ? 'Error' : 'Éxito';
   const bsModal = new bootstrap.Modal(modal);
   modal.addEventListener('hidden.bs.modal', function handler() {
     modal.removeEventListener('hidden.bs.modal', handler);
