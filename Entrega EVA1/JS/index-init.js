@@ -20,4 +20,5 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </div>
   `).join('');
+  // No renderizar tarjetas de destacados en la home — se deja solo el carrusel
 });

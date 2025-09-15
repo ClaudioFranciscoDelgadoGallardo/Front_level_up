@@ -46,8 +46,8 @@ function renderProductosTienda() {
           <p class="card-text mb-1">${prod.descripcion || ''}</p>
           <p class="card-text fw-bold mb-1">$${prod.precio.toLocaleString('es-CL')}</p>
           <div class="d-flex flex-column align-items-center w-100 mt-auto">
-            <button class="btn btn-success mb-2 w-75" onclick="agregarAlCarrito('${prod.codigo}')">Agregar al carrito</button>
-            <a class="btn btn-outline-success px-4 text-center" href="detalle.html?codigo=${encodeURIComponent(prod.codigo)}">Detalles</a>
+            <button class="btn btn-neon mb-2 w-75" onclick="agregarAlCarrito('${prod.codigo}')" style="padding:.6rem .9rem;">Agregar al carrito</button>
+            <a class="btn btn-neon-outline px-4 text-center" href="detalle.html?codigo=${encodeURIComponent(prod.codigo)}" style="padding:.5rem .9rem;">Detalles</a>
           </div>
         </div>
       </div>

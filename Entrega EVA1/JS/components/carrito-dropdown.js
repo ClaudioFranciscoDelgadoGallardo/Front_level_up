@@ -4,6 +4,7 @@
     let cart = readCart();
     cart = cart.filter(x => x.codigo !== codigo);
     writeCart(cart);
+    // don't auto-close dropdown when removing an item - re-render in place
     renderCarritoDropdown();
     renderMiniCart();
   }
@@ -12,7 +13,7 @@
     const carritoBody = document.getElementById('carrito-body');
     const {items, subtotal, desc, total} = calcularTotales();
     if(items.length === 0) {
-      carritoBody.innerHTML = '<p class="text-center text-muted mb-0">No hay productos en el carrito.</p>';
+      carritoBody.innerHTML = '<p class="text-center mb-0 carrito-empty">El carrito contiene 0 productos</p>';
       return;
     }
     carritoBody.innerHTML = `
@@ -75,18 +76,29 @@
       cerrarCarrito.addEventListener('click', function() {
         toggleCarritoDropdown(false);
       });
+      // Close dropdown when clicking outside, but ignore clicks coming from
+      // buttons that interact with the cart (add/remove) so the dropdown stays open
       document.addEventListener('click', function(e) {
-        if (!carritoDropdown.contains(e.target) && e.target !== carritoIcon) {
-          toggleCarritoDropdown(false);
+        const target = e.target;
+        // Elements that should not trigger close (add/remove buttons, carrito icon)
+        if (carritoDropdown.contains(target) || target === carritoIcon) return;
+        // if click is on an element that has data-codigo or is inside a product card add button,
+        // don't close - allow handlers to update dropdown
+        if (target.closest('[data-codigo]') || target.closest('.btn') && target.closest('.btn').getAttribute('onclick')?.includes('addToCart')) {
+          return;
         }
+        toggleCarritoDropdown(false);
       });
     }
     // Actualizar dropdown al agregar productos
     const origAddToCart = window.addToCart;
     window.addToCart = function(codigo, qty=1) {
+      // open dropdown when adding so user sees feedback, and keep it open
       origAddToCart(codigo, qty);
       renderCarritoDropdown();
       renderMiniCart();
+      // ensure dropdown is shown after adding
+      toggleCarritoDropdown(true);
     }
   });
 })();
