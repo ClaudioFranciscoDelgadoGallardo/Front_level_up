@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (prod.imagen && prod.imagen.startsWith('http')) {
         inputImagen.value = prod.imagen;
       }
-      // Si es local-img, no se puede previsualizar el file input
+   
     }
     document.querySelector('h2.section-title').textContent = 'Editar Producto';
     form.querySelector('button[type="submit"]').textContent = 'Guardar Cambios';
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // Si se seleccionó imagen local, la guardamos en localStorage simulando assets/imgs
+
     if (imagenLocalFile) {
       imagenFinal = await fileToBase64(imagenLocalFile);
       let imgs = JSON.parse(localStorage.getItem('imagenes_productos') || '{}');
@@ -69,18 +69,18 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (imagenUrl) {
       imagenFinal = imagenUrl;
     } else if (codigoEditar) {
-      // Si no se cambia la imagen, mantener la anterior
+
       const prodAnt = productos.find(p => p.codigo === codigo);
       if (prodAnt) imagenFinal = prodAnt.imagen;
     }
 
     if (codigoEditar) {
-      // Edición: actualizar producto existente
+
       productos = productos.map(p =>
         p.codigo === codigo ? { codigo, nombre, categoria, precio, stock, descripcion, imagen: imagenFinal } : p
       );
     } else {
-      // Alta: agregar nuevo producto
+
       productos.push({ codigo, nombre, categoria, precio, stock, descripcion, imagen: imagenFinal });
     }
     localStorage.setItem('productos', JSON.stringify(productos));

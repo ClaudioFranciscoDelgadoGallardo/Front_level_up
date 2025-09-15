@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
   
-  <link rel="stylesheet" href="../css/styles.css"/>
+  <link rel="stylesheet" href="../CSS/styles.css"/>
 </head>
 <body>
   <header>
@@ -44,7 +44,7 @@
       <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" id="cerrar-carrito"></button>
     </div>
     <div class="carrito-body p-3" id="carrito-body">
-      <p class="text-center text-muted mb-0">No hay productos en el carrito.</p>
+  <p class="text-center text-muted mb-0">No hay productos en el carrito.</p>
     </div>
   </div>
 
@@ -69,7 +69,7 @@
       <label for="reg-fnac">Fecha Nacimiento</label>
       <input id="reg-fnac" type="date">
 
-      <button class="btn btn-primary" type="submit">Registrarme</button>
+  <button class="btn btn-success" type="submit">Registrarme</button>
     </form>
   </main>
 
@@ -110,14 +110,102 @@
   </footer>
 
  
-  <script src="../js/utils/data.js"></script>
-  <script src="../js/utils/validators.js"></script>
-  <script src="../js/utils/regions.js"></script>
-  <script src="../js/utils/cart.js"></script>
-  <script src="../js/components/carrito-dropdown.js"></script>
-  <script src="../js/components/notificacion.js"></script>
-  <script src="../js/app.js"></script>
-  <script src="../js/utils/registro.js"></script>
-  <script src="../js/utils/init-minicart.js"></script>
+  <script src="../JS/utils/data.js"></script>
+  <script src="../JS/utils/validators.js"></script>
+  <script src="../JS/utils/regions.js"></script>
+  <script src="../JS/utils/cart.js"></script>
+  <script src="../JS/components/notificacion.js"></script>
+  <script src="../JS/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderMiniCart();
+    });
+    const carritoIcon = document.getElementById('carrito-icon');
+    const carritoDropdown = document.getElementById('carrito-dropdown');
+    const cerrarCarrito = document.getElementById('cerrar-carrito');
+    const carritoBody = document.getElementById('carrito-body');
+    function quitarDelCarrito(codigo) {
+      let cart = readCart();
+      cart = cart.filter(x => x.codigo !== codigo);
+      writeCart(cart);
+      renderCarritoDropdown();
+      renderMiniCart();
+    }
+    function renderCarritoDropdown() {
+      const {items, subtotal, desc, total} = calcularTotales();
+      if(items.length === 0) {
+        carritoBody.innerHTML = '<p class="text-center text-muted mb-0">El carrito contiene 0 productos</p>';
+        return;
+      }
+      carritoBody.innerHTML = `
+        <ul class="list-group mb-2">
+          ${items.map(it => `<li class="list-group-item bg-dark text-white d-flex justify-content-between align-items-center">
+            <span>${it.nombre} <span class="badge bg-secondary ms-2">x${it.qty}</span></span>
+            <span>$${it.subtotal.toLocaleString('es-CL')}</span>
+            <button class="btn btn-sm btn-danger ms-2 quitar-item" data-codigo="${it.codigo}">&times;</button>
+          </li>`).join('')}
+        </ul>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span>Subtotal:</span>
+          <span>$${subtotal.toLocaleString('es-CL')}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span>Descuento:</span>
+          <span>-$${desc.toLocaleString('es-CL')}</span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="fw-bold">Total:</span>
+          <span class="fw-bold">$${total.toLocaleString('es-CL')}</span>
+        </div>
+        <button class="btn btn-success w-100 mt-2" id="btn-pagar">Pagar</button>
+      `;
+      carritoBody.querySelectorAll('.quitar-item').forEach(btn => {
+        btn.addEventListener('click', function() {
+          quitarDelCarrito(this.getAttribute('data-codigo'));
+        });
+      });
+      const btnPagar = carritoBody.querySelector('#btn-pagar');
+      if(btnPagar){
+        btnPagar.addEventListener('click', function(){
+          alert('¡Gracias por tu compra! (Simulación de pago)');
+          writeCart([]);
+          renderCarritoDropdown();
+          renderMiniCart();
+        });
+      }
+    }
+    function toggleCarritoDropdown(show) {
+      if(show) {
+        renderCarritoDropdown();
+        carritoDropdown.style.display = 'block';
+      } else {
+        carritoDropdown.style.display = 'none';
+      }
+    }
+    if(carritoIcon && carritoDropdown && cerrarCarrito) {
+      carritoIcon.addEventListener('click', function(e) {
+        e.preventDefault();
+        toggleCarritoDropdown(carritoDropdown.style.display !== 'block');
+      });
+      cerrarCarrito.addEventListener('click', function() {
+        toggleCarritoDropdown(false);
+      });
+      document.addEventListener('click', function(e) {
+        if(window.__keepCarritoOpen) { window.__keepCarritoOpen = false; return; }
+        const path = e.composedPath ? e.composedPath() : (function(n){ const p=[]; while(n){ p.push(n); n=n.parentNode;} return p;})(e.target);
+        if (carritoDropdown.contains(e.target)) return;
+        if (e.target === carritoIcon) return;
+        if (path.some(el => el && el.classList && (el.classList.contains('add-to-cart') || el.classList.contains('quitar-item') || (el.getAttribute && el.getAttribute('onclick') && el.getAttribute('onclick').includes('addToCart'))))) return;
+        toggleCarritoDropdown(false);
+      });
+    }
+    const origAddToCart = window.addToCart;
+    window.addToCart = function(codigo, qty=1) {
+      window.__keepCarritoOpen = true; setTimeout(()=> window.__keepCarritoOpen = false, 300);
+      origAddToCart(codigo, qty);
+      renderCarritoDropdown();
+      renderMiniCart();
+    }
+  </script>
 </body>
 </html>

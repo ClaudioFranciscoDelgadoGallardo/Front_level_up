@@ -13,13 +13,17 @@ function renderProductos(containerId){
       <h3>${p.nombre}</h3>
       <p class="label">${p.categoria}</p>
       <p>Precio: $${p.precio.toLocaleString('es-CL')}</p>
-      <a class="btn" href="detalle.html?codigo=${encodeURIComponent(p.codigo)}">Ver detalle</a>
-      <button class="btn secondary" data-codigo="${p.codigo}">Añadir</button>
+      <a class="btn btn-neon-outline mb-2" href="detalle.html?codigo=${encodeURIComponent(p.codigo)}">Ver detalle</a>
+      <button class="btn btn-neon" data-codigo="${p.codigo}" style="display:block;margin:0.5rem auto 0;">Añadir</button>
     `;
     el.appendChild(card);
   });
   el.querySelectorAll("button[data-codigo]").forEach(b=>{
-    b.addEventListener("click", e=> addToCart(e.currentTarget.getAttribute("data-codigo"), 1));
+    b.addEventListener("click", e=> {
+      const codigo = e.currentTarget.getAttribute("data-codigo");
+      if(typeof addToCart === 'function') addToCart(codigo, 1);
+      else if(typeof window.agregarAlCarrito === 'function') window.agregarAlCarrito(codigo);
+    });
   });
 }
 
@@ -196,17 +200,60 @@ function bindContactoForm(){
   const nombre = document.getElementById("ct-nombre");
   const correo = document.getElementById("ct-correo");
   const comentario = document.getElementById("ct-comentario");
+  const telefono = document.getElementById("ct-telefono");
 
   nombre.addEventListener("input", ()=> longitudEntre(nombre.value,1,100)?clearError(nombre):setError(nombre,"Máx 100"));
   correo.addEventListener("input", ()=> emailPermitido(correo.value)?clearError(correo):setError(correo,"Dominio no permitido"));
+  telefono.addEventListener("input", ()=> /^\d{9}$/.test(telefono.value) && telefono.value.charAt(0) === '9' ? clearError(telefono) : setError(telefono,"El número no es válido, ingrese 9 dígitos y comience con 9"));
+  // permitir solo dígitos y truncar a 8
+  telefono.addEventListener('beforeinput', function(e){
+    if(e.inputType === 'insertFromPaste') return; // manejar paste en paste handler
+    if(!/^[0-9]*$/.test(e.data || '')) e.preventDefault();
+  });
+  telefono.addEventListener('paste', function(e){
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text') || '';
+    const digits = text.replace(/\D/g,'').slice(0,9);
+    const cur = telefono.value || '';
+    const combined = (cur + digits).slice(0,9);
+    telefono.value = combined;
+    telefono.dispatchEvent(new Event('input'));
+  });
+  telefono.addEventListener('input', function(){
+    const only = (telefono.value || '').replace(/\D/g,'').slice(0,9);
+    if(telefono.value !== only) telefono.value = only;
+  });
+  telefono.addEventListener('keydown', function(e){
+    const allowed = ['Backspace','ArrowLeft','ArrowRight','Delete','Tab'];
+    if(allowed.indexOf(e.key) !== -1) return;
+    if(e.ctrlKey || e.metaKey) return;
+    if(!/^[0-9]$/.test(e.key)) e.preventDefault();
+  });
   comentario.addEventListener("input", ()=> longitudEntre(comentario.value,1,500)?clearError(comentario):setError(comentario,"Máx 500"));
 
   form.addEventListener("submit", e=>{
     e.preventDefault();
     if(!longitudEntre(nombre.value,1,100)) return;
     if(!emailPermitido(correo.value)) return;
+    if(!/^\d{9}$/.test(telefono.value) || telefono.value.charAt(0) !== '9') {
+      setError(telefono, 'El número no es válido, ingrese 9 dígitos y comience con 9');
+      return;
+    }
     if(!longitudEntre(comentario.value,1,500)) return;
-    mostrarNotificacion("Mensaje enviado", "success");
+    const contactoMsg = 'Solicitud de contacto ingresada correctamente';
+    // compute a reliable index target and store globally so the notification button can navigate to it
+    try{
+      // Use URL resolution so it works on file://, http(s) and GitHub Pages
+      const resolved = new URL('../index.html', location.href).toString();
+      window.__contactRedirectTarget = resolved;
+    } catch(e){ window.__contactRedirectTarget = '../index.html'; }
+    if (typeof mostrarNotificacionConCallback === 'function') {
+      // do not pass a callback here; the notification button will read window.__contactRedirectTarget
+      mostrarNotificacionConCallback(contactoMsg, 'success', 0, null);
+    } else if (typeof mostrarNotificacion === 'function') {
+      mostrarNotificacion(contactoMsg, 'success', 3000);
+      setTimeout(()=> location.href = '../index.html', 1200);
+    }
     form.reset();
   });
 }
