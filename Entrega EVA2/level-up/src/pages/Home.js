@@ -1,0 +1,129 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useCarrito } from '../context/CarritoContext';
+import '../styles/Home.css';
+
+const PRODUCTOS = [
+  {
+    codigo: "JM001",
+    categoria: "Juegos de Mesa",
+    nombre: "Catan",
+    precio: 29990,
+    stock: 10,
+    desc: "Juego clásico de estrategia.",
+    img: "/assets/imgs/destacado1.png",
+    imagen: "/assets/imgs/destacado1.png"
+  },
+  {
+    codigo: "AC001",
+    categoria: "Accesorios",
+    nombre: "Control Xbox Series X",
+    precio: 59990,
+    stock: 15,
+    desc: "Control inalámbrico.",
+    img: "/assets/imgs/destacado2.png",
+    imagen: "/assets/imgs/destacado2.png"
+  },
+  {
+    codigo: "CO001",
+    categoria: "Consolas",
+    nombre: "PlayStation 5",
+    precio: 549990,
+    stock: 5,
+    desc: "Consola de última generación.",
+    img: "/assets/imgs/destacado3.png",
+    imagen: "/assets/imgs/destacado3.png"
+  }
+];
+
+export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const { agregarAlCarrito } = useCarrito();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % PRODUCTOS.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handlePrev = () => {
+    setCurrentSlide((prev) => (prev - 1 + PRODUCTOS.length) % PRODUCTOS.length);
+  };
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % PRODUCTOS.length);
+  };
+
+  const handleAgregarAlCarrito = (codigo) => {
+    const producto = PRODUCTOS.find(p => p.codigo === codigo);
+    if (producto) {
+      agregarAlCarrito(producto);
+      if (window.notificar) {
+        window.notificar(`¡${producto.nombre} agregado al carrito!`, 'success', 3000);
+      }
+    }
+  };
+
+  return (
+    <>
+      <section className="hero">
+        <div className="container">
+          <h1>¡DESAFÍA TUS LÍMITES!</h1>
+          <p>Explora consolas, accesorios, PCs y más</p>
+          <Link className="btn btn-secondary" to="/productos">Explorar Productos</Link>
+          <Link className="btn btn-secondary" to="/nosotros" style={{ marginLeft: '.5rem' }}>Conócenos</Link>
+        </div>
+      </section>
+
+      <main className="container" style={{ marginTop: '2rem' }}>
+        <h2 className="section-title">Destacados</h2>
+        
+        <div id="productos-carrusel-container" className="mt-5">
+          <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+            <div className="carousel-inner" id="carousel-productos-inner">
+              {PRODUCTOS.map((prod, idx) => (
+                <div className={`carousel-item${idx === currentSlide ? ' active' : ''}`} key={prod.codigo}>
+                  <div className="d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: '340px' }}>
+                    <img 
+                      src={prod.img} 
+                      alt={prod.nombre} 
+                      className="mb-3 rounded" 
+                      style={{ maxWidth: '220px', maxHeight: '160px', objectFit: 'contain', background: '#222' }} 
+                    />
+                    <h5 className="text-neon mb-2">{prod.nombre}</h5>
+                    <span className="badge bg-secondary mb-2">{prod.categoria}</span>
+                    <span className="fw-bold text-success mb-2">${prod.precio.toLocaleString('es-CL')}</span>
+                    <p className="mb-2 text-center" style={{ maxWidth: '320px' }}>{prod.desc}</p>
+                    <button 
+                      className="btn btn-success" 
+                      onClick={() => handleAgregarAlCarrito(prod.codigo)}
+                    >
+                      Agregar al carrito
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button 
+              className="carousel-control-prev" 
+              type="button" 
+              onClick={handlePrev}
+            >
+              <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span className="visually-hidden">Anterior</span>
+            </button>
+            <button 
+              className="carousel-control-next" 
+              type="button" 
+              onClick={handleNext}
+            >
+              <span className="carousel-control-next-icon" aria-hidden="true"></span>
+              <span className="visually-hidden">Siguiente</span>
+            </button>
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}

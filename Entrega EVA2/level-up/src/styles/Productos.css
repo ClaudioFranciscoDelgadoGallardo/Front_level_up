@@ -1,0 +1,32 @@
+.productos-table {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.productos-table .card {
+  background: var(--card-bg);
+  border: 1px solid var(--accent-green);
+  box-shadow: 0 0 8px #39ff14;
+}
+
+.productos-table .card * {
+  color: #fff !important;
+}
+
+.btn-outline-success {
+  color: var(--accent-green) !important;
+  border-color: var(--accent-green) !important;
+  background: transparent !important;
+  font-weight: 600;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-outline-success:hover,
+.btn-outline-success:focus {
+  background: var(--accent-green) !important;
+  color: #000 !important;
+  border-color: var(--accent-green) !important;
+}
