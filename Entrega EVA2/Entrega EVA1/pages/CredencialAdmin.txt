@@ -1,0 +1,4 @@
+Para acceder a admin este tiene una credencial que se debe poner en login.
+credencial:
+correo: admin@levelup.com
+admin: admin
