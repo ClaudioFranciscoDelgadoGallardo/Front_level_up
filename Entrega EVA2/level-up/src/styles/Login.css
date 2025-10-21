@@ -1,5 +1,13 @@
 /* Estilos para la página de Login */
 #form-login {
   max-width: 400px;
+  width: 100%;
   margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 576px) {
+  #form-login {
+    margin: 1rem auto;
+  }
 }

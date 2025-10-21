@@ -4,8 +4,16 @@ form {
   gap: 0.8rem;
   margin-top: 1rem;
   max-width: 600px;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 576px) {
+  form {
+    gap: 0.6rem;
+  }
 }
 
 label {
