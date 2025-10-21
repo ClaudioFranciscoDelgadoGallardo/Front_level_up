@@ -13,7 +13,7 @@ export default function Footer() {
               <Link to="/nosotros" className="text-decoration-none mx-3 footer-label">Nosotros</Link>
             </div>
             <ul className="text-dark small mt-2 ms-3 list-unstyled mb-0">
-              <li><strong>Email:</strong> contacto@levelup.cl</li>
+              <li><strong>Email:</strong> contacto@levelup.com</li>
               <li><strong>Teléfono:</strong> +56 9 1234 5678</li>
               <li><strong>Horario:</strong> Lunes a Viernes, 9:00 - 18:00</li>
               <li><strong>Dirección:</strong> Calle Falsa 123, Santiago, Chile</li>

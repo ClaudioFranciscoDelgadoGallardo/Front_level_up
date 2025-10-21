@@ -24,29 +24,11 @@ html, body {
   color: var(--text-primary);
   line-height: 1.6;
   font-family: 'Roboto', Arial, sans-serif;
-  overflow-x: hidden;
-  width: 100%;
-  min-height: 100vh;
-}
-
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.App {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5 { 
   font-family: 'Orbitron', sans-serif; 
-  margin-bottom: 1rem;
-  word-wrap: break-word;
+  margin-bottom: 1rem; 
 }
 
 a { 
@@ -67,59 +49,8 @@ body {
 }
 
 .container { 
-  width: 100%; 
+  width: 90%; 
   max-width: 1200px; 
   margin: 0 auto; 
   padding: 0 15px; 
-}
-
-@media (min-width: 576px) {
-  .container {
-    padding: 0 20px;
-  }
-}
-
-@media (min-width: 768px) {
-  .container {
-    width: 95%;
-  }
-}
-
-@media (min-width: 992px) {
-  .container {
-    width: 90%;
-  }
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-table {
-  width: 100%;
-  overflow-x: auto;
-  display: block;
-}
-
-@media (max-width: 768px) {
-  body {
-    padding-top: 100px;
-  }
-  
-  .table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-@media (max-width: 576px) {
-  body {
-    padding-top: 120px;
-  }
-  
-  .btn {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
-  }
 }

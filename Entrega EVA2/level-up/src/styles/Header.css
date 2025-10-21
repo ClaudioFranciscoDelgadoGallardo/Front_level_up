@@ -3,52 +3,40 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  min-height: var(--header-height);
+  height: var(--header-height);
   background: var(--bg-primary);
   border-bottom: 1px solid var(--accent-blue);
   z-index: 1000;
-  width: 100%;
 }
 
 .header-content {
   height: 100%;
-  min-height: var(--header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
-  flex-wrap: wrap;
-  padding: 0.5rem 0;
 }
 
 .logo {
   font-family: 'Orbitron', sans-serif;
-  font-size: clamp(1rem, 3vw, 1.4rem);
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--accent-green);
   text-decoration: none;
-  white-space: nowrap;
 }
 
 .nav-menu {
   list-style: none;
   display: flex;
-  gap: clamp(0.5rem, 2vw, 1.2rem);
+  gap: 1.2rem;
   margin-left: auto;
   margin-right: 0.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.nav-menu li {
-  white-space: nowrap;
 }
 
 .nav-menu a {
   color: var(--text-primary);
   text-decoration: none;
   font-weight: 500;
-  font-size: clamp(0.85rem, 2vw, 1rem);
 }
 
 .nav-menu a:hover {
@@ -58,7 +46,7 @@ header {
 .carrito-dropdown {
   position: fixed !important;
   right: 2rem;
-  top: calc(var(--header-height) + 0.5rem);
+  top: 4.5rem;
   min-width: 320px;
   max-width: 95vw;
   z-index: 1000;
@@ -67,62 +55,25 @@ header {
   box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
-@media (max-width: 992px) {
-  .header-content {
-    gap: 1rem;
-  }
-  
-  .nav-menu {
-    gap: 0.8rem;
-  }
-}
-
-@media (max-width: 768px) {
-  header {
-    min-height: auto;
-  }
-  
-  .header-content {
-    flex-direction: column;
-    gap: 0.6rem;
-    padding: 0.8rem 0;
-  }
-  
-  .nav-menu {
-    margin-left: 0;
-    margin-right: 0;
-    width: 100%;
-  }
-  
-  .logo {
-    font-size: 1.2rem;
-  }
-}
-
 @media (max-width: 600px) {
   .carrito-dropdown {
     right: 0.5rem;
     left: 0.5rem;
     min-width: unset;
     width: auto;
-    max-width: calc(100vw - 1rem);
-  }
-  
-  .nav-menu {
-    gap: 0.5rem;
-  }
-  
-  .nav-menu a {
-    font-size: 0.85rem;
+    max-width: 98vw;
   }
 }
 
-@media (max-width: 400px) {
-  .logo {
-    font-size: 1rem;
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.6rem 0;
+    height: auto;
   }
-  
-  .nav-menu a {
-    font-size: 0.75rem;
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
