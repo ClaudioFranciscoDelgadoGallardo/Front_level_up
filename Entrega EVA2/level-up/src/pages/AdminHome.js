@@ -36,7 +36,7 @@ export default function AdminHome() {
       <div className="admin-header d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="section-title mb-2">Panel de Administración</h2>
-          <p className="text-muted">
+          <p style={{ color: '#fff' }}>
             Bienvenido, <span style={{ color: 'var(--accent-green)' }}>{usuarioActual?.nombre || 'Admin'}</span>
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function AdminHome() {
               <h4>Gestión de Productos</h4>
             </div>
             <div className="admin-card-body">
-              <p className="text-secondary mb-4">Administra el catálogo de productos de la tienda</p>
+              <p style={{ color: '#fff' }} className="mb-4">Administra el catálogo de productos de la tienda</p>
               <div className="d-flex gap-3">
                 <Link to="/admin/productos" className="btn btn-success flex-grow-1">
                   Ver Productos
@@ -106,7 +106,7 @@ export default function AdminHome() {
               <h4>Gestión de Usuarios</h4>
             </div>
             <div className="admin-card-body">
-              <p className="text-secondary mb-4">Administra los usuarios registrados en el sistema</p>
+              <p style={{ color: '#fff' }} className="mb-4">Administra los usuarios registrados en el sistema</p>
               <div className="d-flex gap-3">
                 <Link to="/admin/usuarios" className="btn btn-success flex-grow-1">
                   Ver Usuarios
@@ -133,7 +133,7 @@ export default function AdminHome() {
                     className="img-fluid rounded mb-2"
                   />
                   <h6>{producto.nombre}</h6>
-                  <p className="text-muted mb-0">{producto.categoria}</p>
+                  <p style={{ color: 'var(--accent-green)' }} className="mb-0">{producto.categoria}</p>
                   <p className="fw-bold" style={{ color: 'var(--accent-green)' }}>
                     ${producto.precio.toLocaleString('es-CL')}
                   </p>

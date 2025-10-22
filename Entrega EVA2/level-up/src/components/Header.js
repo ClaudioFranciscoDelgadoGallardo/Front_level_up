@@ -55,8 +55,8 @@ export default function Header() {
               <li>
                 <button 
                   onClick={handleCerrarSesion}
-                  className="btn btn-outline-danger btn-sm"
-                  style={{ padding: '0.25rem 0.75rem' }}
+                  className="btn btn-danger btn-sm"
+                  style={{ padding: '0.25rem 0.75rem', fontWeight: 'bold' }}
                 >
                   Cerrar Sesión
                 </button>
@@ -74,30 +74,30 @@ export default function Header() {
           )}
           
           {!isAdminRoute && (
-          <div className="d-flex align-items-center ms-auto">
-            <button 
-              className="me-3 d-flex align-items-center bg-transparent border-0 position-relative" 
-              title="Carrito"
-              onClick={() => setShowCarrito(!showCarrito)}
-              style={{ cursor: 'pointer' }}
-            >
-            >
-              <img src="/assets/icons/carrito.png" alt="Carrito" width="32" height="32" id="carrito-icon" />
-              {obtenerCantidadTotal() > 0 && (
-                <span 
-                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill"
-                  style={{ 
-                    backgroundColor: 'var(--accent-green)', 
-                    color: '#000',
-                    fontSize: '0.65rem',
-                    padding: '0.25rem 0.5rem'
-                  }}
-                >
-                  {obtenerCantidadTotal()}
-                </span>
-              )}
-            </button>
-          </div>
+            <div className="d-flex align-items-center ms-auto">
+              <button 
+                className="me-3 d-flex align-items-center bg-transparent border-0 position-relative" 
+                title="Carrito"
+                onClick={() => setShowCarrito(!showCarrito)}
+                style={{ cursor: 'pointer' }}
+              >
+                <img src="/assets/icons/carrito.png" alt="Carrito" width="32" height="32" id="carrito-icon" />
+                {obtenerCantidadTotal() > 0 && (
+                  <span 
+                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill"
+                    style={{ 
+                      backgroundColor: 'var(--accent-green)', 
+                      color: '#000',
+                      fontSize: '0.65rem',
+                      padding: '0.25rem 0.5rem'
+                    }}
+                  >
+                    {obtenerCantidadTotal()}
+                  </span>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
