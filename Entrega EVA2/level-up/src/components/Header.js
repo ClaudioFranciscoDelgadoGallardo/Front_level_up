@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
 import '../styles/Header.css';
 
@@ -7,6 +7,10 @@ export default function Header() {
   const [showCarrito, setShowCarrito] = useState(false);
   const { eliminarDelCarrito, calcularTotales, obtenerCantidadTotal, vaciarCarrito } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
+  const location = useLocation();
+  const navigate = useNavigate();
+  
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
   const formatearPrecio = (precio) => {
     return `$${precio.toLocaleString('es-CL')}`;
@@ -26,28 +30,57 @@ export default function Header() {
     setShowCarrito(false);
   };
 
+  const handleCerrarSesion = () => {
+    localStorage.removeItem('usuarioActual');
+    if (window.notificar) {
+      window.notificar('Sesión cerrada exitosamente', 'success', 3000);
+    }
+    navigate('/login');
+  };
+
   return (
     <>
       <header>
         <div className="container header-content">
-          <Link to="/" className="logo d-flex align-items-center">
+          <Link to={isAdminRoute ? "/admin" : "/"} className="logo d-flex align-items-center">
             <img src="/assets/icons/icono.png" alt="Level Up" width="56" height="56" className="me-2" />
             LEVEL-UP GAMER
           </Link>
-          <ul className="nav-menu">
-            <li><Link to="/">Inicio</Link></li>
-            <li><Link to="/productos">Productos</Link></li>
-            <li><Link to="/nosotros">Nosotros</Link></li>
-            <li><Link to="/contacto">Contacto</Link></li>
-            <li><Link to="/registro">Registro</Link></li>
-            <li><Link to="/login">Login</Link></li>
-          </ul>
+          
+          {isAdminRoute ? (
+            <ul className="nav-menu">
+              <li><Link to="/admin">Dashboard</Link></li>
+              <li><Link to="/admin/productos">Productos</Link></li>
+              <li><Link to="/admin/usuarios">Usuarios</Link></li>
+              <li>
+                <button 
+                  onClick={handleCerrarSesion}
+                  className="btn btn-outline-danger btn-sm"
+                  style={{ padding: '0.25rem 0.75rem' }}
+                >
+                  Cerrar Sesión
+                </button>
+              </li>
+            </ul>
+          ) : (
+            <ul className="nav-menu">
+              <li><Link to="/">Inicio</Link></li>
+              <li><Link to="/productos">Productos</Link></li>
+              <li><Link to="/nosotros">Nosotros</Link></li>
+              <li><Link to="/contacto">Contacto</Link></li>
+              <li><Link to="/registro">Registro</Link></li>
+              <li><Link to="/login">Login</Link></li>
+            </ul>
+          )}
+          
+          {!isAdminRoute && (
           <div className="d-flex align-items-center ms-auto">
             <button 
               className="me-3 d-flex align-items-center bg-transparent border-0 position-relative" 
               title="Carrito"
               onClick={() => setShowCarrito(!showCarrito)}
               style={{ cursor: 'pointer' }}
+            >
             >
               <img src="/assets/icons/carrito.png" alt="Carrito" width="32" height="32" id="carrito-icon" />
               {obtenerCantidadTotal() > 0 && (
