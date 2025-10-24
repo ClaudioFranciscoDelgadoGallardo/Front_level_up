@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registrarLogUsuario, registrarLogAdmin } from '../utils/logManager';
 import '../styles/Login.css';
 
 export default function Login() {
@@ -57,6 +58,13 @@ export default function Login() {
     
     if (usuario) {
       localStorage.setItem('usuarioActual', JSON.stringify(usuario));
+      
+      if (usuario.rol === 'admin') {
+        registrarLogAdmin(`Inició sesión: ${usuario.nombre} ${usuario.apellidos || ''} (${usuario.correo})`);
+      } else {
+        registrarLogUsuario(`Inició sesión: ${usuario.nombre} ${usuario.apellidos || ''} (${usuario.correo})`);
+      }
+      
       if (window.notificar) {
         window.notificar(`¡Bienvenido ${usuario.nombre}!`, 'success', 3000);
       }

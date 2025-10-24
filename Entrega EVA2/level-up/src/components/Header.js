@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { registrarLogUsuario } from '../utils/logManager';
 import '../styles/Header.css';
 
 export default function Header() {
@@ -23,6 +24,38 @@ export default function Header() {
       }
       return;
     }
+    
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    let stockInsuficiente = false;
+    
+    items.forEach(item => {
+      const producto = productos.find(p => p.codigo === item.codigo);
+      if (producto && producto.stock < item.qty) {
+        stockInsuficiente = true;
+        if (window.notificar) {
+          window.notificar(`Stock insuficiente para ${producto.nombre}`, 'error', 3000);
+        }
+      }
+    });
+    
+    if (stockInsuficiente) {
+      return;
+    }
+    
+    items.forEach(item => {
+      const index = productos.findIndex(p => p.codigo === item.codigo);
+      if (index !== -1) {
+        productos[index].stock -= item.qty;
+        productos[index].fechaModificacion = new Date().toISOString();
+      }
+    });
+    
+    localStorage.setItem('productos', JSON.stringify(productos));
+    window.dispatchEvent(new Event('storage'));
+    
+    const productosComprados = items.map(item => `${item.nombre} (x${item.qty})`).join(', ');
+    registrarLogUsuario(`Realizó compra: ${productosComprados} - Total: $${total.toLocaleString('es-CL')}`);
+    
     if (window.notificar) {
       window.notificar('¡Gracias por tu compra!', 'success', 3000);
     }
@@ -51,7 +84,9 @@ export default function Header() {
             <ul className="nav-menu">
               <li><Link to="/admin">Dashboard</Link></li>
               <li><Link to="/admin/productos">Productos</Link></li>
+              <li><Link to="/admin/destacados">Destacados</Link></li>
               <li><Link to="/admin/usuarios">Usuarios</Link></li>
+              <li><Link to="/admin/logs">Logs</Link></li>
               <li>
                 <button 
                   onClick={handleCerrarSesion}
@@ -66,6 +101,7 @@ export default function Header() {
             <ul className="nav-menu">
               <li><Link to="/">Inicio</Link></li>
               <li><Link to="/productos">Productos</Link></li>
+              <li><Link to="/noticias">Noticias</Link></li>
               <li><Link to="/nosotros">Nosotros</Link></li>
               <li><Link to="/contacto">Contacto</Link></li>
               <li><Link to="/registro">Registro</Link></li>

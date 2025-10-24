@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { registrarLogAdmin } from '../utils/logManager';
 import '../styles/Admin.css';
 
 export default function AdminProductoForm() {
@@ -40,12 +41,70 @@ export default function AdminProductoForm() {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5000000) {
+        if (window.notificar) {
+          window.notificar('La imagen no puede pesar más de 5MB', 'error', 3000);
+        }
+        return;
+      }
+
+      if (!file.type.startsWith('image/')) {
+        if (window.notificar) {
+          window.notificar('Solo se permiten archivos de imagen', 'error', 3000);
+        }
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({
+          ...prev,
+          imagen: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.codigo || !formData.nombre || !formData.precio || !formData.stock) {
+    if (!formData.codigo.trim() || !formData.nombre.trim() || !formData.precio || !formData.stock || !formData.descripcion.trim() || !formData.imagen.trim()) {
       if (window.notificar) {
         window.notificar('Por favor completa todos los campos obligatorios', 'error', 3000);
+      }
+      return;
+    }
+
+    const precio = parseFloat(formData.precio);
+    if (precio >= 10000000) {
+      if (window.notificar) {
+        window.notificar('El precio no puede ser mayor o igual a $10.000.000', 'error', 3000);
+      }
+      return;
+    }
+
+    if (precio <= 0) {
+      if (window.notificar) {
+        window.notificar('El precio debe ser mayor a $0', 'error', 3000);
+      }
+      return;
+    }
+
+    const stock = parseInt(formData.stock);
+    if (stock >= 10000000) {
+      if (window.notificar) {
+        window.notificar('El stock no puede ser mayor o igual a 10.000.000', 'error', 3000);
+      }
+      return;
+    }
+
+    if (stock < 0) {
+      if (window.notificar) {
+        window.notificar('El stock no puede ser negativo', 'error', 3000);
       }
       return;
     }
@@ -58,9 +117,13 @@ export default function AdminProductoForm() {
         productos[index] = {
           ...formData,
           precio: parseFloat(formData.precio),
-          stock: parseInt(formData.stock)
+          stock: parseInt(formData.stock),
+          fechaModificacion: new Date().toISOString(),
+          fechaCreacion: productos[index].fechaCreacion || new Date().toISOString()
         };
         localStorage.setItem('productos', JSON.stringify(productos));
+        window.dispatchEvent(new Event('storage'));
+        registrarLogAdmin(`Editó producto: ${formData.nombre} (${formData.codigo})`);
         if (window.notificar) {
           window.notificar('Producto actualizado exitosamente', 'success', 3000);
         }
@@ -74,13 +137,18 @@ export default function AdminProductoForm() {
         return;
       }
 
+      const fechaActual = new Date().toISOString();
       productos.push({
         ...formData,
         id: formData.codigo,
         precio: parseFloat(formData.precio),
-        stock: parseInt(formData.stock)
+        stock: parseInt(formData.stock),
+        fechaCreacion: fechaActual,
+        fechaModificacion: fechaActual
       });
       localStorage.setItem('productos', JSON.stringify(productos));
+      window.dispatchEvent(new Event('storage'));
+      registrarLogAdmin(`Creó producto: ${formData.nombre} (${formData.codigo})`);
       if (window.notificar) {
         window.notificar('Producto creado exitosamente', 'success', 3000);
       }
@@ -111,7 +179,6 @@ export default function AdminProductoForm() {
               value={formData.codigo}
               onChange={handleChange}
               disabled={esEdicion}
-              required
             />
           </div>
 
@@ -124,7 +191,6 @@ export default function AdminProductoForm() {
               name="nombre"
               value={formData.nombre}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -136,7 +202,6 @@ export default function AdminProductoForm() {
               name="categoria"
               value={formData.categoria}
               onChange={handleChange}
-              required
             >
               <option value="Juegos de Mesa">Juegos de Mesa</option>
               <option value="Accesorios">Accesorios</option>
@@ -156,9 +221,9 @@ export default function AdminProductoForm() {
               name="precio"
               value={formData.precio}
               onChange={handleChange}
-              min="0"
+              min="1"
+              max="9999999"
               step="1"
-              required
             />
           </div>
 
@@ -172,12 +237,12 @@ export default function AdminProductoForm() {
               value={formData.stock}
               onChange={handleChange}
               min="0"
-              required
+              max="9999999"
             />
           </div>
 
           <div className="col-12 mb-3">
-            <label htmlFor="descripcion" className="form-label">Descripción</label>
+            <label htmlFor="descripcion" className="form-label">Descripción *</label>
             <textarea
               className="form-control"
               id="descripcion"
@@ -189,7 +254,32 @@ export default function AdminProductoForm() {
           </div>
 
           <div className="col-12 mb-3">
-            <label htmlFor="imagen" className="form-label">URL de la Imagen</label>
+            <label htmlFor="imagen" className="form-label">Imagen del Producto *</label>
+            <div className="mb-2">
+              <label 
+                htmlFor="imagenFile" 
+                className="btn btn-success w-100"
+                style={{ 
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem'
+                }}
+              >
+                📁 Seleccionar Imagen desde el Computador
+              </label>
+              <input
+                type="file"
+                className="form-control"
+                id="imagenFile"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
+              <small style={{ color: '#fff', opacity: 0.7 }}>Formatos: JPG, PNG, GIF. Máximo 5MB</small>
+            </div>
+            <div className="mb-2" style={{ color: 'var(--accent-green)' }}>O ingresa una URL:</div>
             <input
               type="text"
               className="form-control"
@@ -197,10 +287,11 @@ export default function AdminProductoForm() {
               name="imagen"
               value={formData.imagen}
               onChange={handleChange}
-              placeholder="/assets/imgs/producto.png"
+              placeholder="/assets/imgs/producto.png o https://ejemplo.com/imagen.jpg"
             />
             {formData.imagen && (
               <div className="mt-3 text-center">
+                <p className="text-white mb-2">Vista previa:</p>
                 <img 
                   src={formData.imagen} 
                   alt="Preview"
@@ -220,7 +311,7 @@ export default function AdminProductoForm() {
           </div>
         </div>
 
-        <div className="d-flex gap-3 mt-4">
+        <div className="d-flex gap-3 mt-4 justify-content-center">
           <button 
             type="submit" 
             className="btn btn-success px-5"

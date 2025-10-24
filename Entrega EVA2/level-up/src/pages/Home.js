@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
 import '../styles/Home.css';
 
-const PRODUCTOS = [
+const PRODUCTOS_DEFAULT = [
   {
     codigo: "JM001",
     categoria: "Juegos de Mesa",
@@ -38,25 +38,54 @@ const PRODUCTOS = [
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [productos, setProductos] = useState(PRODUCTOS_DEFAULT);
   const { agregarAlCarrito } = useCarrito();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const destacadosCodigosLS = JSON.parse(localStorage.getItem('destacados') || '[]');
+    if (destacadosCodigosLS.length > 0) {
+      const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
+      const productosDestacados = destacadosCodigosLS.map(codigo => {
+        const producto = productosLS.find(p => p.codigo === codigo);
+        if (producto && producto.stock > 0) {
+          return {
+            codigo: producto.codigo,
+            categoria: producto.categoria,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            stock: producto.stock,
+            desc: producto.descripcion || producto.desc || 'Producto destacado',
+            img: producto.imagen,
+            imagen: producto.imagen
+          };
+        }
+        return null;
+      }).filter(p => p !== null);
+      
+      if (productosDestacados.length > 0) {
+        setProductos(productosDestacados);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % PRODUCTOS.length);
+      setCurrentSlide((prev) => (prev + 1) % productos.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [productos.length]);
 
   const handlePrev = () => {
-    setCurrentSlide((prev) => (prev - 1 + PRODUCTOS.length) % PRODUCTOS.length);
+    setCurrentSlide((prev) => (prev - 1 + productos.length) % productos.length);
   };
 
   const handleNext = () => {
-    setCurrentSlide((prev) => (prev + 1) % PRODUCTOS.length);
+    setCurrentSlide((prev) => (prev + 1) % productos.length);
   };
 
   const handleAgregarAlCarrito = (codigo) => {
-    const producto = PRODUCTOS.find(p => p.codigo === codigo);
+    const producto = productos.find(p => p.codigo === codigo);
     if (producto) {
       agregarAlCarrito(producto);
       if (window.notificar) {
@@ -82,16 +111,29 @@ export default function Home() {
         <div id="productos-carrusel-container" className="mt-5">
           <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
             <div className="carousel-inner" id="carousel-productos-inner">
-              {PRODUCTOS.map((prod, idx) => (
+              {productos.map((prod, idx) => (
                 <div className={`carousel-item${idx === currentSlide ? ' active' : ''}`} key={prod.codigo}>
                   <div className="d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: '340px' }}>
                     <img 
                       src={prod.img} 
                       alt={prod.nombre} 
                       className="mb-3 rounded" 
-                      style={{ maxWidth: '220px', maxHeight: '160px', objectFit: 'contain', background: '#222' }} 
+                      style={{ 
+                        maxWidth: '220px', 
+                        maxHeight: '160px', 
+                        objectFit: 'contain', 
+                        background: '#222',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
                     />
-                    <h5 className="text-neon mb-2">{prod.nombre}</h5>
+                    <h5 
+                      className="text-neon mb-2" 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
+                    >
+                      {prod.nombre}
+                    </h5>
                     <span className="badge bg-secondary mb-2">{prod.categoria}</span>
                     <span className="fw-bold text-success mb-2">${prod.precio.toLocaleString('es-CL')}</span>
                     <p className="mb-2 text-center" style={{ maxWidth: '320px' }}>{prod.desc}</p>

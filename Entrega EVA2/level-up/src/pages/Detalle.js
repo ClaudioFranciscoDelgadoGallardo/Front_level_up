@@ -77,10 +77,8 @@ export default function Detalle() {
         <div className="col-md-6">
           <div className="detalle-info">
             <span 
-              className="badge mb-3"
+              className="badge bg-secondary mb-3"
               style={{ 
-                backgroundColor: 'var(--accent-blue)', 
-                color: '#000',
                 fontSize: '0.9rem',
                 padding: '0.5rem 1rem'
               }}
@@ -92,7 +90,9 @@ export default function Detalle() {
               {producto.nombre}
             </h1>
 
-            <p className="text-muted mb-2">Código: {producto.codigo}</p>
+            <p className="mb-2" style={{ color: 'var(--accent-blue)', fontSize: '1.1rem', fontWeight: '500' }}>
+              Código: {producto.codigo}
+            </p>
 
             <div className="mb-4">
               <h2 style={{ color: 'var(--accent-green)', fontSize: '2.5rem' }}>

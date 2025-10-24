@@ -7,23 +7,52 @@ export default function AdminHome() {
   const [stats, setStats] = useState({
     totalProductos: 0,
     totalUsuarios: 0,
+    totalDestacados: 0,
     productosDestacados: []
   });
   const navigate = useNavigate();
+
+  const cargarEstadisticas = () => {
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    const destacadosCodigos = JSON.parse(localStorage.getItem('destacados') || '[]');
+
+    const productosConFecha = productos
+      .filter(p => p.fechaModificacion || p.fechaCreacion)
+      .map(p => ({
+        ...p,
+        fechaModificacion: p.fechaModificacion || p.fechaCreacion
+      }));
+
+    const productosOrdenados = productosConFecha.sort((a, b) => 
+      new Date(b.fechaModificacion) - new Date(a.fechaModificacion)
+    );
+
+    setStats({
+      totalProductos: productos.length,
+      totalUsuarios: usuarios.length,
+      totalDestacados: destacadosCodigos.length,
+      productosDestacados: productosOrdenados.slice(0, 3)
+    });
+  };
 
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem('usuarioActual') || 'null');
     setUsuarioActual(usuario);
 
-    // Cargar estadísticas
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+    cargarEstadisticas();
 
-    setStats({
-      totalProductos: productos.length,
-      totalUsuarios: usuarios.length,
-      productosDestacados: productos.slice(0, 3)
-    });
+    const handleStorageChange = () => {
+      cargarEstadisticas();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('destacadosActualizados', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('destacadosActualizados', handleStorageChange);
+    };
   }, []);
 
   const handleCerrarSesion = () => {
@@ -73,7 +102,7 @@ export default function AdminHome() {
           <div className="stat-card">
             <div className="stat-icon">⭐</div>
             <div className="stat-info">
-              <h3>{stats.productosDestacados.length}</h3>
+              <h3>{stats.totalDestacados}</h3>
               <p>Productos Destacados</p>
             </div>
           </div>
@@ -103,6 +132,22 @@ export default function AdminHome() {
         <div className="col-md-6 mb-4">
           <div className="admin-card">
             <div className="admin-card-header">
+              <h4>Gestión de Destacados</h4>
+            </div>
+            <div className="admin-card-body">
+              <p style={{ color: '#fff' }} className="mb-4">Administra los productos del carrusel de inicio</p>
+              <div className="d-flex gap-3">
+                <Link to="/admin/destacados" className="btn btn-success flex-grow-1">
+                  Ver Destacados
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6 mb-4">
+          <div className="admin-card">
+            <div className="admin-card-header">
               <h4>Gestión de Usuarios</h4>
             </div>
             <div className="admin-card-body">
@@ -113,6 +158,22 @@ export default function AdminHome() {
                 </Link>
                 <Link to="/admin/usuarios/nuevo" className="btn btn-success flex-grow-1">
                   Agregar Usuario
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6 mb-4">
+          <div className="admin-card">
+            <div className="admin-card-header">
+              <h4>Registro de Actividades</h4>
+            </div>
+            <div className="admin-card-body">
+              <p style={{ color: '#fff' }} className="mb-4">Visualiza el historial de acciones de admin y usuarios</p>
+              <div className="d-flex gap-3">
+                <Link to="/admin/logs" className="btn btn-success flex-grow-1">
+                  Ver Logs
                 </Link>
               </div>
             </div>
@@ -133,7 +194,9 @@ export default function AdminHome() {
                     className="img-fluid rounded mb-2"
                   />
                   <h6>{producto.nombre}</h6>
-                  <p style={{ color: 'var(--accent-green)' }} className="mb-0">{producto.categoria}</p>
+                  <p className="mb-0">
+                    <span className="badge bg-secondary">{producto.categoria}</span>
+                  </p>
                   <p className="fw-bold" style={{ color: 'var(--accent-green)' }}>
                     ${producto.precio.toLocaleString('es-CL')}
                   </p>

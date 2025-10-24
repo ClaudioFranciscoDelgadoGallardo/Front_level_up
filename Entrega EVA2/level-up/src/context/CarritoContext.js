@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { registrarLogUsuario } from '../utils/logManager';
 
 const CarritoContext = createContext();
 
@@ -37,36 +38,80 @@ export const CarritoProvider = ({ children }) => {
       return;
     }
     
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    const productoActual = productos.find(p => p.codigo === producto.codigo);
+    const stockDisponible = productoActual ? productoActual.stock : producto.stock;
+    
+    if (stockDisponible <= 0) {
+      if (window.notificar) {
+        window.notificar('Producto sin stock disponible', 'error', 3000);
+      }
+      return;
+    }
+    
     setCarrito(prevCarrito => {
       const idx = prevCarrito.findIndex(item => item.codigo === producto.codigo);
-      const maxQty = producto.stock || 999;
       
       if (idx >= 0) {
+        const cantidadActual = prevCarrito[idx].qty;
+        const nuevaCantidad = cantidadActual + qty;
+        
+        if (nuevaCantidad > stockDisponible) {
+          if (window.notificar) {
+            window.notificar(`Solo hay ${stockDisponible} unidades disponibles`, 'error', 3000);
+          }
+          return prevCarrito;
+        }
+        
         const newCart = [...prevCarrito];
         newCart[idx] = {
           ...newCart[idx],
-          qty: Math.min(newCart[idx].qty + qty, maxQty)
+          qty: nuevaCantidad
         };
+        
+        registrarLogUsuario(`Agregó al carrito: ${producto.nombre} (cantidad: ${qty})`);
         return newCart;
       } else {
+        if (qty > stockDisponible) {
+          if (window.notificar) {
+            window.notificar(`Solo hay ${stockDisponible} unidades disponibles`, 'error', 3000);
+          }
+          return prevCarrito;
+        }
+        
+        registrarLogUsuario(`Agregó al carrito: ${producto.nombre} (cantidad: ${qty})`);
         return [...prevCarrito, {
           codigo: producto.codigo,
           nombre: producto.nombre,
           precio: producto.precio,
           imagen: producto.imagen,
-          qty: Math.min(qty, maxQty)
+          qty: qty
         }];
       }
     });
   };
 
   const eliminarDelCarrito = (codigo) => {
+    const itemEliminado = carrito.find(item => item.codigo === codigo);
+    if (itemEliminado) {
+      registrarLogUsuario(`Eliminó del carrito: ${itemEliminado.nombre} (cantidad: ${itemEliminado.qty})`);
+    }
     setCarrito(prevCarrito => prevCarrito.filter(item => item.codigo !== codigo));
   };
 
   const actualizarCantidad = (codigo, nuevaCantidad) => {
     if (nuevaCantidad <= 0) {
       eliminarDelCarrito(codigo);
+      return;
+    }
+    
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    const producto = productos.find(p => p.codigo === codigo);
+    
+    if (producto && nuevaCantidad > producto.stock) {
+      if (window.notificar) {
+        window.notificar(`Solo hay ${producto.stock} unidades disponibles`, 'error', 3000);
+      }
       return;
     }
     

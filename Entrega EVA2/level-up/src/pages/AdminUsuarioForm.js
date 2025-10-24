@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { registrarLogAdmin } from '../utils/logManager';
 import '../styles/Admin.css';
 
 export default function AdminUsuarioForm() {
@@ -67,6 +68,9 @@ export default function AdminUsuarioForm() {
           password: formData.password || usuarios[index].password
         };
         localStorage.setItem('usuarios', JSON.stringify(usuarios));
+        
+        registrarLogAdmin(`Editó usuario: ${formData.nombre} ${formData.apellidos} (${formData.correo})`);
+        
         if (window.notificar) {
           window.notificar('Usuario actualizado exitosamente', 'success', 3000);
         }
@@ -82,6 +86,9 @@ export default function AdminUsuarioForm() {
 
       usuarios.push(formData);
       localStorage.setItem('usuarios', JSON.stringify(usuarios));
+      
+      registrarLogAdmin(`Creó usuario: ${formData.nombre} ${formData.apellidos} (${formData.correo})`);
+      
       if (window.notificar) {
         window.notificar('Usuario creado exitosamente', 'success', 3000);
       }
@@ -198,7 +205,7 @@ export default function AdminUsuarioForm() {
           </div>
         </div>
 
-        <div className="d-flex gap-3 mt-4">
+        <div className="d-flex gap-3 mt-4 justify-content-center">
           <button 
             type="submit" 
             className="btn btn-success px-5"
