@@ -9,6 +9,7 @@ export default function Footer() {
         <div className="row align-items-start">
           <div className="col-md-6 d-flex flex-column align-items-start mb-3 mb-md-0">
             <div className="mb-2">
+              <Link to="/noticias" className="text-decoration-none mx-3 footer-label">Noticias</Link>
               <Link to="/contacto" className="text-decoration-none mx-3 footer-label">Contacto</Link>
               <Link to="/nosotros" className="text-decoration-none mx-3 footer-label">Nosotros</Link>
             </div>

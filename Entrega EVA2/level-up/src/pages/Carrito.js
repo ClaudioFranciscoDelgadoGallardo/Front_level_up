@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
 import '../styles/Carrito.css';
@@ -6,6 +6,17 @@ import '../styles/Carrito.css';
 export default function Carrito() {
   const { eliminarDelCarrito, actualizarCantidad, vaciarCarrito, calcularTotales } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
+  const [productosStock, setProductosStock] = useState([]);
+
+  useEffect(() => {
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    setProductosStock(productos);
+  }, [items]);
+
+  const getStockDisponible = (codigo) => {
+    const producto = productosStock.find(p => p.codigo === codigo);
+    return producto ? producto.stock : 0;
+  };
 
   const formatearPrecio = (precio) => {
     return `$${precio.toLocaleString('es-CL')}`;
@@ -72,6 +83,9 @@ export default function Carrito() {
                       </h5>
                     </Link>
                     <p className="mb-0" style={{ color: 'var(--text-primary)' }}>{item.codigo}</p>
+                    <small style={{ color: item.qty > getStockDisponible(item.codigo) ? '#ff4444' : 'var(--text-secondary)' }}>
+                      Stock disponible: {getStockDisponible(item.codigo)}
+                    </small>
                   </div>
                   <div className="col-md-2 text-center">
                     <p className="mb-0 fw-bold" style={{ color: 'var(--accent-blue)' }}>
@@ -84,6 +98,7 @@ export default function Carrito() {
                       <button 
                         className="btn btn-sm btn-outline-secondary"
                         onClick={() => actualizarCantidad(item.codigo, item.qty - 1)}
+                        disabled={item.qty <= 1}
                       >
                         -
                       </button>
@@ -93,11 +108,13 @@ export default function Carrito() {
                         style={{ width: '60px' }}
                         value={item.qty}
                         onChange={(e) => handleCantidadChange(item.codigo, e.target.value)}
-                        min="0"
+                        min="1"
+                        max={getStockDisponible(item.codigo)}
                       />
                       <button 
                         className="btn btn-sm btn-outline-secondary"
                         onClick={() => actualizarCantidad(item.codigo, item.qty + 1)}
+                        disabled={item.qty >= getStockDisponible(item.codigo)}
                       >
                         +
                       </button>

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { registrarLogAdmin } from '../utils/logManager';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import '../styles/Admin.css';
 
 export default function AdminUsuarios() {
   const [usuarios, setUsuarios] = useState([]);
   const [busqueda, setBusqueda] = useState('');
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,15 +20,31 @@ export default function AdminUsuarios() {
     setUsuarios(usuariosLS);
   };
 
-  const eliminarUsuario = (correo) => {
-    if (window.confirm(`¿Estás seguro de eliminar el usuario ${correo}?`)) {
-      const usuariosActualizados = usuarios.filter(u => u.correo !== correo);
+  const confirmarEliminar = (correo) => {
+    setUsuarioAEliminar(correo);
+    setMostrarModal(true);
+  };
+
+  const eliminarUsuario = () => {
+    if (usuarioAEliminar) {
+      const usuario = usuarios.find(u => u.correo === usuarioAEliminar);
+      const usuariosActualizados = usuarios.filter(u => u.correo !== usuarioAEliminar);
       localStorage.setItem('usuarios', JSON.stringify(usuariosActualizados));
       setUsuarios(usuariosActualizados);
+      
+      registrarLogAdmin(`Eliminó usuario: ${usuario?.nombre || 'Desconocido'} (${usuarioAEliminar})`);
+      
       if (window.notificar) {
         window.notificar('Usuario eliminado exitosamente', 'success', 3000);
       }
+      setMostrarModal(false);
+      setUsuarioAEliminar(null);
     }
+  };
+
+  const cancelarEliminar = () => {
+    setMostrarModal(false);
+    setUsuarioAEliminar(null);
   };
 
   const editarUsuario = (correo) => {
@@ -115,7 +135,7 @@ export default function AdminUsuarios() {
                     </button>
                     <button 
                       className="btn btn-sm btn-danger btn-action"
-                      onClick={() => eliminarUsuario(usuario.correo)}
+                      onClick={() => confirmarEliminar(usuario.correo)}
                     >
                       Eliminar
                     </button>
@@ -132,6 +152,14 @@ export default function AdminUsuarios() {
           <p className="text-secondary">No se encontraron usuarios con "{busqueda}"</p>
         </div>
       )}
+
+      <ModalConfirmacion
+        mostrar={mostrarModal}
+        titulo="Eliminar Usuario"
+        mensaje={`¿Estás seguro de que deseas eliminar el usuario ${usuarioAEliminar}? Esta acción no se puede deshacer.`}
+        onConfirmar={eliminarUsuario}
+        onCancelar={cancelarEliminar}
+      />
     </main>
   );
 }

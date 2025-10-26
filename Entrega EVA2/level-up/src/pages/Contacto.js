@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { registrarLogUsuario } from '../utils/logManager';
 import '../styles/Contacto.css';
 
 export default function Contacto() {
@@ -61,6 +62,8 @@ export default function Contacto() {
     if (!validarFormulario()) {
       return;
     }
+
+    registrarLogUsuario(`Envió mensaje de contacto: "${formData.comentario.substring(0, 50)}${formData.comentario.length > 50 ? '...' : ''}" - Email: ${formData.correo}`);
 
     if (window.notificar) {
       window.notificar(`¡Gracias ${formData.nombre}, tu mensaje ha sido enviado!`, 'success', 3000);

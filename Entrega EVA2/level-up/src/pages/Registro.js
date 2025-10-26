@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { registrarLogUsuario } from '../utils/logManager';
 import '../styles/Registro.css';
 
 export default function Registro() {
@@ -87,6 +88,8 @@ export default function Registro() {
       rol: 'usuario'
     });
     localStorage.setItem('usuarios', JSON.stringify(usuarios));
+    
+    registrarLogUsuario(`Se registró como nuevo usuario: ${formData.nombre} ${formData.apellidos} (${formData.correo})`);
     
     if (window.notificar) {
       window.notificar(`¡Usuario ${formData.nombre} registrado exitosamente!`, 'success', 3000);

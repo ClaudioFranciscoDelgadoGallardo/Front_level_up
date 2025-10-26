@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { registrarLogAdmin } from '../utils/logManager';
+import ModalConfirmacion from '../components/ModalConfirmacion';
 import '../styles/Admin.css';
 
 export default function AdminProductos() {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState('');
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [productoAEliminar, setProductoAEliminar] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,15 +20,32 @@ export default function AdminProductos() {
     setProductos(productosLS);
   };
 
-  const eliminarProducto = (codigo) => {
-    if (window.confirm(`¿Estás seguro de eliminar el producto ${codigo}?`)) {
-      const productosActualizados = productos.filter(p => p.codigo !== codigo);
+  const confirmarEliminar = (codigo) => {
+    setProductoAEliminar(codigo);
+    setMostrarModal(true);
+  };
+
+  const eliminarProducto = () => {
+    if (productoAEliminar) {
+      const producto = productos.find(p => p.codigo === productoAEliminar);
+      const productosActualizados = productos.filter(p => p.codigo !== productoAEliminar);
       localStorage.setItem('productos', JSON.stringify(productosActualizados));
       setProductos(productosActualizados);
+      
+      window.dispatchEvent(new Event('storage'));
+      registrarLogAdmin(`Eliminó producto: ${producto?.nombre || 'Desconocido'} (${productoAEliminar})`);
+      
       if (window.notificar) {
         window.notificar('Producto eliminado exitosamente', 'success', 3000);
       }
+      setMostrarModal(false);
+      setProductoAEliminar(null);
     }
+  };
+
+  const cancelarEliminar = () => {
+    setMostrarModal(false);
+    setProductoAEliminar(null);
   };
 
   const editarProducto = (codigo) => {
@@ -36,6 +57,8 @@ export default function AdminProductos() {
     p.codigo.toLowerCase().includes(busqueda.toLowerCase()) ||
     p.categoria.toLowerCase().includes(busqueda.toLowerCase())
   );
+
+  const productosSinStock = productos.filter(p => p.stock === 0);
 
   return (
     <main className="container admin-page">
@@ -50,6 +73,16 @@ export default function AdminProductos() {
           + Nuevo Producto
         </Link>
       </div>
+
+      {productosSinStock.length > 0 && (
+        <div className="alert alert-warning d-flex align-items-center mb-4" role="alert">
+          <strong>⚠️ Atención:</strong>
+          <span className="ms-2">
+            Hay {productosSinStock.length} producto{productosSinStock.length > 1 ? 's' : ''} sin stock. 
+            Los usuarios no podrán verlos hasta que agregues más unidades.
+          </span>
+        </div>
+      )}
 
       <div className="mb-4">
         <input
@@ -102,7 +135,7 @@ export default function AdminProductos() {
                   <td>{producto.codigo}</td>
                   <td>{producto.nombre}</td>
                   <td>
-                    <span className="badge" style={{ backgroundColor: 'var(--accent-blue)' }}>
+                    <span className="badge bg-secondary">
                       {producto.categoria}
                     </span>
                   </td>
@@ -113,6 +146,9 @@ export default function AdminProductos() {
                     <span className={producto.stock < 5 ? 'text-danger' : 'text-success'}>
                       {producto.stock}
                     </span>
+                    {producto.stock === 0 && (
+                      <span className="badge bg-danger ms-2">Sin Stock</span>
+                    )}
                   </td>
                   <td>
                     <button 
@@ -123,7 +159,7 @@ export default function AdminProductos() {
                     </button>
                     <button 
                       className="btn btn-sm btn-danger btn-action"
-                      onClick={() => eliminarProducto(producto.codigo)}
+                      onClick={() => confirmarEliminar(producto.codigo)}
                     >
                       Eliminar
                     </button>
@@ -140,6 +176,14 @@ export default function AdminProductos() {
           <p className="text-secondary">No se encontraron productos con "{busqueda}"</p>
         </div>
       )}
+
+      <ModalConfirmacion
+        mostrar={mostrarModal}
+        titulo="Eliminar Producto"
+        mensaje={`¿Estás seguro de que deseas eliminar el producto ${productoAEliminar}? Esta acción no se puede deshacer.`}
+        onConfirmar={eliminarProducto}
+        onCancelar={cancelarEliminar}
+      />
     </main>
   );
 }
