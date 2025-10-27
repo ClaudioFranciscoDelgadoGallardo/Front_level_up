@@ -12,7 +12,7 @@ export default function Carrito() {
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     setProductosStock(productos);
-  }, [items]);
+  }, []); // Sin dependencias - solo carga al montar
 
   const getStockDisponible = (codigo) => {
     const producto = productosStock.find(p => p.codigo === codigo);
@@ -48,15 +48,22 @@ export default function Carrito() {
     });
     localStorage.setItem('productos', JSON.stringify(productos));
     
-    if (window.notificar) {
-      window.notificar('¡Gracias por tu compra!', 'success', 3000);
-    }
+    // Vaciar carrito primero
     vaciarCarrito();
+    
+    if (window.notificar) {
+      window.notificar('¡Gracias por tu compra!', 'success', 2000);
+    }
+    
+    // Forzar recarga completa de la página en /productos
+    setTimeout(() => {
+      window.location.href = '/productos';
+    }, 2000);
   };
 
   const handleIrAProductos = () => {
     console.log('Navegando a productos...');
-    navigate('/productos');
+    window.location.href = '/productos';
   };
 
   return (
