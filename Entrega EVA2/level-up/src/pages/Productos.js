@@ -204,23 +204,39 @@ export default function Productos() {
             <div 
               key={prod.codigo} 
               className="card bg-dark text-white border-success m-2 d-inline-block" 
-              style={{ width: '18rem', boxShadow: '0 0 8px #39ff14' }}
+              style={{ width: '22rem', boxShadow: '0 0 8px #39ff14' }}
             >
-              <div className="card-body d-flex flex-column align-items-center">
+              <div className="card-body d-flex flex-column align-items-center" style={{ minHeight: '480px' }}>
                 {prod.imagen && (
-                  <img 
-                    src={prod.imagen} 
-                    alt={prod.nombre} 
-                    className="img-fluid rounded mb-2" 
-                    style={{ maxWidth: '120px', maxHeight: '120px' }} 
-                  />
+                  <div style={{ 
+                    width: '100%', 
+                    height: '240px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    background: '#1a1a1a',
+                    borderRadius: '8px',
+                    marginBottom: '1rem',
+                    padding: '1rem'
+                  }}>
+                    <img 
+                      src={prod.imagen} 
+                      alt={prod.nombre} 
+                      className="img-fluid rounded" 
+                      style={{ 
+                        maxWidth: '100%', 
+                        maxHeight: '220px',
+                        objectFit: 'contain'
+                      }} 
+                    />
+                  </div>
                 )}
-                <h5 className="card-title mt-2">{prod.nombre}</h5>
+                <h5 className="card-title mt-2" style={{ fontSize: '1.25rem' }}>{prod.nombre}</h5>
                 <p className="card-text mb-1">
-                  <span className="badge bg-secondary">{prod.categoria}</span>
+                  <span className="badge bg-secondary" style={{ fontSize: '0.9rem' }}>{prod.categoria}</span>
                 </p>
-                <p className="card-text mb-1">{prod.descripcion || ''}</p>
-                <p className="card-text fw-bold mb-1">${prod.precio.toLocaleString('es-CL')}</p>
+                <p className="card-text mb-1" style={{ fontSize: '0.95rem', textAlign: 'center' }}>{prod.descripcion || ''}</p>
+                <p className="card-text fw-bold mb-1" style={{ fontSize: '1.2rem', color: 'var(--accent-green)' }}>${prod.precio.toLocaleString('es-CL')}</p>
                 <div className="d-flex flex-column align-items-center w-100 mt-auto">
                   <button 
                     className="btn btn-success mb-2 w-75" 
