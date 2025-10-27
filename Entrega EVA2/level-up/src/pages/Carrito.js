@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
 import '../styles/Carrito.css';
 
@@ -7,6 +7,7 @@ export default function Carrito() {
   const { eliminarDelCarrito, actualizarCantidad, vaciarCarrito, calcularTotales } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
   const [productosStock, setProductosStock] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
@@ -36,10 +37,26 @@ export default function Carrito() {
       }
       return;
     }
+    
+    // Actualizar stock de productos
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    items.forEach(item => {
+      const index = productos.findIndex(p => p.codigo === item.codigo);
+      if (index !== -1 && productos[index].stock >= item.qty) {
+        productos[index].stock -= item.qty;
+      }
+    });
+    localStorage.setItem('productos', JSON.stringify(productos));
+    
     if (window.notificar) {
       window.notificar('¡Gracias por tu compra!', 'success', 3000);
     }
     vaciarCarrito();
+  };
+
+  const handleIrAProductos = () => {
+    console.log('Navegando a productos...');
+    navigate('/productos');
   };
 
   return (
@@ -55,9 +72,13 @@ export default function Carrito() {
             className="mb-4"
           />
           <h3 className="text-secondary mb-4">No hay productos en el carrito</h3>
-          <Link to="/productos" className="btn btn-success px-5">
+          <button 
+            onClick={handleIrAProductos}
+            className="btn btn-success px-5"
+            style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+          >
             Ir a Productos
-          </Link>
+          </button>
         </div>
       ) : (
         <>
