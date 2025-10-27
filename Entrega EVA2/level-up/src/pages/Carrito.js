@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
 import '../styles/Carrito.css';
 
@@ -7,11 +7,12 @@ export default function Carrito() {
   const { eliminarDelCarrito, actualizarCantidad, vaciarCarrito, calcularTotales } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
   const [productosStock, setProductosStock] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     setProductosStock(productos);
-  }, [items]);
+  }, []); // Sin dependencias - solo carga al montar
 
   const getStockDisponible = (codigo) => {
     const producto = productosStock.find(p => p.codigo === codigo);
@@ -36,10 +37,33 @@ export default function Carrito() {
       }
       return;
     }
-    if (window.notificar) {
-      window.notificar('¡Gracias por tu compra!', 'success', 3000);
-    }
+    
+    // Actualizar stock de productos
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    items.forEach(item => {
+      const index = productos.findIndex(p => p.codigo === item.codigo);
+      if (index !== -1 && productos[index].stock >= item.qty) {
+        productos[index].stock -= item.qty;
+      }
+    });
+    localStorage.setItem('productos', JSON.stringify(productos));
+    
+    // Vaciar carrito primero
     vaciarCarrito();
+    
+    if (window.notificar) {
+      window.notificar('¡Gracias por tu compra!', 'success', 2000);
+    }
+    
+    // Forzar recarga completa de la página en /productos
+    setTimeout(() => {
+      window.location.href = '/productos';
+    }, 2000);
+  };
+
+  const handleIrAProductos = () => {
+    console.log('Navegando a productos...');
+    window.location.href = '/productos';
   };
 
   return (
@@ -55,9 +79,13 @@ export default function Carrito() {
             className="mb-4"
           />
           <h3 className="text-secondary mb-4">No hay productos en el carrito</h3>
-          <Link to="/productos" className="btn btn-success px-5">
+          <button 
+            onClick={handleIrAProductos}
+            className="btn btn-success px-5"
+            style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+          >
             Ir a Productos
-          </Link>
+          </button>
         </div>
       ) : (
         <>

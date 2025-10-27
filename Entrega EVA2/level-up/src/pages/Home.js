@@ -113,32 +113,33 @@ export default function Home() {
             <div className="carousel-inner" id="carousel-productos-inner">
               {productos.map((prod, idx) => (
                 <div className={`carousel-item${idx === currentSlide ? ' active' : ''}`} key={prod.codigo}>
-                  <div className="d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: '340px' }}>
+                  <div className="d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: '500px' }}>
                     <img 
                       src={prod.img} 
                       alt={prod.nombre} 
                       className="mb-3 rounded" 
                       style={{ 
-                        maxWidth: '220px', 
-                        maxHeight: '160px', 
+                        maxWidth: '400px', 
+                        maxHeight: '300px', 
                         objectFit: 'contain', 
                         background: '#222',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        padding: '1rem'
                       }}
                       onClick={() => navigate(`/detalle/${prod.codigo}`)}
                     />
                     <h5 
                       className="text-neon mb-2" 
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: 'pointer', fontSize: '1.5rem' }}
                       onClick={() => navigate(`/detalle/${prod.codigo}`)}
                     >
                       {prod.nombre}
                     </h5>
-                    <span className="badge bg-secondary mb-2">{prod.categoria}</span>
-                    <span className="fw-bold text-success mb-2">${prod.precio.toLocaleString('es-CL')}</span>
-                    <p className="mb-2 text-center" style={{ maxWidth: '320px' }}>{prod.desc}</p>
+                    <span className="badge bg-secondary mb-2" style={{ fontSize: '0.95rem' }}>{prod.categoria}</span>
+                    <span className="fw-bold text-success mb-2" style={{ fontSize: '1.3rem' }}>${prod.precio.toLocaleString('es-CL')}</span>
+                    <p className="mb-2 text-center" style={{ maxWidth: '420px', fontSize: '1rem' }}>{prod.desc}</p>
                     <button 
-                      className="btn btn-success" 
+                      className="btn btn-success btn-lg" 
                       onClick={() => handleAgregarAlCarrito(prod.codigo)}
                     >
                       Agregar al carrito

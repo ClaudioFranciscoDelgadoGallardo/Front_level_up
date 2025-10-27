@@ -25,14 +25,15 @@
   border-radius: 12px;
   padding: 2rem;
   text-align: center;
-  min-height: 400px;
+  min-height: 500px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .detalle-imagen-container img {
-  max-height: 400px;
+  max-height: 450px;
+  max-width: 100%;
   object-fit: contain;
 }
 
@@ -77,10 +78,10 @@
   }
 
   .detalle-imagen-container {
-    min-height: 300px;
+    min-height: 350px;
   }
 
   .detalle-imagen-container img {
-    max-height: 250px;
+    max-height: 300px;
   }
 }
