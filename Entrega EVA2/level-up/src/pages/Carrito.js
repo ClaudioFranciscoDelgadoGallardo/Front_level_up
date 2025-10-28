@@ -11,7 +11,11 @@ export default function Carrito() {
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     setProductosStock(productos);
+<<<<<<< HEAD
   }, [items]);
+=======
+  }, []);
+>>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
 
   const getStockDisponible = (codigo) => {
     const producto = productosStock.find(p => p.codigo === codigo);
@@ -36,10 +40,37 @@ export default function Carrito() {
       }
       return;
     }
+<<<<<<< HEAD
+=======
+    
+    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+    items.forEach(item => {
+      const index = productos.findIndex(p => p.codigo === item.codigo);
+      if (index !== -1 && productos[index].stock >= item.qty) {
+        productos[index].stock -= item.qty;
+      }
+    });
+    localStorage.setItem('productos', JSON.stringify(productos));
+    
+    vaciarCarrito();
+    
+>>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
     if (window.notificar) {
       window.notificar('¡Gracias por tu compra!', 'success', 3000);
     }
+<<<<<<< HEAD
     vaciarCarrito();
+=======
+    
+    setTimeout(() => {
+      window.location.href = '/productos';
+    }, 2000);
+  };
+
+  const handleIrAProductos = () => {
+    console.log('Navegando a productos...');
+    window.location.href = '/productos';
+>>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
   };
 
   return (
@@ -66,12 +97,14 @@ export default function Carrito() {
               <div key={item.codigo} className="carrito-item-card mb-3">
                 <div className="row align-items-center">
                   <div className="col-md-2 text-center">
-                    <img 
-                      src={item.imagen} 
-                      alt={item.nombre}
-                      className="img-fluid rounded"
-                      style={{ maxHeight: '100px', objectFit: 'cover' }}
-                    />
+                    <Link to={`/detalle/${item.codigo}`}>
+                      <img 
+                        src={item.imagen} 
+                        alt={item.nombre}
+                        className="img-fluid rounded"
+                        style={{ maxHeight: '100px', objectFit: 'cover', cursor: 'pointer' }}
+                      />
+                    </Link>
                   </div>
                   <div className="col-md-4">
                     <Link 

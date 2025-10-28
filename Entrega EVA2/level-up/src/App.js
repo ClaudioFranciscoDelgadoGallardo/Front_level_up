@@ -29,7 +29,6 @@ function App() {
           <NotificacionContainer />
           <Header />
           <Routes>
-            {/* Rutas públicas */}
             <Route path="/" element={<Home />} />
             <Route path="/productos" element={<Productos />} />
             <Route path="/detalle/:codigo" element={<Detalle />} />
@@ -40,7 +39,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             
-            {/* Rutas de administración protegidas */}
             <Route path="/admin" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
             <Route path="/admin/logs" element={<ProtectedRoute><AdminLogs /></ProtectedRoute>} />
             <Route path="/admin/productos" element={<ProtectedRoute><AdminProductos /></ProtectedRoute>} />
