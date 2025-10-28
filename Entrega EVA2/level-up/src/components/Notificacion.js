@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-let setNotificacionesGlobal = null;
-
 export default function NotificacionContainer() {
   const [notificaciones, setNotificaciones] = useState([]);
 
   useEffect(() => {
-    setNotificacionesGlobal = setNotificaciones;
-    
     window.notificar = (mensaje, tipo = 'info', duracion = 3000) => {
       const id = Date.now();
       setNotificaciones(prev => [...prev, { id, mensaje, tipo }]);
@@ -20,7 +16,6 @@ export default function NotificacionContainer() {
     };
 
     return () => {
-      setNotificacionesGlobal = null;
       window.notificar = null;
     };
   }, []);

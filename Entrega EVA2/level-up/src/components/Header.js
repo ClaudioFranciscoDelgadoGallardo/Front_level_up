@@ -172,10 +172,16 @@ export default function Header() {
                 <ul className="list-group mb-2">
                   {items.map(item => (
                     <li key={item.codigo} className="list-group-item bg-dark text-white d-flex justify-content-between align-items-center" style={{ fontSize: '0.9rem' }}>
-                      <span>
-                        {item.nombre} 
-                        <span className="badge bg-secondary ms-2">x{item.qty}</span>
-                      </span>
+                      <Link 
+                        to={`/detalle/${item.codigo}`}
+                        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                        onClick={() => setShowCarrito(false)}
+                      >
+                        <span>
+                          {item.nombre} 
+                          <span className="badge bg-secondary ms-2">x{item.qty}</span>
+                        </span>
+                      </Link>
                       <span>{formatearPrecio(item.subtotal)}</span>
                       <button 
                         className="btn btn-sm btn-danger ms-2"
