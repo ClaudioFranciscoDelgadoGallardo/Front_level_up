@@ -1,4 +1,3 @@
-// Funciones de validación para Login
 export const validarEmailVacio = (email) => {
   return !email || email.trim().length === 0 ? false : true;
 };
@@ -19,7 +18,6 @@ export const validarCredenciales = (credentials) => {
   );
 };
 
-// Funciones de validación para Registro
 export const validarRUN = (run) => {
   return run && run.length >= 7 && run.length <= 9;
 };
@@ -37,7 +35,6 @@ export const validarEmailDuplicado = (email) => {
   return !usuarios.some(u => u.correo === email);
 };
 
-// Funciones de validación para Carrito
 export const validarStock = (producto, cantidad) => {
   return producto.stock >= cantidad;
 };

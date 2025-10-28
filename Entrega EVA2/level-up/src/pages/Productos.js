@@ -66,7 +66,6 @@ export default function Productos() {
     };
   }, []);
 
-  // Todas las categorías disponibles (siempre visibles)
   const categoriasDisponibles = [
     'todas',
     'Juegos de Mesa',
@@ -77,8 +76,7 @@ export default function Productos() {
     'Otros'
   ];
 
-  // Filtrar productos por categoría y búsqueda
-  const productosFiltrados = productos.filter(producto => {
+  let productosFiltrados = productos.filter(producto => {
     const cumpleCategoria = filtroCategoria === 'todas' || producto.categoria === filtroCategoria;
     const cumpleBusqueda = producto.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
                           producto.descripcion?.toLowerCase().includes(busqueda.toLowerCase()) ||
@@ -131,7 +129,6 @@ export default function Productos() {
         )}
       </div>
 
-      {/* Filtros por categoría */}
       <div className="filtros-productos mb-4">
         <div className="filtros-header mb-3">
           <i className="fas fa-filter me-2"></i>
@@ -159,7 +156,6 @@ export default function Productos() {
         </div>
       </div>
 
-      {/* Contador de resultados */}
       {(busqueda || filtroCategoria !== 'todas') && (
         <div className="text-center mb-3">
           <small className="text-secondary">

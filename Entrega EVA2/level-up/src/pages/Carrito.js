@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
 import '../styles/Carrito.css';
 
@@ -7,12 +7,11 @@ export default function Carrito() {
   const { eliminarDelCarrito, actualizarCantidad, vaciarCarrito, calcularTotales } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
   const [productosStock, setProductosStock] = useState([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     setProductosStock(productos);
-  }, []); // Sin dependencias - solo carga al montar
+  }, []);
 
   const getStockDisponible = (codigo) => {
     const producto = productosStock.find(p => p.codigo === codigo);
@@ -38,7 +37,6 @@ export default function Carrito() {
       return;
     }
     
-    // Actualizar stock de productos
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     items.forEach(item => {
       const index = productos.findIndex(p => p.codigo === item.codigo);
@@ -48,14 +46,12 @@ export default function Carrito() {
     });
     localStorage.setItem('productos', JSON.stringify(productos));
     
-    // Vaciar carrito primero
     vaciarCarrito();
     
     if (window.notificar) {
       window.notificar('¡Gracias por tu compra!', 'success', 2000);
     }
     
-    // Forzar recarga completa de la página en /productos
     setTimeout(() => {
       window.location.href = '/productos';
     }, 2000);
@@ -94,12 +90,14 @@ export default function Carrito() {
               <div key={item.codigo} className="carrito-item-card mb-3">
                 <div className="row align-items-center">
                   <div className="col-md-2 text-center">
-                    <img 
-                      src={item.imagen} 
-                      alt={item.nombre}
-                      className="img-fluid rounded"
-                      style={{ maxHeight: '100px', objectFit: 'cover' }}
-                    />
+                    <Link to={`/detalle/${item.codigo}`}>
+                      <img 
+                        src={item.imagen} 
+                        alt={item.nombre}
+                        className="img-fluid rounded"
+                        style={{ maxHeight: '100px', objectFit: 'cover', cursor: 'pointer' }}
+                      />
+                    </Link>
                   </div>
                   <div className="col-md-4">
                     <Link 
