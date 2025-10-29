@@ -85,3 +85,62 @@
     max-height: 300px;
   }
 }
+
+/* Clases para elementos específicos */
+.detalle-loading {
+  padding-top: 6rem;
+  min-height: calc(100vh - 200px);
+}
+
+.detalle-breadcrumb-link {
+  color: var(--accent-blue);
+}
+
+.detalle-badge {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+}
+
+.detalle-titulo-producto {
+  color: var(--text-primary);
+}
+
+.detalle-categoria {
+  color: var(--accent-blue);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.detalle-precio {
+  color: var(--accent-green);
+  font-size: 2.5rem;
+}
+
+.detalle-seccion-titulo {
+  color: var(--text-primary);
+}
+
+.detalle-descripcion {
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.detalle-stock-disponible {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.detalle-cantidad-input {
+  max-width: 150px;
+  background: #111;
+  border: 1px solid #333;
+  color: var(--text-primary);
+}
+
+.detalle-btn-agregar {
+  padding: 0.75rem;
+}
+
+.detalle-btn-volver {
+  padding: 0.75rem 2rem;
+}

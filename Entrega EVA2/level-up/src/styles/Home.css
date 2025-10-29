@@ -1,5 +1,5 @@
 .hero {
-  padding: 120px 0 80px;
+  padding: 120px 20px 80px;
   background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)),
               url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80')
               no-repeat center/cover;
@@ -7,15 +7,16 @@
 }
 
 .hero h1 {
-  font-size: 2.4rem;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
   text-shadow: 0 2px 10px rgba(0,0,0,.5);
 }
 
 .hero p {
-  font-size: 1.05rem;
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
   max-width: 700px;
   margin: 0 auto 1.5rem;
   color: var(--text-secondary);
+  padding: 0 15px;
 }
 
 .btn {
@@ -35,6 +36,17 @@
 
 .btn-primary:hover {
   background: #0e80e0;
+}
+
+.btn-success {
+  background: var(--accent-green);
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-success:hover {
+  background: #45ff17;
+  color: #000;
 }
 
 .btn-secondary {
@@ -85,8 +97,30 @@
   background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
   border: 2px solid rgba(57, 255, 20, 0.3);
   border-radius: 15px;
-  padding: 1.5rem;
-  min-height: 550px;
+  padding: 1rem;
+  min-height: 450px;
+}
+
+@media (min-width: 768px) {
+  .carousel-inner {
+    padding: 1.5rem;
+    min-height: 550px;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel-inner {
+    min-height: 400px;
+    padding: 0.75rem;
+  }
+  
+  .hero {
+    padding: 100px 15px 60px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+  }
 }
 
 .carousel-item {
@@ -148,4 +182,37 @@
   .hero p {
     font-size: 0.95rem;
   }
+}
+
+/* Clases para tarjetas del carrusel */
+.carousel-card {
+  border: 1px solid #333;
+  transition: all 0.3s ease;
+}
+
+.carousel-card-left,
+.carousel-card-right {
+  opacity: 0.5;
+  transform: scale(0.85);
+}
+
+.carousel-card-center {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.carousel-card-img {
+  height: 250px;
+  object-fit: contain;
+  background: #222;
+  cursor: pointer;
+}
+
+.carousel-card-title {
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.carousel-card-price {
+  font-size: 1.3rem;
 }

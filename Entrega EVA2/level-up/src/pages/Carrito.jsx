@@ -58,7 +58,6 @@ export default function Carrito() {
   };
 
   const handleIrAProductos = () => {
-    console.log('Navegando a productos...');
     window.location.href = '/productos';
   };
 
@@ -71,14 +70,12 @@ export default function Carrito() {
           <img 
             src="/assets/icons/carrito.png" 
             alt="Carrito vacío" 
-            style={{ width: '100px', opacity: 0.3 }}
-            className="mb-4"
+            className="mb-4 carrito-vacio-icon"
           />
           <h3 className="text-secondary mb-4">No hay productos en el carrito</h3>
           <button 
             onClick={handleIrAProductos}
-            className="btn btn-success px-5"
-            style={{ cursor: 'pointer', pointerEvents: 'auto' }}
+            className="btn btn-success px-5 carrito-ir-productos-btn"
           >
             Ir a Productos
           </button>
@@ -94,30 +91,29 @@ export default function Carrito() {
                       <img 
                         src={item.imagen} 
                         alt={item.nombre}
-                        className="img-fluid rounded"
-                        style={{ maxHeight: '100px', objectFit: 'cover', cursor: 'pointer' }}
+                        className="img-fluid rounded carrito-item-img"
                       />
                     </Link>
                   </div>
                   <div className="col-md-4">
                     <Link 
                       to={`/detalle/${item.codigo}`} 
-                      style={{ textDecoration: 'none', color: 'inherit' }}
+                      className="carrito-item-link"
                     >
-                      <h5 className="mb-1" style={{ cursor: 'pointer', color: 'var(--text-primary)' }}>
+                      <h5 className="mb-1 carrito-item-title">
                         {item.nombre}
                       </h5>
                     </Link>
-                    <p className="mb-0" style={{ color: 'var(--text-primary)' }}>{item.codigo}</p>
-                    <small style={{ color: item.qty > getStockDisponible(item.codigo) ? '#ff4444' : 'var(--text-secondary)' }}>
+                    <p className="mb-0 carrito-item-codigo">{item.codigo}</p>
+                    <small className={item.qty > getStockDisponible(item.codigo) ? 'carrito-item-stock-error' : 'carrito-item-stock-ok'}>
                       Stock disponible: {getStockDisponible(item.codigo)}
                     </small>
                   </div>
                   <div className="col-md-2 text-center">
-                    <p className="mb-0 fw-bold" style={{ color: 'var(--accent-blue)' }}>
+                    <p className="mb-0 fw-bold carrito-item-precio">
                       {formatearPrecio(item.precio)}
                     </p>
-                    <small style={{ color: 'var(--text-primary)' }}>c/u</small>
+                    <small className="carrito-item-precio-label">c/u</small>
                   </div>
                   <div className="col-md-2">
                     <div className="cantidad-control d-flex align-items-center justify-content-center h-100">
@@ -130,8 +126,7 @@ export default function Carrito() {
                       </button>
                       <input 
                         type="number" 
-                        className="form-control form-control-sm mx-2 text-center"
-                        style={{ width: '60px' }}
+                        className="form-control form-control-sm mx-2 text-center carrito-item-cantidad-input"
                         value={item.qty}
                         onChange={(e) => handleCantidadChange(item.codigo, e.target.value)}
                         min="1"
@@ -148,7 +143,7 @@ export default function Carrito() {
                   </div>
                   <div className="col-md-1">
                     <div className="d-flex align-items-center justify-content-center h-100">
-                      <p className="mb-0 fw-bold" style={{ color: 'var(--accent-green)', fontSize: '1.1rem' }}>
+                      <p className="mb-0 fw-bold carrito-item-subtotal">
                         {formatearPrecio(item.subtotal)}
                       </p>
                     </div>
@@ -201,18 +196,12 @@ export default function Carrito() {
                   <hr />
                   <div className="d-flex justify-content-between mb-4">
                     <h5>Total:</h5>
-                    <h5 style={{ color: 'var(--accent-green)' }}>
+                    <h5 className="carrito-resumen-titulo">
                       {formatearPrecio(total)}
                     </h5>
                   </div>
                   <button 
-                    className="btn w-100"
-                    style={{ 
-                      backgroundColor: 'var(--accent-green)', 
-                      color: '#000',
-                      fontWeight: 'bold',
-                      padding: '0.75rem'
-                    }}
+                    className="btn carrito-finalizar-btn"
                     onClick={handleFinalizarCompra}
                   >
                     Finalizar Compra

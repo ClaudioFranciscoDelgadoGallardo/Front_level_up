@@ -3,20 +3,21 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     files: [
-      'src/**/*.spec.js'
+      'src/tests/**/*.spec.js'
     ],
     exclude: [
-      'node_modules'
+      'node_modules',
+      'src/**/*.test.js'
     ],
     preprocessors: {
-      'src/**/*.spec.js': ['webpack']
+      'src/tests/**/*.spec.js': ['webpack']
     },
     webpack: {
       mode: 'development',
       module: {
         rules: [
           {
-            test: /\.js$/,
+            test: /\.(js|jsx)$/,
             exclude: /node_modules/,
             use: {
               loader: 'babel-loader',
@@ -24,17 +25,24 @@ module.exports = function(config) {
                 presets: [
                   ['@babel/preset-env', {
                     targets: {
-                      node: 'current'
+                      browsers: ['last 2 versions']
                     }
+                  }],
+                  ['@babel/preset-react', {
+                    runtime: 'automatic'
                   }]
                 ]
               }
             }
+          },
+          {
+            test: /\.css$/,
+            use: ['style-loader', 'css-loader']
           }
         ]
       },
       resolve: {
-        extensions: ['.js']
+        extensions: ['.js', '.jsx']
       }
     },
     webpackMiddleware: {
@@ -45,7 +53,7 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'],
     singleRun: false,
     concurrency: Infinity,
     plugins: [

@@ -1,95 +1,324 @@
 # Level-Up Gamer - Aplicación React
 
-Aplicación web de e-commerce para productos gaming desarrollada con React.
+## Descripción del Proyecto
 
-## 🚀 Características
+Level-Up Gamer es una tienda en línea especializada en productos gaming desarrollada con React. La aplicación ofrece una experiencia completa de e-commerce con gestión de productos, carrito de compras, sistema de usuarios y un panel de administración completo.
 
-- ✅ Catálogo de productos con filtrado
-- 🛒 Carrito de compras funcional con Context API
-- 👤 Sistema de autenticación (Login/Registro)
-- 🔐 Panel de administración protegido con rutas privadas
-- 📦 CRUD completo de productos y usuarios (Admin)
-- 💾 Persistencia de datos con localStorage
-- 📱 Diseño responsive con Bootstrap 5
-- 🎨 Tema oscuro con colores personalizados
+## Características Principales
 
-## 👥 Usuarios de Prueba
+### Para Usuarios
+- Catálogo de productos con filtros por categoría y búsqueda
+- Sistema de carrito de compras con persistencia en localStorage
+- Vista detallada de productos con zoom en imágenes
+- Carrusel de productos destacados en la página principal
+- Formulario de contacto con validación
+- Sistema de registro e inicio de sesión
+- Gestión de perfil de usuario
+- Notificaciones en tiempo real
+- Diseño responsive para móviles, tablets y desktop
 
-### Administrador
-- **Correo:** admin@levelup.cl
-- **Contraseña:** admin123
+### Para Administradores
+- Panel de administración con estadísticas
+- Gestión completa de productos (crear, editar, eliminar)
+- Administración de usuarios
+- Gestión de productos destacados para el carrusel
+- Sistema de logs para auditoría de acciones
+- Validaciones de seguridad y permisos
+
+## Tecnologías Utilizadas
+
+### Framework y Librerías
+- React 19.2.0
+- React Router DOM 7.9.4 (navegación)
+- Bootstrap 5.3.8 (estilos y componentes UI)
+- Context API (gestión de estado del carrito)
+
+### Testing
+- Karma 6.4.4 (test runner)
+- Jasmine (framework de testing)
+- React Testing Library 16.3.0
+- Jest DOM 6.9.1
+
+### Herramientas de Desarrollo
+- Create React App 5.0.1
+- Webpack 5.102.1
+- Babel 7.x (transpilación)
+- ESLint (análisis de código)
+
+## Estructura del Proyecto
+
+```
+src/
+├── components/          # Componentes reutilizables
+│   ├── Header.jsx
+│   ├── Footer.jsx
+│   ├── CarritoDebug.jsx
+│   ├── ModalConfirmacion.jsx
+│   ├── Notificacion.jsx
+│   └── ProtectedRoute.jsx
+├── pages/              # Páginas de la aplicación
+│   ├── Home.jsx
+│   ├── Productos.jsx
+│   ├── Detalle.jsx
+│   ├── Carrito.jsx
+│   ├── Login.jsx
+│   ├── Registro.jsx
+│   ├── Contacto.jsx
+│   ├── Nosotros.jsx
+│   ├── Noticias.jsx
+│   ├── AdminHome.jsx
+│   ├── AdminProductos.jsx
+│   ├── AdminProductoForm.jsx
+│   ├── AdminUsuarios.jsx
+│   ├── AdminUsuarioForm.jsx
+│   ├── AdminDestacados.jsx
+│   └── AdminLogs.jsx
+├── context/            # Context API
+│   └── CarritoContext.js
+├── styles/             # Archivos CSS
+│   ├── Header.css
+│   ├── Footer.css
+│   ├── Home.css
+│   ├── Productos.css
+│   ├── Detalle.css
+│   ├── Carrito.css
+│   ├── Login.css
+│   ├── Registro.css
+│   ├── Contacto.css
+│   ├── Nosotros.css
+│   ├── Noticias.css
+│   ├── Admin.css
+│   ├── CarritoDebug.css
+│   ├── ModalConfirmacion.css
+│   └── Notificacion.css
+├── utils/              # Utilidades y funciones auxiliares
+│   ├── validaciones.js
+│   ├── logManager.js
+│   ├── inicializarDatos.js
+│   └── zoomManager.js
+└── tests/              # Tests con Jasmine
+    ├── carrito.spec.js
+    ├── Login.spec.js
+    └── Registro.spec.js
+```
+
+## Instalación y Configuración
+
+### Requisitos Previos
+- Node.js (versión 14 o superior)
+- npm o yarn
+- Navegador web moderno (Chrome, Firefox, Edge, Safari)
+
+### Pasos de Instalación
+
+1. Clonar el repositorio
+```bash
+git clone https://github.com/ClaudioFranciscoDelgadoGallardo/Front_level_up.git
+cd Front_level_up/Entrega\ EVA2/level-up
+```
+
+2. Instalar dependencias
+```bash
+npm install
+```
+
+3. Iniciar la aplicación en modo desarrollo
+```bash
+npm start
+```
+
+La aplicación se abrirá automáticamente en http://localhost:3000
+
+## Scripts Disponibles
+
+### Desarrollo
+```bash
+npm start
+```
+Inicia el servidor de desarrollo con hot-reload.
+
+### Testing
+```bash
+npm test
+```
+Ejecuta los tests con React Testing Library en modo watch.
+
+```bash
+npm run test:ui
+```
+Ejecuta los tests con Karma/Jasmine en Chrome Headless.
+
+### Producción
+```bash
+npm run build
+```
+Genera la versión optimizada para producción en la carpeta `build/`.
+
+## Sistema de Testing
+
+El proyecto incluye dos sistemas de testing:
+
+### Tests con Karma y Jasmine
+- Ubicados en `src/tests/`
+- Ejecutar con `npm run test:ui`
+- 10 tests implementados que validan:
+  - Funcionalidad del carrito de compras
+  - Validaciones de login
+  - Validaciones de registro
+
+### Tests con React Testing Library
+- Ubicados junto a los componentes
+- Ejecutar con `npm test`
+- Tests unitarios de componentes React
+
+## Funcionalidades Detalladas
+
+### Gestión de Productos
+- Listado con paginación y filtros
+- Búsqueda en tiempo real
+- Categorización (Consolas, Juegos, Accesorios, etc.)
+- Validación de stock antes de agregar al carrito
+- Imágenes con zoom interactivo
+
+### Carrito de Compras
+- Agregar/eliminar productos
+- Modificar cantidades
+- Cálculo automático de subtotales y totales
+- Aplicación de descuentos (10% en compras sobre $100.000)
+- Persistencia en localStorage
+- Validación de stock al finalizar compra
+
+### Sistema de Usuarios
+- Registro con validación de datos:
+  - RUN chileno (mínimo 9 caracteres)
+  - Email único
+  - Campos obligatorios
+- Login con credenciales
+- Dos roles: usuario y admin
+- Sesión persistente en localStorage
+
+### Panel de Administración
+- Acceso restringido solo para administradores
+- Estadísticas en tiempo real
+- CRUD completo de productos
+- CRUD completo de usuarios
+- Gestión de productos destacados
+- Sistema de logs con registro de todas las acciones
+- Filtros por fecha y tipo de acción
+
+### Sistema de Logs
+Registra automáticamente:
+- Inicio y cierre de sesión
+- Creación, edición y eliminación de productos
+- Creación, edición y eliminación de usuarios
+- Finalización de compras
+- Cambios en productos destacados
+
+## Credenciales de Prueba
+
+### Usuario Administrador
+- Correo: admin@levelup.com
+- Contraseña: admin123
 
 ### Usuario Regular
-- **Correo:** usuario@levelup.cl
-- **Contraseña:** user123
+- Correo: usuario@ejemplo.com
+- Contraseña: usuario123
 
----
+## Datos Iniciales
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+La aplicación se inicializa automáticamente con:
+- 12 productos de diferentes categorías
+- 2 usuarios (1 admin, 1 usuario regular)
+- 3 productos destacados para el carrusel
+- Estructura de logs vacía
 
-## Available Scripts
+## Responsive Design
 
-In the project directory, you can run:
+La aplicación está optimizada para:
+- Móviles (< 576px)
+- Tablets (576px - 768px)
+- Desktop (> 768px)
 
-### `npm start`
+Utiliza el sistema de grid de Bootstrap con breakpoints adaptativos.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Persistencia de Datos
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Todos los datos se almacenan en localStorage:
+- `productos`: Catálogo completo
+- `usuarios`: Base de datos de usuarios
+- `usuarioActual`: Sesión activa
+- `carrito`: Items del carrito
+- `destacados`: Códigos de productos destacados
+- `logs`: Historial de acciones
 
-### `npm test`
+## Validaciones Implementadas
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Productos
+- Código único
+- Nombre (3-100 caracteres)
+- Precio mayor a 0
+- Stock no negativo
+- URL o archivo de imagen válido
 
-### `npm run build`
+### Usuarios
+- RUN mínimo 9 caracteres
+- Email único y formato válido
+- Nombre máximo 50 caracteres
+- Apellidos máximo 100 caracteres
+- Todos los campos obligatorios
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Carrito
+- Stock disponible antes de agregar
+- Cantidades válidas (mínimo 1)
+- Validación de stock al finalizar compra
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Optimizaciones
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Código CSS separado del JSX (mejores prácticas)
+- Lazy loading de imágenes
+- Debounce en búsquedas
+- Memoización de cálculos pesados
+- Minimización de re-renders con Context API
+- Build optimizado con code splitting
 
-### `npm run eject`
+## Problemas Conocidos y Limitaciones
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Los datos se pierden al limpiar localStorage
+- No hay persistencia en base de datos real
+- Las imágenes se almacenan como URLs o base64
+- Límite de 5MB por imagen en localStorage
+- Sin sistema de recuperación de contraseña
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Mejoras Futuras
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Integración con backend y base de datos
+- Sistema de pagos real
+- Recuperación de contraseña por email
+- Chat en vivo con soporte
+- Sistema de reseñas y valoraciones
+- Wishlist de productos favoritos
+- Historial de compras por usuario
+- Notificaciones push
+- Modo oscuro/claro
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Compatibilidad de Navegadores
 
-## Learn More
+- Chrome (última versión)
+- Firefox (última versión)
+- Safari (última versión)
+- Edge (última versión)
+- Opera (última versión)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+No compatible con Internet Explorer.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Licencia
 
-### Code Splitting
+Este proyecto es parte de una evaluación académica.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Autor
 
-### Analyzing the Bundle Size
+Claudio Francisco Delgado Gallardo
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Fecha
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Octubre 2025

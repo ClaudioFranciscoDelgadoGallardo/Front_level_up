@@ -72,7 +72,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % productos.length);
-    }, 3000);
+    }, 8000);
     return () => clearInterval(interval);
   }, [productos.length]);
 
@@ -82,6 +82,16 @@ export default function Home() {
 
   const handleNext = () => {
     setCurrentSlide((prev) => (prev + 1) % productos.length);
+  };
+
+  const getVisibleProducts = (centerIndex) => {
+    const prevIndex = (centerIndex - 1 + productos.length) % productos.length;
+    const nextIndex = (centerIndex + 1) % productos.length;
+    return [
+      { producto: productos[prevIndex], position: 'left' },
+      { producto: productos[centerIndex], position: 'center' },
+      { producto: productos[nextIndex], position: 'right' }
+    ];
   };
 
   const handleAgregarAlCarrito = (codigo) => {
@@ -98,55 +108,68 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="container">
-          <h1>¡DESAFÍA TUS LÍMITES!</h1>
-          <p>Explora consolas, accesorios, PCs y más</p>
-          <Link className="btn btn-secondary" to="/productos">Explorar Productos</Link>
-          <Link className="btn btn-secondary" to="/nosotros" style={{ marginLeft: '.5rem' }}>Conócenos</Link>
+          <h1 className="display-4 fw-bold">¡DESAFÍA TUS LÍMITES!</h1>
+          <p className="lead">Explora consolas, accesorios, PCs y más</p>
+          <div className="d-flex flex-wrap gap-2 justify-content-center mt-4">
+            <Link className="btn btn-success btn-lg" to="/productos">Explorar Productos</Link>
+            <Link className="btn btn-outline-success btn-lg" to="/nosotros">Conócenos</Link>
+          </div>
         </div>
       </section>
 
-      <main className="container" style={{ marginTop: '2rem' }}>
-        <h2 className="section-title">Destacados</h2>
+      <main className="container py-5">
+        <h2 className="section-title text-center mb-5">Destacados</h2>
         
-        <div id="productos-carrusel-container" className="mt-5">
-          <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+        <div id="productos-carrusel-container" className="mt-4">
+          <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel">
             <div className="carousel-inner" id="carousel-productos-inner">
-              {productos.map((prod, idx) => (
-                <div className={`carousel-item${idx === currentSlide ? ' active' : ''}`} key={prod.codigo}>
-                  <div className="d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: '500px' }}>
-                    <img 
-                      src={prod.img} 
-                      alt={prod.nombre} 
-                      className="mb-3 rounded" 
-                      style={{ 
-                        maxWidth: '400px', 
-                        maxHeight: '300px', 
-                        objectFit: 'contain', 
-                        background: '#222',
-                        cursor: 'pointer',
-                        padding: '1rem'
-                      }}
-                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
-                    />
-                    <h5 
-                      className="text-neon mb-2" 
-                      style={{ cursor: 'pointer', fontSize: '1.5rem' }}
-                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
-                    >
-                      {prod.nombre}
-                    </h5>
-                    <span className="badge bg-secondary mb-2" style={{ fontSize: '0.95rem' }}>{prod.categoria}</span>
-                    <span className="fw-bold text-success mb-2" style={{ fontSize: '1.3rem' }}>${prod.precio.toLocaleString('es-CL')}</span>
-                    <p className="mb-2 text-center" style={{ maxWidth: '420px', fontSize: '1rem' }}>{prod.desc}</p>
-                    <button 
-                      className="btn btn-success btn-lg" 
-                      onClick={() => handleAgregarAlCarrito(prod.codigo)}
-                    >
-                      Agregar al carrito
-                    </button>
+              {productos.map((_, idx) => {
+                const visibleProducts = getVisibleProducts(idx);
+                
+                return (
+                  <div 
+                    className={`carousel-item${idx === currentSlide ? ' active' : ''}`} 
+                    key={idx}
+                  >
+                    <div className="row g-3 g-md-4 justify-content-center p-2 p-md-4">
+                      {visibleProducts.map(({ producto: prod, position }) => (
+                        <div 
+                          className="col-12 col-sm-6 col-md-4"
+                          key={`${prod.codigo}-${position}`}
+                        >
+                          <div className={`card h-100 bg-dark text-white carousel-card carousel-card-${position}`}>
+                            <img 
+                              src={prod.img} 
+                              alt={prod.nombre} 
+                              className="card-img-top p-3 carousel-card-img" 
+                              onClick={() => navigate(`/detalle/${prod.codigo}`)}
+                            />
+                            <div className="card-body d-flex flex-column">
+                              <h5 
+                                className="card-title text-neon mb-2 carousel-card-title" 
+                                onClick={() => navigate(`/detalle/${prod.codigo}`)}
+                              >
+                                {prod.nombre}
+                              </h5>
+                              <span className="badge bg-secondary mb-2 align-self-start">{prod.categoria}</span>
+                              <p className="card-text text-success fw-bold mb-2 carousel-card-price">
+                                ${prod.precio.toLocaleString('es-CL')}
+                              </p>
+                              <p className="card-text mb-3 flex-grow-1">{prod.desc}</p>
+                              <button 
+                                className="btn btn-success w-100 mt-auto" 
+                                onClick={() => handleAgregarAlCarrito(prod.codigo)}
+                              >
+                                Agregar al carrito
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <button 
               className="carousel-control-prev" 

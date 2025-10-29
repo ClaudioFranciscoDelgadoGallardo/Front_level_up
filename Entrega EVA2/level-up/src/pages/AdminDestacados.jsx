@@ -142,8 +142,8 @@ export default function AdminDestacados() {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="section-title mb-2">Gestión de Productos Destacados</h2>
-          <p style={{ color: '#fff', marginBottom: '0.5rem' }}>
-            Total de productos destacados: <span style={{ color: 'var(--accent-green)', fontWeight: 'bold', fontSize: '1.2rem' }}>{destacados.length}</span>
+          <p className="admin-destacados-info">
+            Total de productos destacados: <span className="admin-destacados-contador">{destacados.length}</span>
           </p>
           <Link to="/admin" className="text-secondary">
             ← Volver al Panel
@@ -160,14 +160,9 @@ export default function AdminDestacados() {
             <div className="col-md-9 mb-3 mb-md-0">
               <label className="form-label text-white">Seleccionar Producto Existente</label>
               <select
-                className="form-control"
+                className="form-control admin-destacados-select"
                 value={codigoSeleccionado}
                 onChange={(e) => setCodigoSeleccionado(e.target.value)}
-                style={{
-                  background: '#111',
-                  border: '1px solid #333',
-                  color: 'var(--text-primary)'
-                }}
               >
                 <option value="">-- Seleccione un producto --</option>
                 {productosDisponibles.map(producto => (
@@ -231,7 +226,7 @@ export default function AdminDestacados() {
                           alt={producto.nombre}
                           width="50"
                           height="50"
-                          style={{ objectFit: 'cover' }}
+                          className="admin-producto-img"
                         />
                       </td>
                       <td>{producto.codigo}</td>
@@ -241,7 +236,7 @@ export default function AdminDestacados() {
                           {producto.categoria}
                         </span>
                       </td>
-                      <td style={{ color: 'var(--accent-green)' }}>
+                      <td className="admin-producto-precio">
                         ${producto.precio.toLocaleString('es-CL')}
                       </td>
                       <td>

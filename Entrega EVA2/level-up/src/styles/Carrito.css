@@ -71,3 +71,75 @@
     margin-top: 2rem;
   }
 }
+
+/* Clases para elementos específicos */
+.carrito-vacio-icon {
+  width: 100px;
+  opacity: 0.3;
+}
+
+.carrito-ir-productos-btn {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.carrito-item-img {
+  max-height: 100px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.carrito-item-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.carrito-item-title {
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.carrito-item-codigo {
+  color: var(--text-primary);
+}
+
+.carrito-item-stock-error {
+  color: #ff4444;
+}
+
+.carrito-item-stock-ok {
+  color: var(--text-secondary);
+}
+
+.carrito-item-precio {
+  color: var(--accent-blue);
+}
+
+.carrito-item-precio-label {
+  color: var(--text-primary);
+}
+
+.carrito-item-cantidad-input {
+  width: 60px;
+}
+
+.carrito-item-subtotal {
+  color: var(--accent-green);
+  font-size: 1.1rem;
+}
+
+.carrito-resumen-titulo {
+  color: var(--accent-green);
+}
+
+.carrito-finalizar-btn {
+  background: var(--accent-green);
+  color: #000;
+  font-weight: bold;
+  padding: 0.75rem;
+  width: 100%;
+}
+
+.carrito-finalizar-btn:hover {
+  background: #2dd40a;
+}

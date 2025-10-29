@@ -11,7 +11,7 @@ export default function Nosotros() {
         Nuestra visión es ser líderes en innovación y fidelización en el mercado gamer.
       </p>
 
-      <div style={{ marginTop: '2rem' }}>
+      <div className="nosotros-video-container">
         <video controls width="100%">
           <source src="/assets/media/never.mp4" type="video/mp4" />
           Tu navegador no soporta el video.

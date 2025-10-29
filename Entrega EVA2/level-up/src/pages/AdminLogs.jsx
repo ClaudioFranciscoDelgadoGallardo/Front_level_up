@@ -224,14 +224,9 @@ export default function AdminLogs() {
               <label className="form-label text-white fw-bold">Fecha desde:</label>
               <input
                 type="date"
-                className="form-control"
+                className="form-control admin-logs-fecha-input"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
-                style={{
-                  background: '#111',
-                  border: '1px solid #333',
-                  color: 'var(--text-primary)'
-                }}
               />
             </div>
 
@@ -239,14 +234,9 @@ export default function AdminLogs() {
               <label className="form-label text-white fw-bold">Fecha hasta:</label>
               <input
                 type="date"
-                className="form-control"
+                className="form-control admin-logs-fecha-input"
                 value={fechaFin}
                 onChange={(e) => setFechaFin(e.target.value)}
-                style={{
-                  background: '#111',
-                  border: '1px solid #333',
-                  color: 'var(--text-primary)'
-                }}
               />
             </div>
 
@@ -283,22 +273,22 @@ export default function AdminLogs() {
               <table className="table table-dark table-hover">
                 <thead>
                   <tr>
-                    <th style={{ width: '60px' }}>Tipo</th>
-                    <th style={{ width: '180px' }}>Fecha y Hora</th>
-                    <th style={{ width: '150px' }}>Usuario/ID</th>
+                    <th className="admin-logs-th-tipo">Tipo</th>
+                    <th className="admin-logs-th-fecha">Fecha y Hora</th>
+                    <th className="admin-logs-th-usuario">Usuario/ID</th>
                     <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {logsFiltrados.map((log, index) => (
                     <tr key={index}>
-                      <td className="text-center" style={{ fontSize: '1.5rem' }}>
+                      <td className="text-center admin-logs-td-icono">
                         {getIconoTipo(log.tipo)}
                       </td>
-                      <td style={{ color: 'var(--accent-blue)', fontSize: '0.9rem' }}>
+                      <td className="admin-logs-td-fecha">
                         {formatearFecha(log.fecha)}
                       </td>
-                      <td style={{ color: 'var(--accent-green)' }}>
+                      <td className="admin-logs-td-usuario">
                         {log.usuario}
                       </td>
                       <td style={{ color: getColorAccion(log.accion) }}>
