@@ -74,15 +74,10 @@ export default function AdminUsuarios() {
       <div className="mb-4">
         <input
           type="text"
-          className="form-control"
+          className="form-control admin-search-input"
           placeholder="Buscar por nombre, apellido o correo..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          style={{
-            background: '#111',
-            border: '1px solid #333',
-            color: 'var(--text-primary)'
-          }}
         />
       </div>
 
@@ -117,11 +112,7 @@ export default function AdminUsuarios() {
                   <td>{usuario.fechaNac || 'N/A'}</td>
                   <td>
                     <span 
-                      className="badge" 
-                      style={{ 
-                        backgroundColor: usuario.rol === 'admin' ? 'var(--accent-green)' : 'var(--accent-blue)',
-                        color: '#000'
-                      }}
+                      className={`badge ${usuario.rol === 'admin' ? 'admin-badge-admin' : 'admin-badge-usuario'}`}
                     >
                       {usuario.rol || 'usuario'}
                     </span>

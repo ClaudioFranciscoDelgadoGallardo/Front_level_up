@@ -258,28 +258,20 @@ export default function AdminProductoForm() {
             <div className="mb-2">
               <label 
                 htmlFor="imagenFile" 
-                className="btn btn-success w-100"
-                style={{ 
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem'
-                }}
+                className="btn btn-success w-100 admin-form-imagen-label"
               >
                 📁 Seleccionar Imagen desde el Computador
               </label>
               <input
                 type="file"
-                className="form-control"
+                className="form-control admin-form-imagen-input-hidden"
                 id="imagenFile"
                 accept="image/*"
                 onChange={handleImageChange}
-                style={{ display: 'none' }}
               />
-              <small style={{ color: '#fff', opacity: 0.7 }}>Formatos: JPG, PNG, GIF. Máximo 5MB</small>
+              <small className="admin-form-imagen-info">Formatos: JPG, PNG, GIF. Máximo 5MB</small>
             </div>
-            <div className="mb-2" style={{ color: 'var(--accent-green)' }}>O ingresa una URL:</div>
+            <div className="mb-2 admin-form-url-label">O ingresa una URL:</div>
             <input
               type="text"
               className="form-control"
@@ -295,13 +287,7 @@ export default function AdminProductoForm() {
                 <img 
                   src={formData.imagen} 
                   alt="Preview"
-                  style={{ 
-                    maxWidth: '200px', 
-                    maxHeight: '200px',
-                    objectFit: 'cover',
-                    borderRadius: '8px',
-                    border: '1px solid #333'
-                  }}
+                  className="admin-form-preview-img"
                   onError={(e) => {
                     e.target.src = '/assets/icons/icono.png';
                   }}

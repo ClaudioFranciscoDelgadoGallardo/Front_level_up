@@ -87,15 +87,10 @@ export default function AdminProductos() {
       <div className="mb-4">
         <input
           type="text"
-          className="form-control"
+          className="form-control admin-search-input"
           placeholder="Buscar por nombre, código o categoría..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          style={{
-            background: '#111',
-            border: '1px solid #333',
-            color: 'var(--text-primary)'
-          }}
         />
       </div>
 
@@ -129,7 +124,7 @@ export default function AdminProductos() {
                       alt={producto.nombre}
                       width="50"
                       height="50"
-                      style={{ objectFit: 'cover' }}
+                      className="admin-producto-img"
                     />
                   </td>
                   <td>{producto.codigo}</td>
@@ -139,7 +134,7 @@ export default function AdminProductos() {
                       {producto.categoria}
                     </span>
                   </td>
-                  <td style={{ color: 'var(--accent-green)' }}>
+                  <td className="admin-producto-precio">
                     ${producto.precio.toLocaleString('es-CL')}
                   </td>
                   <td>

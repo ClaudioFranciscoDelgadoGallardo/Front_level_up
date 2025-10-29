@@ -220,7 +220,7 @@ export default function Noticias() {
 
       {cargando ? (
         <div className="text-center py-5">
-          <div className="spinner-border" style={{ color: 'var(--accent-green)' }} role="status">
+          <div className="spinner-border noticias-spinner" role="status">
             <span className="visually-hidden">Cargando...</span>
           </div>
           <p className="text-secondary mt-3">Cargando noticias...</p>
@@ -245,7 +245,7 @@ export default function Noticias() {
                     <h5 className="mb-2">{noticia.titulo}</h5>
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <span className="badge bg-success">{noticia.categoria}</span>
-                      <small style={{ color: 'var(--accent-blue)' }}>{formatearFecha(noticia.fecha)}</small>
+                      <small className="noticias-fecha">{formatearFecha(noticia.fecha)}</small>
                       <small className="text-secondary">{noticia.fuente}</small>
                     </div>
                   </div>
@@ -263,21 +263,7 @@ export default function Noticias() {
                       href={noticia.enlace} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="btn btn-sm"
-                      style={{
-                        backgroundColor: 'transparent',
-                        border: '1px solid var(--accent-green)',
-                        color: 'var(--accent-green)',
-                        transition: 'all 0.3s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = 'var(--accent-green)';
-                        e.target.style.color = '#000';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = 'transparent';
-                        e.target.style.color = 'var(--accent-green)';
-                      }}
+                      className="btn btn-sm btn-outline-success"
                     >
                       Ver en {noticia.fuente} →
                     </a>
@@ -299,7 +285,7 @@ export default function Noticias() {
                   </div>
                   <div className="noticia-contenido">
                     <div className="noticia-meta mb-2">
-                      <small style={{ color: 'var(--accent-blue)' }}>
+                      <small className="noticias-fecha">
                         {formatearFecha(noticia.fecha)}
                       </small>
                       <small className="text-secondary ms-2">• {noticia.fuente}</small>
@@ -311,21 +297,7 @@ export default function Noticias() {
                         href={noticia.enlace} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="btn btn-sm"
-                        style={{
-                          backgroundColor: 'transparent',
-                          border: '1px solid var(--accent-green)',
-                          color: 'var(--accent-green)',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.target.style.backgroundColor = 'var(--accent-green)';
-                          e.target.style.color = '#000';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.target.style.backgroundColor = 'transparent';
-                          e.target.style.color = 'var(--accent-green)';
-                        }}
+                        className="btn btn-sm btn-outline-success"
                       >
                         Leer más →
                       </a>

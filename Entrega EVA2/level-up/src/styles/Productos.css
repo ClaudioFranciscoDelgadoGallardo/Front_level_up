@@ -259,3 +259,49 @@
     font-size: 0.9rem;
   }
 }
+
+/* Clases para tarjetas de productos */
+.producto-card {
+  width: 22rem;
+  box-shadow: 0 0 8px #39ff14;
+}
+
+.producto-card-body {
+  min-height: 480px;
+}
+
+.producto-img-container {
+  width: 100%;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a1a;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.producto-img {
+  max-width: 100%;
+  max-height: 220px;
+  object-fit: contain;
+}
+
+.producto-titulo {
+  font-size: 1.25rem;
+}
+
+.producto-categoria {
+  font-size: 0.9rem;
+}
+
+.producto-descripcion {
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.producto-precio {
+  font-size: 1.2rem;
+  color: var(--accent-green);
+}

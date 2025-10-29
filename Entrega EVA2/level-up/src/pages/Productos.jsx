@@ -199,40 +199,24 @@ export default function Productos() {
           productosFiltrados.map((prod) => (
             <div 
               key={prod.codigo} 
-              className="card bg-dark text-white border-success m-2 d-inline-block" 
-              style={{ width: '22rem', boxShadow: '0 0 8px #39ff14' }}
+              className="card bg-dark text-white border-success m-2 d-inline-block producto-card"
             >
-              <div className="card-body d-flex flex-column align-items-center" style={{ minHeight: '480px' }}>
+              <div className="card-body d-flex flex-column align-items-center producto-card-body">
                 {prod.imagen && (
-                  <div style={{ 
-                    width: '100%', 
-                    height: '240px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    background: '#1a1a1a',
-                    borderRadius: '8px',
-                    marginBottom: '1rem',
-                    padding: '1rem'
-                  }}>
+                  <div className="producto-img-container">
                     <img 
                       src={prod.imagen} 
                       alt={prod.nombre} 
-                      className="img-fluid rounded" 
-                      style={{ 
-                        maxWidth: '100%', 
-                        maxHeight: '220px',
-                        objectFit: 'contain'
-                      }} 
+                      className="img-fluid rounded producto-img" 
                     />
                   </div>
                 )}
-                <h5 className="card-title mt-2" style={{ fontSize: '1.25rem' }}>{prod.nombre}</h5>
+                <h5 className="card-title mt-2 producto-titulo">{prod.nombre}</h5>
                 <p className="card-text mb-1">
-                  <span className="badge bg-secondary" style={{ fontSize: '0.9rem' }}>{prod.categoria}</span>
+                  <span className="badge bg-secondary producto-categoria">{prod.categoria}</span>
                 </p>
-                <p className="card-text mb-1" style={{ fontSize: '0.95rem', textAlign: 'center' }}>{prod.descripcion || ''}</p>
-                <p className="card-text fw-bold mb-1" style={{ fontSize: '1.2rem', color: 'var(--accent-green)' }}>${prod.precio.toLocaleString('es-CL')}</p>
+                <p className="card-text mb-1 producto-descripcion">{prod.descripcion || ''}</p>
+                <p className="card-text fw-bold mb-1 producto-precio">${prod.precio.toLocaleString('es-CL')}</p>
                 <div className="d-flex flex-column align-items-center w-100 mt-auto">
                   <button 
                     className="btn btn-success mb-2 w-75" 

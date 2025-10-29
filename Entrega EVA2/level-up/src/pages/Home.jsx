@@ -39,7 +39,6 @@ const PRODUCTOS_DEFAULT = [
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [productos, setProductos] = useState(PRODUCTOS_DEFAULT);
-  const [isAnimating, setIsAnimating] = useState(false);
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
 
@@ -72,27 +71,17 @@ export default function Home() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setIsAnimating(true);
       setCurrentSlide((prev) => (prev + 1) % productos.length);
-      setTimeout(() => setIsAnimating(false), 1500);
     }, 8000);
     return () => clearInterval(interval);
   }, [productos.length]);
 
   const handlePrev = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setCurrentSlide((prev) => (prev - 1 + productos.length) % productos.length);
-      setTimeout(() => setIsAnimating(false), 1500);
-    }
+    setCurrentSlide((prev) => (prev - 1 + productos.length) % productos.length);
   };
 
   const handleNext = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setCurrentSlide((prev) => (prev + 1) % productos.length);
-      setTimeout(() => setIsAnimating(false), 1500);
-    }
+    setCurrentSlide((prev) => (prev + 1) % productos.length);
   };
 
   const getVisibleProducts = (centerIndex) => {
@@ -119,17 +108,19 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="container">
-          <h1>¡DESAFÍA TUS LÍMITES!</h1>
-          <p>Explora consolas, accesorios, PCs y más</p>
-          <Link className="btn btn-secondary" to="/productos">Explorar Productos</Link>
-          <Link className="btn btn-secondary" to="/nosotros" style={{ marginLeft: '.5rem' }}>Conócenos</Link>
+          <h1 className="display-4 fw-bold">¡DESAFÍA TUS LÍMITES!</h1>
+          <p className="lead">Explora consolas, accesorios, PCs y más</p>
+          <div className="d-flex flex-wrap gap-2 justify-content-center mt-4">
+            <Link className="btn btn-success btn-lg" to="/productos">Explorar Productos</Link>
+            <Link className="btn btn-outline-success btn-lg" to="/nosotros">Conócenos</Link>
+          </div>
         </div>
       </section>
 
-      <main className="container" style={{ marginTop: '2rem' }}>
-        <h2 className="section-title">Destacados</h2>
+      <main className="container py-5">
+        <h2 className="section-title text-center mb-5">Destacados</h2>
         
-        <div id="productos-carrusel-container" className="mt-5">
+        <div id="productos-carrusel-container" className="mt-4">
           <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel">
             <div className="carousel-inner" id="carousel-productos-inner">
               {productos.map((_, idx) => {
@@ -140,46 +131,28 @@ export default function Home() {
                     className={`carousel-item${idx === currentSlide ? ' active' : ''}`} 
                     key={idx}
                   >
-                    <div className="row g-4 justify-content-center p-4">
+                    <div className="row g-3 g-md-4 justify-content-center p-2 p-md-4">
                       {visibleProducts.map(({ producto: prod, position }) => (
                         <div 
-                          className="col-md-4" 
+                          className="col-12 col-sm-6 col-md-4"
                           key={`${prod.codigo}-${position}`}
-                          style={{
-                            animation: isAnimating ? `slideCard${position} 1.5s cubic-bezier(0.4, 0, 0.2, 1)` : 'none'
-                          }}
                         >
-                          <div 
-                            className="card h-100 bg-dark text-white" 
-                            style={{ 
-                              border: '1px solid #333',
-                              opacity: position === 'center' ? 1 : 0.5,
-                              transform: position === 'center' ? 'scale(1)' : 'scale(0.85)',
-                              transition: isAnimating ? 'none' : 'all 0.3s ease'
-                            }}
-                          >
+                          <div className={`card h-100 bg-dark text-white carousel-card carousel-card-${position}`}>
                             <img 
                               src={prod.img} 
                               alt={prod.nombre} 
-                              className="card-img-top p-3" 
-                              style={{ 
-                                height: '250px',
-                                objectFit: 'contain', 
-                                background: '#222',
-                                cursor: 'pointer'
-                              }}
+                              className="card-img-top p-3 carousel-card-img" 
                               onClick={() => navigate(`/detalle/${prod.codigo}`)}
                             />
                             <div className="card-body d-flex flex-column">
                               <h5 
-                                className="card-title text-neon mb-2" 
-                                style={{ cursor: 'pointer', fontSize: '1.25rem' }}
+                                className="card-title text-neon mb-2 carousel-card-title" 
                                 onClick={() => navigate(`/detalle/${prod.codigo}`)}
                               >
                                 {prod.nombre}
                               </h5>
                               <span className="badge bg-secondary mb-2 align-self-start">{prod.categoria}</span>
-                              <p className="card-text text-success fw-bold mb-2" style={{ fontSize: '1.3rem' }}>
+                              <p className="card-text text-success fw-bold mb-2 carousel-card-price">
                                 ${prod.precio.toLocaleString('es-CL')}
                               </p>
                               <p className="card-text mb-3 flex-grow-1">{prod.desc}</p>

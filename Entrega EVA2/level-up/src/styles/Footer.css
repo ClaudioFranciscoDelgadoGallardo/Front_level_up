@@ -100,3 +100,7 @@ footer img {
   border-radius: 8px;
   padding: 2px;
 }
+
+.footer-copyright {
+  font-size: 0.95rem;
+}

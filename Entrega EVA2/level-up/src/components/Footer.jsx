@@ -47,7 +47,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="text-center mt-3 text-muted" style={{ fontSize: '0.95rem' }}>
+        <div className="text-center mt-3 text-muted footer-copyright">
           &copy; {new Date().getFullYear()} Level Up. Todos los derechos reservados.
         </div>
       </div>

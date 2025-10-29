@@ -26,6 +26,16 @@ html, body {
   font-family: 'Roboto', Arial, sans-serif;
 }
 
+body {
+  padding-top: 70px;
+}
+
+@media (max-width: 991px) {
+  body {
+    padding-top: 60px;
+  }
+}
+
 h1, h2, h3, h4, h5 { 
   font-family: 'Orbitron', sans-serif; 
   margin-bottom: 1rem; 
