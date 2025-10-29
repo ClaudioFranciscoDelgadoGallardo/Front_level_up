@@ -3,12 +3,12 @@ import {
   agregarProductoAlCarrito 
 } from '../utils/validaciones';
 
-describe('Carrito Tests', function() {
+describe('Tests del Carrito', function() {
   beforeEach(function() {
     localStorage.clear();
   });
 
-  it('adds product to cart', function() {
+  it('agrega producto al carrito', function() {
     var producto = {
       codigo: 'PROD001',
       nombre: 'Test Product',
@@ -21,7 +21,7 @@ describe('Carrito Tests', function() {
     expect(carrito.length).toBe(1);
   });
 
-  it('validates stock before adding to cart', function() {
+  it('valida stock antes de agregar al carrito', function() {
     var producto = {
       codigo: 'PROD001',
       nombre: 'Test Product',

@@ -12,11 +12,13 @@ export default function CarritoDebug() {
   };
 
   const handleVerLocalStorage = () => {
-    console.log('=== ESTADO DEL LOCALSTORAGE ===');
-    console.log('Carrito:', localStorage.getItem('carrito'));
-    console.log('Productos:', localStorage.getItem('productos'));
-    console.log('Usuarios:', localStorage.getItem('usuarios'));
-    console.log('Usuario Actual:', localStorage.getItem('usuarioActual'));
+    const info = {
+      carrito: localStorage.getItem('carrito'),
+      productos: localStorage.getItem('productos'),
+      usuarios: localStorage.getItem('usuarios'),
+      usuarioActual: localStorage.getItem('usuarioActual')
+    };
+    alert(JSON.stringify(info, null, 2));
   };
 
   return (
@@ -65,7 +67,7 @@ export default function CarritoDebug() {
             fontWeight: 'bold'
           }}
         >
-          Ver Console
+          Ver LocalStorage
         </button>
         <button 
           onClick={handleLimpiarTodo}

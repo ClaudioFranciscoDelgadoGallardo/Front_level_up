@@ -5,12 +5,12 @@ import {
   validarCredenciales 
 } from '../utils/validaciones';
 
-describe('Login Component Tests', function() {
+describe('Tests del Componente Login', function() {
   beforeEach(function() {
     localStorage.clear();
   });
 
-  it('validates empty email', function() {
+  it('valida mail vacío', function() {
     var formData = {
       email: '',
       password: 'test123'
@@ -18,7 +18,7 @@ describe('Login Component Tests', function() {
     expect(validarEmailVacio(formData.email)).toBe(false);
   });
 
-  it('validates email format', function() {
+  it('valida formato de mail', function() {
     var email = 'invalid-email';
     expect(validarFormatoEmail(email)).toBe(false);
     
@@ -26,7 +26,7 @@ describe('Login Component Tests', function() {
     expect(validarFormatoEmail(email)).toBe(true);
   });
 
-  it('validates empty password', function() {
+  it('valida contraseña vacía', function() {
     var formData = {
       email: 'test@email.com',
       password: ''
@@ -34,7 +34,7 @@ describe('Login Component Tests', function() {
     expect(validarPasswordVacio(formData.password)).toBe(false);
   });
 
-  it('validates user credentials', function() {
+  it('valida credenciales de usuario', function() {
     var usuarios = [
       {
         correo: 'test@email.com',

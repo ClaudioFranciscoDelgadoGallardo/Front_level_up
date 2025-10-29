@@ -39,6 +39,7 @@ const PRODUCTOS_DEFAULT = [
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [productos, setProductos] = useState(PRODUCTOS_DEFAULT);
+  const [isAnimating, setIsAnimating] = useState(false);
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
 
@@ -71,17 +72,37 @@ export default function Home() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      setIsAnimating(true);
       setCurrentSlide((prev) => (prev + 1) % productos.length);
-    }, 3000);
+      setTimeout(() => setIsAnimating(false), 1500);
+    }, 8000);
     return () => clearInterval(interval);
   }, [productos.length]);
 
   const handlePrev = () => {
-    setCurrentSlide((prev) => (prev - 1 + productos.length) % productos.length);
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setCurrentSlide((prev) => (prev - 1 + productos.length) % productos.length);
+      setTimeout(() => setIsAnimating(false), 1500);
+    }
   };
 
   const handleNext = () => {
-    setCurrentSlide((prev) => (prev + 1) % productos.length);
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setCurrentSlide((prev) => (prev + 1) % productos.length);
+      setTimeout(() => setIsAnimating(false), 1500);
+    }
+  };
+
+  const getVisibleProducts = (centerIndex) => {
+    const prevIndex = (centerIndex - 1 + productos.length) % productos.length;
+    const nextIndex = (centerIndex + 1) % productos.length;
+    return [
+      { producto: productos[prevIndex], position: 'left' },
+      { producto: productos[centerIndex], position: 'center' },
+      { producto: productos[nextIndex], position: 'right' }
+    ];
   };
 
   const handleAgregarAlCarrito = (codigo) => {
@@ -109,44 +130,73 @@ export default function Home() {
         <h2 className="section-title">Destacados</h2>
         
         <div id="productos-carrusel-container" className="mt-5">
-          <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+          <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel">
             <div className="carousel-inner" id="carousel-productos-inner">
-              {productos.map((prod, idx) => (
-                <div className={`carousel-item${idx === currentSlide ? ' active' : ''}`} key={prod.codigo}>
-                  <div className="d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: '500px' }}>
-                    <img 
-                      src={prod.img} 
-                      alt={prod.nombre} 
-                      className="mb-3 rounded" 
-                      style={{ 
-                        maxWidth: '400px', 
-                        maxHeight: '300px', 
-                        objectFit: 'contain', 
-                        background: '#222',
-                        cursor: 'pointer',
-                        padding: '1rem'
-                      }}
-                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
-                    />
-                    <h5 
-                      className="text-neon mb-2" 
-                      style={{ cursor: 'pointer', fontSize: '1.5rem' }}
-                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
-                    >
-                      {prod.nombre}
-                    </h5>
-                    <span className="badge bg-secondary mb-2" style={{ fontSize: '0.95rem' }}>{prod.categoria}</span>
-                    <span className="fw-bold text-success mb-2" style={{ fontSize: '1.3rem' }}>${prod.precio.toLocaleString('es-CL')}</span>
-                    <p className="mb-2 text-center" style={{ maxWidth: '420px', fontSize: '1rem' }}>{prod.desc}</p>
-                    <button 
-                      className="btn btn-success btn-lg" 
-                      onClick={() => handleAgregarAlCarrito(prod.codigo)}
-                    >
-                      Agregar al carrito
-                    </button>
+              {productos.map((_, idx) => {
+                const visibleProducts = getVisibleProducts(idx);
+                
+                return (
+                  <div 
+                    className={`carousel-item${idx === currentSlide ? ' active' : ''}`} 
+                    key={idx}
+                  >
+                    <div className="row g-4 justify-content-center p-4">
+                      {visibleProducts.map(({ producto: prod, position }) => (
+                        <div 
+                          className="col-md-4" 
+                          key={`${prod.codigo}-${position}`}
+                          style={{
+                            animation: isAnimating ? `slideCard${position} 1.5s cubic-bezier(0.4, 0, 0.2, 1)` : 'none'
+                          }}
+                        >
+                          <div 
+                            className="card h-100 bg-dark text-white" 
+                            style={{ 
+                              border: '1px solid #333',
+                              opacity: position === 'center' ? 1 : 0.5,
+                              transform: position === 'center' ? 'scale(1)' : 'scale(0.85)',
+                              transition: isAnimating ? 'none' : 'all 0.3s ease'
+                            }}
+                          >
+                            <img 
+                              src={prod.img} 
+                              alt={prod.nombre} 
+                              className="card-img-top p-3" 
+                              style={{ 
+                                height: '250px',
+                                objectFit: 'contain', 
+                                background: '#222',
+                                cursor: 'pointer'
+                              }}
+                              onClick={() => navigate(`/detalle/${prod.codigo}`)}
+                            />
+                            <div className="card-body d-flex flex-column">
+                              <h5 
+                                className="card-title text-neon mb-2" 
+                                style={{ cursor: 'pointer', fontSize: '1.25rem' }}
+                                onClick={() => navigate(`/detalle/${prod.codigo}`)}
+                              >
+                                {prod.nombre}
+                              </h5>
+                              <span className="badge bg-secondary mb-2 align-self-start">{prod.categoria}</span>
+                              <p className="card-text text-success fw-bold mb-2" style={{ fontSize: '1.3rem' }}>
+                                ${prod.precio.toLocaleString('es-CL')}
+                              </p>
+                              <p className="card-text mb-3 flex-grow-1">{prod.desc}</p>
+                              <button 
+                                className="btn btn-success w-100 mt-auto" 
+                                onClick={() => handleAgregarAlCarrito(prod.codigo)}
+                              >
+                                Agregar al carrito
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <button 
               className="carousel-control-prev" 

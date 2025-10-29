@@ -174,7 +174,6 @@ export default function Noticias() {
 
       setNoticias(noticiasSimuladas);
     } catch (error) {
-      console.error('Error al cargar noticias:', error);
       if (window.notificar) {
         window.notificar('Error al cargar las noticias', 'error', 3000);
       }

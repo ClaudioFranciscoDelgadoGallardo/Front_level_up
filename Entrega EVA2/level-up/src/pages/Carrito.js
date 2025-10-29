@@ -58,7 +58,6 @@ export default function Carrito() {
   };
 
   const handleIrAProductos = () => {
-    console.log('Navegando a productos...');
     window.location.href = '/productos';
   };
 

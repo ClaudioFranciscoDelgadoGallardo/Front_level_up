@@ -5,17 +5,17 @@ import {
   validarEmailDuplicado 
 } from '../utils/validaciones';
 
-describe('Registro Component Tests', function() {
+describe('Tests del Componente Registro', function() {
   beforeEach(function() {
     localStorage.clear();
   });
 
-  it('validates RUN format', function() {
+  it('valida formato de RUN', function() {
     expect(validarRUN('123456789')).toBe(true);
     expect(validarRUN('12345')).toBe(false);
   });
 
-  it('validates nombre length', function() {
+  it('valida longitud del nombre', function() {
     var nombre = 'a'.repeat(51);
     expect(validarNombreLength(nombre)).toBe(false);
     
@@ -23,7 +23,7 @@ describe('Registro Component Tests', function() {
     expect(validarNombreLength(nombre)).toBe(true);
   });
 
-  it('validates apellidos length', function() {
+  it('valida longitud de apellidos', function() {
     var apellidos = 'a'.repeat(101);
     expect(validarApellidosLength(apellidos)).toBe(false);
     
@@ -31,7 +31,7 @@ describe('Registro Component Tests', function() {
     expect(validarApellidosLength(apellidos)).toBe(true);
   });
 
-  it('prevents duplicate email registration', function() {
+  it('previene registro de mail duplicado', function() {
     var usuarios = [
       {
         correo: 'existing@email.com',
