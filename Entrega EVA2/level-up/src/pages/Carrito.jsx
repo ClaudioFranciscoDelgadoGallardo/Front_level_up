@@ -11,7 +11,11 @@ export default function Carrito() {
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     setProductosStock(productos);
+<<<<<<< HEAD
+  }, [items]);
+=======
   }, []);
+>>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
 
   const getStockDisponible = (codigo) => {
     const producto = productosStock.find(p => p.codigo === codigo);
@@ -36,6 +40,8 @@ export default function Carrito() {
       }
       return;
     }
+<<<<<<< HEAD
+=======
     
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     items.forEach(item => {
@@ -48,9 +54,13 @@ export default function Carrito() {
     
     vaciarCarrito();
     
+>>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
     if (window.notificar) {
-      window.notificar('¡Gracias por tu compra!', 'success', 2000);
+      window.notificar('¡Gracias por tu compra!', 'success', 3000);
     }
+<<<<<<< HEAD
+    vaciarCarrito();
+=======
     
     setTimeout(() => {
       window.location.href = '/productos';
@@ -59,6 +69,7 @@ export default function Carrito() {
 
   const handleIrAProductos = () => {
     window.location.href = '/productos';
+>>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
   };
 
   return (
@@ -78,7 +89,7 @@ export default function Carrito() {
             className="btn btn-success px-5 carrito-ir-productos-btn"
           >
             Ir a Productos
-          </button>
+          </Link>
         </div>
       ) : (
         <>
