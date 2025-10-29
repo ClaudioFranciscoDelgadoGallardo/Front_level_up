@@ -11,12 +11,7 @@ export default function Carrito() {
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     setProductosStock(productos);
-<<<<<<< HEAD
-  }, [items]);
-=======
   }, []);
->>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
-
   const getStockDisponible = (codigo) => {
     const producto = productosStock.find(p => p.codigo === codigo);
     return producto ? producto.stock : 0;
@@ -40,8 +35,6 @@ export default function Carrito() {
       }
       return;
     }
-<<<<<<< HEAD
-=======
     
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
     items.forEach(item => {
@@ -54,23 +47,14 @@ export default function Carrito() {
     
     vaciarCarrito();
     
->>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
     if (window.notificar) {
       window.notificar('¡Gracias por tu compra!', 'success', 3000);
     }
-<<<<<<< HEAD
     vaciarCarrito();
-=======
     
     setTimeout(() => {
       window.location.href = '/productos';
     }, 2000);
-  };
-
-  const handleIrAProductos = () => {
-    console.log('Navegando a productos...');
-    window.location.href = '/productos';
->>>>>>> d8b20bb67084320e6bd20b3a61a1bc28f6db992f
   };
 
   return (

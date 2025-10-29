@@ -84,29 +84,39 @@ export default function Login() {
   };
 
   return (
-    <main className="container">
-      <h2 className="section-title">Inicio de sesión</h2>
-      <form id="form-login" onSubmit={handleSubmit} noValidate>
-        <label htmlFor="login-email">Correo</label>
-        <input 
-          id="login-email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
+    <main className="container py-4">
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-8 col-lg-6 col-xl-5">
+          <h2 className="section-title">Inicio de sesión</h2>
+          <form id="form-login" onSubmit={handleSubmit} noValidate className="p-3 p-md-4">
+            <div className="mb-3">
+              <label htmlFor="login-email" className="form-label">Correo</label>
+              <input 
+                id="login-email"
+                name="email"
+                type="email"
+                className="form-control"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
 
-        <label htmlFor="login-pass">Contraseña</label>
-        <input 
-          id="login-pass"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
+            <div className="mb-3">
+              <label htmlFor="login-pass" className="form-label">Contraseña</label>
+              <input 
+                id="login-pass"
+                name="password"
+                type="password"
+                className="form-control"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
 
-        <button className="btn btn-success" type="submit">Ingresar</button>
-      </form>
+            <button className="btn btn-success w-100" type="submit">Ingresar</button>
+          </form>
+        </div>
+      </div>
     </main>
   );
 }

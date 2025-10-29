@@ -3,44 +3,83 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  height: var(--header-height);
   background: var(--bg-primary);
   border-bottom: 1px solid var(--accent-blue);
   z-index: 1000;
 }
 
+header .navbar {
+  padding: 0.5rem 0;
+  background: transparent !important;
+}
+
 .header-content {
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
 }
 
 .logo {
   font-family: 'Orbitron', sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--accent-green);
+  color: var(--accent-green) !important;
   text-decoration: none;
 }
 
-.nav-menu {
-  list-style: none;
-  display: flex;
-  gap: 1.2rem;
-  margin-left: auto;
-  margin-right: 0.5rem;
+.navbar-nav {
+  gap: 0.5rem;
 }
 
-.nav-menu a {
-  color: var(--text-primary);
-  text-decoration: none;
+.navbar-nav .nav-link {
+  color: var(--text-primary) !important;
   font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
 }
 
-.nav-menu a:hover {
-  color: var(--accent-blue);
+.navbar-nav .nav-link:hover {
+  color: var(--accent-blue) !important;
+}
+
+.navbar-toggler {
+  border-color: var(--accent-green);
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%2339ff14' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.25rem rgba(57, 255, 20, 0.25);
+}
+
+/* Menú colapsado en móvil */
+@media (max-width: 991.98px) {
+  .navbar-collapse {
+    background: var(--bg-primary);
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--accent-blue);
+  }
+
+  .navbar-nav {
+    gap: 0;
+  }
+
+  .navbar-nav .nav-item {
+    width: 100%;
+  }
+
+  .navbar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .navbar-nav .nav-item:last-child .nav-link {
+    border-bottom: none;
+  }
 }
 
 .carrito-dropdown {
@@ -63,17 +102,9 @@ header {
     width: auto;
     max-width: 98vw;
   }
+
+  .logo {
+    font-size: 1rem;
+  }
 }
 
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 0.6rem;
-    padding: 0.6rem 0;
-    height: auto;
-  }
-  .nav-menu {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-}

@@ -48,33 +48,38 @@ export default function Detalle() {
   }
 
   return (
-    <main className="container detalle-page">
-      <nav aria-label="breadcrumb" className="mb-4">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item">
-            <Link to="/" style={{ color: 'var(--accent-blue)' }}>Inicio</Link>
-          </li>
-          <li className="breadcrumb-item">
-            <Link to="/productos" style={{ color: 'var(--accent-blue)' }}>Productos</Link>
-          </li>
-          <li className="breadcrumb-item active" aria-current="page">
-            {producto.nombre}
-          </li>
-        </ol>
-      </nav>
+    <main className="container detalle-page py-4">
+      <div className="row">
+        <div className="col-12">
+          <nav aria-label="breadcrumb" className="mb-4">
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item">
+                <Link to="/" style={{ color: 'var(--accent-blue)' }}>Inicio</Link>
+              </li>
+              <li className="breadcrumb-item">
+                <Link to="/productos" style={{ color: 'var(--accent-blue)' }}>Productos</Link>
+              </li>
+              <li className="breadcrumb-item active" aria-current="page">
+                {producto.nombre}
+              </li>
+            </ol>
+          </nav>
+        </div>
+      </div>
 
       <div className="row">
-        <div className="col-md-6 mb-4">
+        <div className="col-12 col-md-6 col-lg-5 mb-4">
           <div className="detalle-imagen-container">
             <img 
               src={producto.imagen} 
               alt={producto.nombre}
-              className="img-fluid rounded"
+              className="img-fluid rounded w-100"
+              style={{ objectFit: 'contain', maxHeight: '500px' }}
             />
           </div>
         </div>
 
-        <div className="col-md-6">
+        <div className="col-12 col-md-6 col-lg-7">
           <div className="detalle-info">
             <span 
               className="badge bg-secondary mb-3"
@@ -155,7 +160,7 @@ export default function Detalle() {
                   </div>
                 </div>
 
-                <div className="d-flex gap-3">
+                <div className="d-flex flex-column flex-sm-row gap-3">
                   <button 
                     className="btn btn-success flex-grow-1"
                     style={{ padding: '0.75rem' }}

@@ -101,62 +101,66 @@ export default function Registro() {
   };
 
   return (
-    <main className="container">
-      <h2 className="section-title">Registro de Usuario</h2>
-      <form id="form-registro" onSubmit={handleSubmit} noValidate>
-        <label htmlFor="reg-run">RUN</label>
-        <input 
-          id="reg-run"
-          name="run"
-          value={formData.run}
-          onChange={handleChange}
-        />
+    <main className="container py-5">
+      <div className="row justify-content-center">
+        <div className="col-12 col-md-8 col-lg-6">
+          <h2 className="section-title">Registro de Usuario</h2>
+          <form id="form-registro" onSubmit={handleSubmit} noValidate>
+            <label htmlFor="reg-run">RUN</label>
+            <input 
+              id="reg-run"
+              name="run"
+              value={formData.run}
+              onChange={handleChange}
+            />
 
-        <label htmlFor="reg-nombre">Nombres</label>
-        <input 
-          id="reg-nombre"
-          name="nombre"
-          value={formData.nombre}
-          onChange={handleChange}
-        />
+            <label htmlFor="reg-nombre">Nombres</label>
+            <input 
+              id="reg-nombre"
+              name="nombre"
+              value={formData.nombre}
+              onChange={handleChange}
+            />
 
-        <label htmlFor="reg-apellidos">Apellidos</label>
-        <input 
-          id="reg-apellidos"
-          name="apellidos"
-          value={formData.apellidos}
-          onChange={handleChange}
-        />
+            <label htmlFor="reg-apellidos">Apellidos</label>
+            <input 
+              id="reg-apellidos"
+              name="apellidos"
+              value={formData.apellidos}
+              onChange={handleChange}
+            />
 
-        <label htmlFor="reg-correo">Correo</label>
-        <input 
-          id="reg-correo"
-          name="correo"
-          type="email"
-          value={formData.correo}
-          onChange={handleChange}
-        />
+            <label htmlFor="reg-correo">Correo</label>
+            <input 
+              id="reg-correo"
+              name="correo"
+              type="email"
+              value={formData.correo}
+              onChange={handleChange}
+            />
 
-        <label htmlFor="reg-pass">Contraseña</label>
-        <input 
-          id="reg-pass"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-        />
+            <label htmlFor="reg-pass">Contraseña</label>
+            <input 
+              id="reg-pass"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
 
-        <label htmlFor="reg-fnac">Fecha Nacimiento</label>
-        <input 
-          id="reg-fnac"
-          name="fechaNac"
-          type="date"
-          value={formData.fechaNac}
-          onChange={handleChange}
-        />
+            <label htmlFor="reg-fnac">Fecha Nacimiento</label>
+            <input 
+              id="reg-fnac"
+              name="fechaNac"
+              type="date"
+              value={formData.fechaNac}
+              onChange={handleChange}
+            />
 
-        <button className="btn btn-success" type="submit">Registrarme</button>
-      </form>
+            <button className="btn btn-success" type="submit">Registrarme</button>
+          </form>
+        </div>
+      </div>
     </main>
   );
 }

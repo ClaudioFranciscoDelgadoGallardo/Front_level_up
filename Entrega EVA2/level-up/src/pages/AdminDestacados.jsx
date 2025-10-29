@@ -157,7 +157,7 @@ export default function AdminDestacados() {
         </div>
         <div className="admin-card-body">
           <div className="row align-items-end">
-            <div className="col-md-9 mb-3 mb-md-0">
+            <div className="col-12 col-md-9 mb-3 mb-md-0">
               <label className="form-label text-white">Seleccionar Producto Existente</label>
               <select
                 className="form-control"
@@ -177,7 +177,7 @@ export default function AdminDestacados() {
                 ))}
               </select>
             </div>
-            <div className="col-md-3">
+            <div className="col-12 col-md-3">
               <button 
                 className="btn btn-success w-100"
                 onClick={agregarDestacado}

@@ -78,7 +78,7 @@ export default function AdminHome() {
       </div>
 
       <div className="row mb-4">
-        <div className="col-md-4 mb-3">
+        <div className="col-12 col-md-4 mb-3">
           <div className="stat-card">
             <div className="stat-icon">
               <img src="/assets/icons/icono.png" alt="Productos" width="40" />
@@ -89,7 +89,7 @@ export default function AdminHome() {
             </div>
           </div>
         </div>
-        <div className="col-md-4 mb-3">
+        <div className="col-12 col-md-4 mb-3">
           <div className="stat-card">
             <div className="stat-icon">👥</div>
             <div className="stat-info">
@@ -98,7 +98,7 @@ export default function AdminHome() {
             </div>
           </div>
         </div>
-        <div className="col-md-4 mb-3">
+        <div className="col-12 col-md-4 mb-3">
           <div className="stat-card">
             <div className="stat-icon">⭐</div>
             <div className="stat-info">
@@ -110,7 +110,7 @@ export default function AdminHome() {
       </div>
 
       <div className="row">
-        <div className="col-md-6 mb-4">
+        <div className="col-12 col-md-6 mb-4">
           <div className="admin-card">
             <div className="admin-card-header">
               <h4>Gestión de Productos</h4>
@@ -129,7 +129,7 @@ export default function AdminHome() {
           </div>
         </div>
 
-        <div className="col-md-6 mb-4">
+        <div className="col-12 col-md-6 mb-4">
           <div className="admin-card">
             <div className="admin-card-header">
               <h4>Gestión de Destacados</h4>
@@ -145,7 +145,7 @@ export default function AdminHome() {
           </div>
         </div>
 
-        <div className="col-md-6 mb-4">
+        <div className="col-12 col-md-6 mb-4">
           <div className="admin-card">
             <div className="admin-card-header">
               <h4>Gestión de Usuarios</h4>
@@ -164,7 +164,7 @@ export default function AdminHome() {
           </div>
         </div>
 
-        <div className="col-md-6 mb-4">
+        <div className="col-12 col-md-6 mb-4">
           <div className="admin-card">
             <div className="admin-card-header">
               <h4>Registro de Actividades</h4>
@@ -186,7 +186,7 @@ export default function AdminHome() {
           <h4 className="mb-3">Productos Recientes</h4>
           <div className="row">
             {stats.productosDestacados.map((producto) => (
-              <div key={producto.codigo} className="col-md-4 mb-3">
+              <div key={producto.codigo} className="col-12 col-sm-6 col-md-4 mb-3">
                 <div className="producto-mini-card">
                   <img 
                     src={producto.imagen} 

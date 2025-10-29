@@ -98,51 +98,68 @@ export default function Home() {
     <>
       <section className="hero">
         <div className="container">
-          <h1>¡DESAFÍA TUS LÍMITES!</h1>
-          <p>Explora consolas, accesorios, PCs y más</p>
-          <Link className="btn btn-secondary" to="/productos">Explorar Productos</Link>
-          <Link className="btn btn-secondary" to="/nosotros" style={{ marginLeft: '.5rem' }}>Conócenos</Link>
+          <div className="row">
+            <div className="col-12">
+              <h1>¡DESAFÍA TUS LÍMITES!</h1>
+              <p>Explora consolas, accesorios, PCs y más</p>
+              <div className="d-flex flex-column flex-sm-row justify-content-center gap-2">
+                <Link className="btn btn-secondary" to="/productos">Explorar Productos</Link>
+                <Link className="btn btn-secondary" to="/nosotros">Conócenos</Link>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       <main className="container" style={{ marginTop: '2rem' }}>
-        <h2 className="section-title">Destacados</h2>
+        <div className="row">
+          <div className="col-12">
+            <h2 className="section-title">Destacados</h2>
+          </div>
+        </div>
         
-        <div id="productos-carrusel-container" className="mt-5">
+        <div className="row">
+          <div className="col-12">
+            <div id="productos-carrusel-container" className="mt-5">
           <div id="productosCarrusel" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
             <div className="carousel-inner" id="carousel-productos-inner">
               {productos.map((prod, idx) => (
                 <div className={`carousel-item${idx === currentSlide ? ' active' : ''}`} key={prod.codigo}>
-                  <div className="d-flex flex-column align-items-center justify-content-center p-4" style={{ minHeight: '340px' }}>
-                    <img 
-                      src={prod.img} 
-                      alt={prod.nombre} 
-                      className="mb-3 rounded" 
-                      style={{ 
-                        maxWidth: '220px', 
-                        maxHeight: '160px', 
-                        objectFit: 'contain', 
-                        background: '#222',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
-                    />
-                    <h5 
-                      className="text-neon mb-2" 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => navigate(`/detalle/${prod.codigo}`)}
-                    >
-                      {prod.nombre}
-                    </h5>
-                    <span className="badge bg-secondary mb-2">{prod.categoria}</span>
-                    <span className="fw-bold text-success mb-2">${prod.precio.toLocaleString('es-CL')}</span>
-                    <p className="mb-2 text-center" style={{ maxWidth: '320px' }}>{prod.desc}</p>
-                    <button 
-                      className="btn btn-success" 
-                      onClick={() => handleAgregarAlCarrito(prod.codigo)}
-                    >
-                      Agregar al carrito
-                    </button>
+                  <div className="row justify-content-center">
+                    <div className="col-12 col-md-10 col-lg-8">
+                      <div className="d-flex flex-column align-items-center justify-content-center p-3 p-md-4" style={{ minHeight: '500px' }}>
+                        <img 
+                          src={prod.img} 
+                          alt={prod.nombre} 
+                          className="img-fluid mb-3 rounded" 
+                          style={{ 
+                            maxWidth: '100%', 
+                            maxHeight: '300px', 
+                            objectFit: 'contain', 
+                            background: '#222',
+                            cursor: 'pointer',
+                            padding: '1rem'
+                          }}
+                          onClick={() => navigate(`/detalle/${prod.codigo}`)}
+                        />
+                        <h5 
+                          className="text-neon mb-2 text-center" 
+                          style={{ cursor: 'pointer', fontSize: 'clamp(1.2rem, 3vw, 1.5rem)' }}
+                          onClick={() => navigate(`/detalle/${prod.codigo}`)}
+                        >
+                          {prod.nombre}
+                        </h5>
+                        <span className="badge bg-secondary mb-2" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.95rem)' }}>{prod.categoria}</span>
+                        <span className="fw-bold text-success mb-2" style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.3rem)' }}>${prod.precio.toLocaleString('es-CL')}</span>
+                        <p className="mb-2 text-center px-2" style={{ maxWidth: '420px', fontSize: 'clamp(0.9rem, 2vw, 1rem)' }}>{prod.desc}</p>
+                        <button 
+                          className="btn btn-success btn-lg w-100 w-sm-auto" 
+                          onClick={() => handleAgregarAlCarrito(prod.codigo)}
+                        >
+                          Agregar al carrito
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -163,6 +180,8 @@ export default function Home() {
               <span className="carousel-control-next-icon" aria-hidden="true"></span>
               <span className="visually-hidden">Siguiente</span>
             </button>
+          </div>
+        </div>
           </div>
         </div>
       </main>
