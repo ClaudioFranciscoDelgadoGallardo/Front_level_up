@@ -1,0 +1,170 @@
+﻿Summary,Issue Type,Priority,Description,Labels,Component,Assignee,Story Points,Status
+"Reunión inicial",Task,Medium,"Reunión de planificación y organización del proyecto","planning,inicial","Configuración",,2,Done
+"Configuración del Proyecto",Task,Medium,"Setup inicial del proyecto React","configuracion,setup","Configuración","Claudio Francisco Delgado Gallardo",3,Done
+"Crear proyecto React con create-react-app",Task,Medium,"Inicializar proyecto con CRA","react,setup","Configuración","Rodrigo Yarzu",2,Done
+"Instalar dependencias (React Router DOM)",Task,Medium,"Instalación de React Router v7.9.4","dependencias,routing","Configuración","Claudio Francisco Delgado Gallardo",2,Done
+"Configurar estructura de carpetas (components, pages, styles, context, utils)",Task,Medium,"Organizar arquitectura del proyecto","estructura,folders","Configuración","Rodrigo Yarzu",3,Done
+"Integrar Bootstrap 5.3.8 via CDN",Task,Medium,"Agregar Bootstrap al proyecto","bootstrap,css","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Integrar Google Fonts (Orbitron, Roboto)",Task,Medium,"Agregar tipografías del proyecto","fonts,estilos","Estilos","Claudio Francisco Delgado Gallardo",2,Done
+"Componentes Base",Task,Medium,"Creación de componentes básicos reutilizables","components,base","Componentes","Rodrigo Yarzu",5,Done
+"Crear componente Header con navegación",Task,Medium,"Header con menú responsive y carrito dropdown","header,navegacion","Componentes","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear componente Footer con redes sociales",Task,Medium,"Footer con links y redes sociales","footer,ui","Componentes","Claudio Francisco Delgado Gallardo",3,Done
+"Implementar React Router con todas las rutas",Task,Medium,"Configuración completa de rutas públicas y privadas","routing,navegacion","Configuración","Rodrigo Yarzu",5,Done
+"Crear sistema de notificaciones (pop-ups personalizados)",Task,Medium,"Sistema de toasts/notificaciones reutilizable","notificaciones,ui","Componentes","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear componente NotificacionContainer",Task,Medium,"Container para gestionar múltiples notificaciones","notificaciones,container","Componentes","Claudio Francisco Delgado Gallardo",3,Done
+"Context API y Estado Global",Task,Medium,"Implementación de Context API para estado global","context,estado","Utilidades","Rodrigo Yarzu",8,Done
+"Crear CarritoContext con Context API",Task,Medium,"Context para gestionar estado del carrito","carrito,context","Carrito","Giovanni Antonio Orellana Muñoz",5,Done
+"Implementar funciones: agregarAlCarrito, eliminarDelCarrito, actualizarCantidad, vaciarCarrito",Task,Medium,"Lógica completa del carrito de compras","carrito,funciones","Carrito","Claudio Francisco Delgado Gallardo",8,Done
+"Implementar calcularTotales con descuento 20% para @duoc.cl",Task,Medium,"Cálculo de totales con descuento automático Duoc","carrito,descuento","Carrito","Rodrigo Yarzu",5,Done
+"Implementar obtenerCantidadTotal",Task,Medium,"Función para obtener cantidad total de items en carrito","carrito,utilidades","Carrito","Giovanni Antonio Orellana Muñoz",2,Done
+"Sincronizar carrito con localStorage",Task,Medium,"Persistencia del carrito en localStorage","carrito,storage","Carrito","Claudio Francisco Delgado Gallardo",5,Done
+"Usar estructura EVA1 (codigo/qty en lugar de id/cantidad)",Task,Medium,"Adaptar estructura de datos a formato EVA1","carrito,compatibilidad","Carrito","Rodrigo Yarzu",3,Done
+"Páginas Públicas",Task,Medium,"Desarrollo de páginas informativas","paginas,publicas","Páginas Públicas","Giovanni Antonio Orellana Muñoz",8,Done
+"Migrar página Home con hero y carrusel",Task,Medium,"Homepage con hero section y carrusel de destacados","home,ui","Páginas Públicas","Claudio Francisco Delgado Gallardo",8,Done
+"Agregar funcionalidad 'Agregar al carrito' en carrusel",Task,Medium,"Botones funcionales en productos destacados","home,carrito","Páginas Públicas","Rodrigo Yarzu",3,Done
+"Migrar página Productos con grid de productos",Task,Medium,"Catálogo de productos con grid responsive","productos,catalogo","Productos","Giovanni Antonio Orellana Muñoz",8,Done
+"Migrar página Detalle de producto",Task,Medium,"Vista detallada de producto individual","productos,detalle","Productos","Rodrigo Yarzu",5,Done
+"Migrar página Carrito",Task,Medium,"Página completa del carrito de compras","carrito,ui","Carrito","Claudio Francisco Delgado Gallardo",8,Done
+"Migrar página Login",Task,Medium,"Página de inicio de sesión","login,auth","Autenticación","Giovanni Antonio Orellana Muñoz",5,Done
+"Migrar página Registro",Task,Medium,"Página de registro de usuarios","registro,auth","Autenticación","Rodrigo Yarzu",5,Done
+"Migrar página Contacto",Task,Medium,"Formulario de contacto","contacto,form","Páginas Públicas","Claudio Francisco Delgado Gallardo",3,Done
+"Migrar página Nosotros",Task,Medium,"Página institucional","nosotros,institucional","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3,Done
+"Migrar página Noticias",Task,Medium,"Sección de noticias gaming","noticias,contenido","Páginas Públicas","Rodrigo Yarzu",3,Done
+"Migrar AdminHome",Task,Medium,"Dashboard administrativo","admin,dashboard","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Migrar AdminProductos",Task,Medium,"Gestión CRUD de productos","admin,productos","Panel Admin","Giovanni Antonio Orellana Muñoz",8,Done
+"Migrar AdminUsuarios",Task,Medium,"Gestión CRUD de usuarios","admin,usuarios","Panel Admin","Rodrigo Yarzu",8,Done
+"Migrar AdminDestacados",Task,Medium,"Gestión de productos destacados","admin,destacados","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Migrar AdminLogs",Task,Medium,"Sistema de auditoría y logs","admin,logs","Panel Admin","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear AdminProductoForm",Task,Medium,"Formulario para crear/editar productos","admin,form","Panel Admin","Rodrigo Yarzu",5,Done
+"Crear AdminUsuarioForm",Task,Medium,"Formulario para crear/editar usuarios","admin,form","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Implementar ProtectedRoute",Task,High,"Protección de rutas administrativas","seguridad,routes","Seguridad","Giovanni Antonio Orellana Muñoz",5,Done
+"Sistema de roles (admin/usuario)",Task,High,"Diferenciación de permisos por rol","auth,roles","Seguridad","Rodrigo Yarzu",8,Done
+"Validación de RUN chileno",Task,Medium,"Validador de RUT/RUN con dígito verificador","validacion,chile","Utilidades","Claudio Francisco Delgado Gallardo",5,Done
+"Sistema de regiones y comunas",Task,Medium,"Datos de regiones y comunas de Chile","datos,chile","Utilidades","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear utils/data.js",Task,Medium,"Módulo de gestión de datos localStorage","utils,storage","Utilidades","Rodrigo Yarzu",5,Done
+"Crear utils/validators.js",Task,High,"Validaciones centralizadas (email, RUN, etc)","validacion,utils","Utilidades","Claudio Francisco Delgado Gallardo",5,Done
+"Crear utils/regions.js",Task,Medium,"Datos de regiones y comunas","utils,datos","Utilidades","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear utils/logManager.js",Task,Medium,"Sistema de registro de eventos","logs,auditoria","Utilidades","Rodrigo Yarzu",3,Done
+"Migrar notificaciones EVA1",Task,Medium,"Replicar sistema de notificaciones original","notificaciones,migracion","Componentes","Claudio Francisco Delgado Gallardo",5,Done
+"Validaciones JavaScript en Registro (sin validación HTML)",Task,Medium,"Validaciones custom sin atributos HTML5","registro,validacion","Autenticación","Rodrigo Yarzu",5,Done
+"Validaciones JavaScript en Contacto (sin validación HTML)",Task,Medium,"Validaciones custom en formulario contacto","contacto,validacion","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3,Done
+"Notificaciones en productos (agregar al carrito)",Task,Medium,"Toasts al agregar productos","notificaciones,productos","Componentes","Claudio Francisco Delgado Gallardo",2,Done
+"Notificaciones en carrito (pagar, eliminar)",Task,Medium,"Toasts en acciones del carrito","notificaciones,carrito","Componentes","Rodrigo Yarzu",3,Done
+"Notificaciones en admin (crear, editar, eliminar)",Task,Medium,"Toasts en panel administrativo","notificaciones,admin","Componentes","Giovanni Antonio Orellana Muñoz",3,Done
+"Pop-ups con colores EVA1 (verde/rojo/azul)",Task,Medium,"Notificaciones con paleta de colores original","notificaciones,estilos","Componentes","Claudio Francisco Delgado Gallardo",2,Done
+"Botón 'OK' para cerrar manualmente",Task,Medium,"Botón de cierre en notificaciones","notificaciones,ui","Componentes","Rodrigo Yarzu",2,Done
+"Auto-cierre después de 3 segundos",Task,Medium,"Timer automático de notificaciones","notificaciones,auto","Componentes","Giovanni Antonio Orellana Muñoz",2,Done
+"Datos y Persistencia",Task,Medium,"Sistema completo de persistencia","storage,datos","Utilidades","Claudio Francisco Delgado Gallardo",5,Done
+"Crear utils/inicializarDatos.js",Task,Medium,"Script de inicialización de datos","utils,seed","Utilidades","Rodrigo Yarzu",3,Done
+"Sembrar usuarios iniciales (admin y usuario)",Task,Medium,"Datos de prueba: usuarios","seed,usuarios","Utilidades","Giovanni Antonio Orellana Muñoz",2,Done
+"Sembrar productos iniciales (3 productos base)",Task,Medium,"Datos de prueba: productos","seed,productos","Utilidades","Claudio Francisco Delgado Gallardo",3,Done
+"Persistencia en localStorage",Task,Medium,"Guardar/cargar datos del navegador","storage,persistencia","Utilidades","Rodrigo Yarzu",5,Done
+"Compatibilidad con campos correo/email",Task,Medium,"Soporte para ambos nombres de campo","compatibilidad,datos","Utilidades","Giovanni Antonio Orellana Muñoz",2,Done
+"Estilos y UI",Task,Medium,"Sistema completo de estilos","css,ui","Estilos","Claudio Francisco Delgado Gallardo",8,Done
+"Modularizar CSS por componente",Task,Medium,"Separar estilos en archivos independientes","css,modular","Estilos","Rodrigo Yarzu",5,Done
+"Aplicar paleta de colores EVA1 (#000000, #1E90FF, #39FF14)",Task,Medium,"Colores negro, azul y verde neón","css,colores","Estilos","Giovanni Antonio Orellana Muñoz",3,Done
+"Aplicar tipografías (Orbitron/Roboto)",Task,Medium,"Fuentes gaming y legible","css,fonts","Estilos","Claudio Francisco Delgado Gallardo",2,Done
+"Replicar diseño exacto de EVA1",Task,Medium,"Mantener identidad visual original","css,diseno","Estilos","Rodrigo Yarzu",8,Done
+"Ajustar espaciado del menú",Task,Medium,"Espaciado entre items de navegación","css,header","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Ajustar colores del footer",Task,Medium,"Paleta de colores en footer","css,footer","Estilos","Claudio Francisco Delgado Gallardo",2,Done
+"Centrar formulario de contacto",Task,Medium,"Layout centrado del formulario","css,contacto","Estilos","Rodrigo Yarzu",2,Done
+"Responsive design con Bootstrap",Task,Medium,"Diseño responsive en todos los breakpoints","css,responsive","Estilos","Giovanni Antonio Orellana Muñoz",5,Done
+"Limpiar código innecesario",Task,Medium,"Refactorización y limpieza de código","refactor,cleanup","Desarrollo","Claudio Francisco Delgado Gallardo",3,Done
+"Pruebas Unitarias",Task,Highest,"Implementación completa de testing","testing,qa","Testing","Rodrigo Yarzu",13,Done
+"Instalar y configurar Webpack + Babel",Task,Medium,"Setup completo de Webpack 5 con Babel para bundling y transpilación","build,webpack,babel","Configuración","Giovanni Antonio Orellana Muñoz",5,Done
+"Configurar scripts de testing en package.json",Task,Medium,"Agregar scripts npm test, test:watch para ejecutar tests","testing,npm,scripts","Testing","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear inicializarDatos.js (carga de datos iniciales)",Task,Medium,"Script para poblar localStorage con productos y usuarios de prueba","utilidades,datos,inicializacion","Utilidades","Rodrigo Yarzu",3,Done
+"Crear validaciones.js (validación email, RUN, stock, etc.)",Task,High,"Módulo centralizado con funciones de validación reutilizables","validacion,utilidades,core","Utilidades","Rodrigo Yarzu",5,Done
+"Crear componente ProtectedRoute para rutas administrativas",Task,High,"Implementar HOC que valide rol de usuario y redirija a login si no es admin","autenticacion,seguridad,react","Seguridad","Rodrigo Yarzu",5,Done
+"Implementar sistema de autenticación con roles (admin/usuario)",Task,High,"Sistema que diferencie entre usuarios normales y administradores en localStorage","autenticacion,roles,seguridad","Seguridad","Rodrigo Yarzu",8,Done
+"Crear página Login con validación de credenciales",Task,High,"Página completa de login con validación de email/password y manejo de errores","autenticacion,ui,validacion","Autenticación","Rodrigo Yarzu",5,Done
+"Crear página Registro con validación de formulario",Task,Medium,"Formulario de registro con validación de RUN, email, contraseña, región/comuna","registro,validacion,ui","Autenticación","Rodrigo Yarzu",5,Done
+"Implementar persistencia de sesión en localStorage",Task,Medium,"Guardar usuario actual en localStorage y mantener sesión activa","autenticacion,persistencia,storage","Seguridad","Rodrigo Yarzu",3,Done
+"Implementar validación de correos duplicados",Task,Medium,"Validar que no se registren usuarios con correos ya existentes","validacion,usuarios,registro","Autenticación","Rodrigo Yarzu",3,Done
+"Crear estilos CSS para Login/Registro (Login.css y Registro.css)",Task,Medium,"Diseño de formularios de autenticación con tema gaming","css,estilos,auth","Estilos","Rodrigo Yarzu",3,Done
+"Crear página Productos con filtros y búsqueda",Task,High,"Catálogo completo con filtros por categoría, búsqueda en tiempo real y paginación","productos,catalogo,filtros","Productos","Giovanni Antonio Orellana Muñoz",8,Done
+"Crear página Detalle de producto con zoom de imagen",Task,High,"Vista detallada de producto con galería de imágenes, zoom, stock y valoraciones","productos,ui,zoom","Productos","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear página Carrito completa (resumen, totales, finalizar compra)",Task,High,"Página dedicada con tabla de productos, cantidades, subtotales, descuentos y botón finalizar","carrito,compras,ui","Carrito","Rodrigo Yarzu",8,Done
+"Implementar actualización de stock al finalizar compra",Task,High,"Reducir stock de productos automáticamente al confirmar compra","carrito,stock,logica","Carrito","Rodrigo Yarzu",5,Done
+"Implementar descuento automático en carrito al finalizar compra",Task,Medium,"Aplicar 20% de descuento automático para usuarios con correo @duoc.cl","carrito,descuentos,logica","Carrito","Rodrigo Yarzu",3,Done
+"Crear zoomManager.js (zoom de imágenes en detalle)",Task,Low,"Utilidad para manejar zoom de imágenes en página de detalle de producto","utilidades,zoom,imagenes","Utilidades","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para catálogo Productos (Productos.css)",Task,Medium,"Grid de productos, filtros, búsqueda y paginación responsive","css,estilos,productos","Estilos","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para página Detalle (Detalle.css)",Task,Medium,"Diseño de galería de imágenes, zoom, información y botón agregar al carrito","css,estilos,productos","Estilos","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para página Carrito (Carrito.css)",Task,Medium,"Diseño responsive de tabla de carrito, totales y botones","css,estilos,carrito","Estilos","Rodrigo Yarzu",3,Done
+"Crear estilos CSS para Homepage (Home.css)",Task,Medium,"Estilos de hero section y carrusel de productos destacados","css,estilos,home","Estilos","Rodrigo Yarzu",3,Done
+"Crear página AdminHome (dashboard con estadísticas)",Task,High,"Dashboard con KPIs: total productos, usuarios, stock bajo, productos destacados","admin,dashboard,estadisticas","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Crear página AdminProductos (gestión CRUD completa)",Task,High,"Panel administrativo con tabla de productos, búsqueda y acciones CRUD","admin,crud,productos","Panel Admin","Claudio Francisco Delgado Gallardo",8,Done
+"Crear componente AdminProductoForm (crear/editar productos)",Task,Medium,"Formulario completo para agregar/editar productos con validaciones","admin,productos,form","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Implementar funcionalidad eliminar productos con confirmación",Task,Medium,"Eliminar productos con modal de confirmación y actualización de stock","admin,productos,crud","Panel Admin","Claudio Francisco Delgado Gallardo",3,Done
+"Crear página AdminUsuarios (listado CRUD)",Task,High,"Página administrativa con tabla de usuarios, filtros y acciones CRUD","admin,crud,usuarios","Panel Admin","Claudio Francisco Delgado Gallardo",8,Done
+"Crear componente AdminUsuarioForm (crear/editar usuarios)",Task,Medium,"Formulario reutilizable para crear y editar usuarios desde el panel admin","admin,usuarios,form","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Implementar funcionalidad eliminar usuarios",Task,Medium,"Permitir a administradores eliminar usuarios con confirmación modal","admin,usuarios,crud","Panel Admin","Claudio Francisco Delgado Gallardo",3,Done
+"Crear página AdminDestacados (gestión productos destacados en carrusel)",Task,Medium,"Panel para seleccionar hasta 6 productos destacados que aparecen en homepage","admin,productos,destacados","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Crear estilos CSS para Panel Administrativo (Admin.css)",Task,Medium,"Estilos completos para todas las páginas del panel admin","css,estilos,admin","Estilos","Claudio Francisco Delgado Gallardo",5,Done
+"Crear página AdminLogs (auditoría de acciones)",Task,Medium,"Sistema de logs con filtros por tipo, fecha y usuario para auditoría completa","admin,logs,auditoria","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Implementar logManager.js (sistema de registro de eventos)",Task,Medium,"Utilidad para registrar todas las acciones administrativas (CRUD, login, etc.)","utilidades,logs,auditoria","Utilidades","Claudio Francisco Delgado Gallardo",3,Done
+"Crear componente ModalConfirmacion (confirmación de acciones destructivas)",Task,Medium,"Modal reutilizable para confirmar eliminaciones y acciones irreversibles","components,ui,modal","Componentes","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear página Contacto con formulario y validación",Task,Medium,"Formulario de contacto con validaciones, mapa y datos de contacto","paginas,contacto,form","Páginas Públicas","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear página Nosotros (información de la empresa)",Task,Low,"Página institucional con misión, visión, historia y equipo","paginas,nosotros,institucional","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear página Noticias (contenido gaming)",Task,Low,"Sección de noticias sobre gaming, lanzamientos y eventos","paginas,noticias,contenido","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para Header (Header.css)",Task,Medium,"Navegación responsive con dropdown de carrito y menú mobile","css,estilos,header","Estilos","Rodrigo Yarzu",3,Done
+"Crear estilos CSS para página Contacto (Contacto.css)",Task,Low,"Estilos de formulario, mapa y sección de información de contacto","css,estilos,contacto","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear estilos CSS para página Nosotros (Nosotros.css)",Task,Low,"Diseño de secciones institucionales (misión, visión, equipo)","css,estilos,nosotros","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear estilos CSS para página Noticias (Noticias.css)",Task,Low,"Diseño de tarjetas de noticias y layout tipo blog","css,estilos,noticias","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Configurar Karma + Jasmine para testing",Task,High,"Instalar y configurar Karma como test runner y Jasmine como framework","testing,configuracion,karma","Testing","Giovanni Antonio Orellana Muñoz",8,Done
+"Configurar karma.conf.js completo",Task,Medium,"Archivo de configuración de Karma con Chrome launcher, Webpack y reporters","testing,karma,configuracion","Testing","Giovanni Antonio Orellana Muñoz",3,Done
+"Configurar Webpack para bundling de tests",Task,Medium,"Setup de Webpack con Babel para transpilar tests a ES5","testing,webpack,configuracion","Testing","Giovanni Antonio Orellana Muñoz",5,Done
+"Instalar y configurar Testing Library",Task,Medium,"Instalar @testing-library/react, jest-dom y user-event para testing avanzado","testing,dependencias,configuracion","Testing","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear tests de Login (4 tests)",Task,High,"Tests unitarios: email vacío, formato email, password vacío, validar credenciales","testing,login,validacion","Testing","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear tests de Registro (4 tests)",Task,High,"Tests: formato RUN, longitud nombre, longitud apellidos, emails duplicados","testing,registro,validacion","Testing","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear tests de Carrito (2 tests)",Task,Medium,"Tests: agregar producto al carrito, validar stock disponible","testing,carrito,validacion","Testing","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para Footer (Footer.css)",Task,Low,"Footer con redes sociales, enlaces y copyright","css,estilos,footer","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear componente CarritoDebug para desarrollo",Task,Low,"Componente de debugging que muestra estado del carrito en tiempo real","debug,carrito,dev","Desarrollo","Rodrigo Yarzu",2,Done
+"Configurar scripts de testing en package.json",Task,Medium,"Agregar scripts npm test, test:watch para ejecutar tests","testing,npm,scripts","Testing","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear inicializarDatos.js (carga de datos iniciales)",Task,Medium,"Script para poblar localStorage con productos y usuarios de prueba","utilidades,datos,inicializacion","Utilidades","Rodrigo Yarzu",3,Done
+"Crear validaciones.js (validación email, RUN, stock, etc.)",Task,High,"Módulo centralizado con funciones de validación reutilizables","validacion,utilidades,core","Utilidades","Rodrigo Yarzu",5,Done
+"Crear componente ProtectedRoute para rutas administrativas",Task,High,"Implementar HOC que valide rol de usuario y redirija a login si no es admin","autenticacion,seguridad,react","Seguridad","Rodrigo Yarzu",5,Done
+"Implementar sistema de autenticación con roles (admin/usuario)",Task,High,"Sistema que diferencie entre usuarios normales y administradores en localStorage","autenticacion,roles,seguridad","Seguridad","Rodrigo Yarzu",8,Done
+"Crear página Login con validación de credenciales",Task,High,"Página completa de login con validación de email/password y manejo de errores","autenticacion,ui,validacion","Autenticación","Rodrigo Yarzu",5,Done
+"Crear página Registro con validación de formulario",Task,Medium,"Formulario de registro con validación de RUN, email, contraseña, región/comuna","registro,validacion,ui","Autenticación","Rodrigo Yarzu",5,Done
+"Implementar persistencia de sesión en localStorage",Task,Medium,"Guardar usuario actual en localStorage y mantener sesión activa","autenticacion,persistencia,storage","Seguridad","Rodrigo Yarzu",3,Done
+"Implementar validación de correos duplicados",Task,Medium,"Validar que no se registren usuarios con correos ya existentes","validacion,usuarios,registro","Autenticación","Rodrigo Yarzu",3,Done
+"Crear estilos CSS para Login/Registro (Login.css y Registro.css)",Task,Medium,"Diseño de formularios de autenticación con tema gaming","css,estilos,auth","Estilos","Rodrigo Yarzu",3,Done
+"Crear página Productos con filtros y búsqueda",Task,High,"Catálogo completo con filtros por categoría, búsqueda en tiempo real y paginación","productos,catalogo,filtros","Productos","Giovanni Antonio Orellana Muñoz",8,Done
+"Crear página Detalle de producto con zoom de imagen",Task,High,"Vista detallada de producto con galería de imágenes, zoom, stock y valoraciones","productos,ui,zoom","Productos","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear página Carrito completa (resumen, totales, finalizar compra)",Task,High,"Página dedicada con tabla de productos, cantidades, subtotales, descuentos y botón finalizar","carrito,compras,ui","Carrito","Rodrigo Yarzu",8,Done
+"Implementar actualización de stock al finalizar compra",Task,High,"Reducir stock de productos automáticamente al confirmar compra","carrito,stock,logica","Carrito","Rodrigo Yarzu",5,Done
+"Implementar descuento automático en carrito al finalizar compra",Task,Medium,"Aplicar 20% de descuento automático para usuarios con correo @duoc.cl","carrito,descuentos,logica","Carrito","Rodrigo Yarzu",3,Done
+"Crear zoomManager.js (zoom de imágenes en detalle)",Task,Low,"Utilidad para manejar zoom de imágenes en página de detalle de producto","utilidades,zoom,imagenes","Utilidades","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para catálogo Productos (Productos.css)",Task,Medium,"Grid de productos, filtros, búsqueda y paginación responsive","css,estilos,productos","Estilos","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para página Detalle (Detalle.css)",Task,Medium,"Diseño de galería de imágenes, zoom, información y botón agregar al carrito","css,estilos,productos","Estilos","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para página Carrito (Carrito.css)",Task,Medium,"Diseño responsive de tabla de carrito, totales y botones","css,estilos,carrito","Estilos","Rodrigo Yarzu",3,Done
+"Crear estilos CSS para Homepage (Home.css)",Task,Medium,"Estilos de hero section y carrusel de productos destacados","css,estilos,home","Estilos","Rodrigo Yarzu",3,Done
+"Crear página AdminHome (dashboard con estadísticas)",Task,High,"Dashboard con KPIs: total productos, usuarios, stock bajo, productos destacados","admin,dashboard,estadisticas","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Crear página AdminProductos (gestión CRUD completa)",Task,High,"Panel administrativo con tabla de productos, búsqueda y acciones CRUD","admin,crud,productos","Panel Admin","Claudio Francisco Delgado Gallardo",8,Done
+"Crear componente AdminProductoForm (crear/editar productos)",Task,Medium,"Formulario completo para agregar/editar productos con validaciones","admin,productos,form","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Implementar funcionalidad eliminar productos con confirmación",Task,Medium,"Eliminar productos con modal de confirmación y actualización de stock","admin,productos,crud","Panel Admin","Claudio Francisco Delgado Gallardo",3,Done
+"Crear página AdminUsuarios (listado CRUD)",Task,High,"Página administrativa con tabla de usuarios, filtros y acciones CRUD","admin,crud,usuarios","Panel Admin","Claudio Francisco Delgado Gallardo",8,Done
+"Crear componente AdminUsuarioForm (crear/editar usuarios)",Task,Medium,"Formulario reutilizable para crear y editar usuarios desde el panel admin","admin,usuarios,form","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Implementar funcionalidad eliminar usuarios",Task,Medium,"Permitir a administradores eliminar usuarios con confirmación modal","admin,usuarios,crud","Panel Admin","Claudio Francisco Delgado Gallardo",3,Done
+"Crear página AdminDestacados (gestión productos destacados en carrusel)",Task,Medium,"Panel para seleccionar hasta 6 productos destacados que aparecen en homepage","admin,productos,destacados","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Crear estilos CSS para Panel Administrativo (Admin.css)",Task,Medium,"Estilos completos para todas las páginas del panel admin","css,estilos,admin","Estilos","Claudio Francisco Delgado Gallardo",5,Done
+"Crear página AdminLogs (auditoría de acciones)",Task,Medium,"Sistema de logs con filtros por tipo, fecha y usuario para auditoría completa","admin,logs,auditoria","Panel Admin","Claudio Francisco Delgado Gallardo",5,Done
+"Implementar logManager.js (sistema de registro de eventos)",Task,Medium,"Utilidad para registrar todas las acciones administrativas (CRUD, login, etc.)","utilidades,logs,auditoria","Utilidades","Claudio Francisco Delgado Gallardo",3,Done
+"Crear componente ModalConfirmacion (confirmación de acciones destructivas)",Task,Medium,"Modal reutilizable para confirmar eliminaciones y acciones irreversibles","components,ui,modal","Componentes","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear página Contacto con formulario y validación",Task,Medium,"Formulario de contacto con validaciones, mapa y datos de contacto","paginas,contacto,form","Páginas Públicas","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear página Nosotros (información de la empresa)",Task,Low,"Página institucional con misión, visión, historia y equipo","paginas,nosotros,institucional","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear página Noticias (contenido gaming)",Task,Low,"Sección de noticias sobre gaming, lanzamientos y eventos","paginas,noticias,contenido","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para Header (Header.css)",Task,Medium,"Navegación responsive con dropdown de carrito y menú mobile","css,estilos,header","Estilos","Rodrigo Yarzu",3,Done
+"Crear estilos CSS para página Contacto (Contacto.css)",Task,Low,"Estilos de formulario, mapa y sección de información de contacto","css,estilos,contacto","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear estilos CSS para página Nosotros (Nosotros.css)",Task,Low,"Diseño de secciones institucionales (misión, visión, equipo)","css,estilos,nosotros","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear estilos CSS para página Noticias (Noticias.css)",Task,Low,"Diseño de tarjetas de noticias y layout tipo blog","css,estilos,noticias","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Configurar Karma + Jasmine para testing",Task,High,"Instalar y configurar Karma como test runner y Jasmine como framework","testing,configuracion,karma","Testing","Giovanni Antonio Orellana Muñoz",8,Done
+"Configurar karma.conf.js completo",Task,Medium,"Archivo de configuración de Karma con Chrome launcher, Webpack y reporters","testing,karma,configuracion","Testing","Giovanni Antonio Orellana Muñoz",3,Done
+"Configurar Webpack para bundling de tests",Task,Medium,"Setup de Webpack con Babel para transpilar tests a ES5","testing,webpack,configuracion","Testing","Giovanni Antonio Orellana Muñoz",5,Done
+"Instalar y configurar Testing Library",Task,Medium,"Instalar @testing-library/react, jest-dom y user-event para testing avanzado","testing,dependencias,configuracion","Testing","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear tests de Login (4 tests)",Task,High,"Tests unitarios: email vacío, formato email, password vacío, validar credenciales","testing,login,validacion","Testing","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear tests de Registro (4 tests)",Task,High,"Tests: formato RUN, longitud nombre, longitud apellidos, emails duplicados","testing,registro,validacion","Testing","Giovanni Antonio Orellana Muñoz",5,Done
+"Crear tests de Carrito (2 tests)",Task,Medium,"Tests: agregar producto al carrito, validar stock disponible","testing,carrito,validacion","Testing","Giovanni Antonio Orellana Muñoz",3,Done
+"Crear estilos CSS para Footer (Footer.css)",Task,Low,"Footer con redes sociales, enlaces y copyright","css,estilos,footer","Estilos","Giovanni Antonio Orellana Muñoz",2,Done
+"Crear componente CarritoDebug para desarrollo",Task,Low,"Componente de debugging que muestra estado del carrito en tiempo real","debug,carrito,dev","Desarrollo","Rodrigo Yarzu",2,Done

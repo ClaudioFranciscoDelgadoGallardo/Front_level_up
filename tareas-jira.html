@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tareas Faltantes en Jira - Level-Up</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 40px 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stat-card.high .number { color: #dc3545; }
+        .stat-card.medium .number { color: #ffc107; }
+        .stat-card.low .number { color: #28a745; }
+        .stat-card.total .number { color: #667eea; }
+
+        .content {
+            padding: 40px;
+        }
+
+        .priority-section {
+            margin-bottom: 50px;
+        }
+
+        .priority-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #e0e0e0;
+        }
+
+        .priority-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .badge-high {
+            background: #dc3545;
+            color: white;
+        }
+
+        .badge-medium {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .badge-low {
+            background: #28a745;
+            color: white;
+        }
+
+        .priority-header h2 {
+            font-size: 1.8rem;
+            color: #333;
+        }
+
+        .category {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+
+        .task-card {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .task-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .task-description {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .task-type {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 12px;
+            border-radius: 15px;
+        }
+
+        .task-priority {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+        }
+
+        .priority-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .priority-medium {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .priority-low {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .button-print {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .button-print:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .button-print {
+                display: none;
+            }
+            .task-card {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 LEVEL-UP GAMER</h1>
+            <p>Tareas Faltantes en Jira - Organizadas por Prioridad</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card total">
+                <div class="number">47</div>
+                <div class="label">Total Tareas</div>
+            </div>
+            <div class="stat-card high">
+                <div class="number">15</div>
+                <div class="label">Alta Prioridad</div>
+            </div>
+            <div class="stat-card medium">
+                <div class="number">25</div>
+                <div class="label">Media Prioridad</div>
+            </div>
+            <div class="stat-card low">
+                <div class="number">7</div>
+                <div class="label">Baja Prioridad</div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <!-- ALTA PRIORIDAD -->
+            <div class="priority-section">
+                <div class="priority-header">
+                    <span class="priority-badge badge-high">HIGH</span>
+                    <h2>Alta Prioridad (15 tareas)</h2>
+                </div>
+
+                <!-- Autenticación -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🔐</span>
+                        AUTENTICACIÓN Y SEGURIDAD
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-25: Crear componente ProtectedRoute para rutas administrativas</div>
+                        <div class="task-description">Implementar HOC que valide rol de usuario y redirija a login si no es admin</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-26: Implementar sistema de autenticación con roles (admin/usuario)</div>
+                        <div class="task-description">Sistema que diferencie entre usuarios normales y administradores en localStorage</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-27: Crear página Login con validación de credenciales</div>
+                        <div class="task-description">Página completa de login con validación de email/password y manejo de errores</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usuarios -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">👤</span>
+                        GESTIÓN DE USUARIOS
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-28: Crear página AdminUsuarios (listado CRUD)</div>
+                        <div class="task-description">Página administrativa con tabla de usuarios, filtros y acciones CRUD</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛍️</span>
+                        PRODUCTOS Y CATÁLOGO
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-29: Crear página Productos con filtros y búsqueda</div>
+                        <div class="task-description">Catálogo completo con filtros por categoría, búsqueda en tiempo real y paginación</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-30: Crear página Detalle de producto con zoom de imagen</div>
+                        <div class="task-description">Vista detallada de producto con galería de imágenes, zoom, stock y valoraciones</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-31: Crear página AdminProductos (gestión CRUD completa)</div>
+                        <div class="task-description">Panel administrativo con tabla de productos, búsqueda y acciones CRUD</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carrito -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛒</span>
+                        CARRITO DE COMPRAS
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-32: Crear página Carrito completa (resumen, totales, finalizar compra)</div>
+                        <div class="task-description">Página dedicada con tabla de productos, cantidades, subtotales, descuentos y botón finalizar</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-33: Implementar actualización de stock al finalizar compra</div>
+                        <div class="task-description">Reducir stock de productos automáticamente al confirmar compra</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Admin -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">📊</span>
+                        PANEL ADMINISTRATIVO
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-34: Crear página AdminHome (dashboard con estadísticas)</div>
+                        <div class="task-description">Dashboard con KPIs: total productos, usuarios, stock bajo, productos destacados</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testing -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🧪</span>
+                        TESTING
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-35: Configurar Karma + Jasmine para testing</div>
+                        <div class="task-description">Instalar y configurar Karma como test runner y Jasmine como framework</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-36: Crear tests de Login (4 tests)</div>
+                        <div class="task-description">Tests unitarios: email vacío, formato email, password vacío, validar credenciales</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-37: Crear tests de Registro (4 tests)</div>
+                        <div class="task-description">Tests: formato RUN, longitud nombre, longitud apellidos, emails duplicados</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Utilidades -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛠️</span>
+                        UTILIDADES Y VALIDACIONES
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-38: Crear validaciones.js (validación email, RUN, stock, etc.)</div>
+                        <div class="task-description">Módulo centralizado con funciones de validación reutilizables</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-high">High</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MEDIA PRIORIDAD -->
+            <div class="priority-section">
+                <div class="priority-header">
+                    <span class="priority-badge badge-medium">MEDIUM</span>
+                    <h2>Media Prioridad (25 tareas)</h2>
+                </div>
+
+                <!-- Autenticación -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🔐</span>
+                        AUTENTICACIÓN Y SEGURIDAD
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-39: Crear página Registro con validación de formulario</div>
+                        <div class="task-description">Formulario de registro con validación de RUN, email, contraseña, región/comuna</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-40: Implementar persistencia de sesión en localStorage</div>
+                        <div class="task-description">Guardar usuario actual en localStorage y mantener sesión activa</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usuarios -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">👤</span>
+                        GESTIÓN DE USUARIOS
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-41: Crear componente AdminUsuarioForm (crear/editar usuarios)</div>
+                        <div class="task-description">Formulario reutilizable para crear y editar usuarios desde el panel admin</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-42: Implementar funcionalidad eliminar usuarios</div>
+                        <div class="task-description">Permitir a administradores eliminar usuarios con confirmación modal</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-43: Implementar validación de correos duplicados</div>
+                        <div class="task-description">Validar que no se registren usuarios con correos ya existentes</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛍️</span>
+                        PRODUCTOS Y CATÁLOGO
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-44: Crear componente AdminProductoForm (crear/editar productos)</div>
+                        <div class="task-description">Formulario completo para agregar/editar productos con validaciones</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-45: Implementar funcionalidad eliminar productos con confirmación</div>
+                        <div class="task-description">Eliminar productos con modal de confirmación y actualización de stock</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-46: Crear página AdminDestacados (gestión productos destacados en carrusel)</div>
+                        <div class="task-description">Panel para seleccionar hasta 6 productos destacados que aparecen en homepage</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carrito -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛒</span>
+                        CARRITO DE COMPRAS
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-47: Implementar descuento automático en carrito al finalizar compra</div>
+                        <div class="task-description">Aplicar 20% de descuento automático para usuarios con correo @duoc.cl</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Admin -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">📊</span>
+                        PANEL ADMINISTRATIVO
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-48: Crear página AdminLogs (auditoría de acciones)</div>
+                        <div class="task-description">Sistema de logs con filtros por tipo, fecha y usuario para auditoría completa</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-49: Implementar logManager.js (sistema de registro de eventos)</div>
+                        <div class="task-description">Utilidad para registrar todas las acciones administrativas (CRUD, login, etc.)</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-50: Crear componente ModalConfirmacion (confirmación de acciones destructivas)</div>
+                        <div class="task-description">Modal reutilizable para confirmar eliminaciones y acciones irreversibles</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Páginas -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">📄</span>
+                        PÁGINAS INFORMATIVAS
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-51: Crear página Contacto con formulario y validación</div>
+                        <div class="task-description">Formulario de contacto con validaciones, mapa y datos de contacto</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testing -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🧪</span>
+                        TESTING
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-52: Crear tests de Carrito (2 tests)</div>
+                        <div class="task-description">Tests: agregar producto al carrito, validar stock disponible</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-53: Configurar Webpack para bundling de tests</div>
+                        <div class="task-description">Setup de Webpack con Babel para transpilar tests a ES5</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Utilidades -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛠️</span>
+                        UTILIDADES Y VALIDACIONES
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-54: Crear inicializarDatos.js (carga de datos iniciales)</div>
+                        <div class="task-description">Script para poblar localStorage con productos y usuarios de prueba</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estilos -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🎨</span>
+                        ESTILOS Y DISEÑO
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-55: Crear estilos CSS para Panel Administrativo (Admin.css)</div>
+                        <div class="task-description">Estilos completos para todas las páginas del panel admin</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-56: Crear estilos CSS para página Carrito (Carrito.css)</div>
+                        <div class="task-description">Diseño responsive de tabla de carrito, totales y botones</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-57: Crear estilos CSS para página Detalle (Detalle.css)</div>
+                        <div class="task-description">Diseño de galería de imágenes, zoom, información y botón agregar al carrito</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-58: Crear estilos CSS para Homepage (Home.css)</div>
+                        <div class="task-description">Estilos de hero section y carrusel de productos destacados</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-59: Crear estilos CSS para Login/Registro (Login.css y Registro.css)</div>
+                        <div class="task-description">Diseño de formularios de autenticación con tema gaming</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-60: Crear estilos CSS para catálogo Productos (Productos.css)</div>
+                        <div class="task-description">Grid de productos, filtros, búsqueda y paginación responsive</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-61: Crear estilos CSS para Header (Header.css)</div>
+                        <div class="task-description">Navegación responsive con dropdown de carrito y menú mobile</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Configuración -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">⚙️</span>
+                        CONFIGURACIÓN AVANZADA
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-62: Configurar karma.conf.js completo</div>
+                        <div class="task-description">Archivo de configuración de Karma con Chrome launcher, Webpack y reporters</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-63: Instalar y configurar Testing Library</div>
+                        <div class="task-description">Instalar @testing-library/react, jest-dom y user-event para testing avanzado</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-64: Instalar y configurar Webpack + Babel</div>
+                        <div class="task-description">Setup completo de Webpack 5 con Babel para bundling y transpilación</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-65: Configurar scripts de testing en package.json</div>
+                        <div class="task-description">Agregar scripts npm test, test:watch para ejecutar tests</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-medium">Medium</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BAJA PRIORIDAD -->
+            <div class="priority-section">
+                <div class="priority-header">
+                    <span class="priority-badge badge-low">LOW</span>
+                    <h2>Baja Prioridad (7 tareas)</h2>
+                </div>
+
+                <!-- Carrito -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛒</span>
+                        CARRITO DE COMPRAS
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-66: Crear componente CarritoDebug para desarrollo</div>
+                        <div class="task-description">Componente de debugging que muestra estado del carrito en tiempo real</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Páginas -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">📄</span>
+                        PÁGINAS INFORMATIVAS
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-67: Crear página Nosotros (información de la empresa)</div>
+                        <div class="task-description">Página institucional con misión, visión, historia y equipo</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-68: Crear página Noticias (contenido gaming)</div>
+                        <div class="task-description">Sección de noticias sobre gaming, lanzamientos y eventos</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Utilidades -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🛠️</span>
+                        UTILIDADES Y VALIDACIONES
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-69: Crear zoomManager.js (zoom de imágenes en detalle)</div>
+                        <div class="task-description">Utilidad para manejar zoom de imágenes en página de detalle de producto</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estilos -->
+                <div class="category">
+                    <div class="category-title">
+                        <span class="category-icon">🎨</span>
+                        ESTILOS Y DISEÑO
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-70: Crear estilos CSS para página Contacto (Contacto.css)</div>
+                        <div class="task-description">Estilos de formulario, mapa y sección de información de contacto</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-71: Crear estilos CSS para página Nosotros (Nosotros.css)</div>
+                        <div class="task-description">Diseño de secciones institucionales (misión, visión, equipo)</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-72: Crear estilos CSS para página Noticias (Noticias.css)</div>
+                        <div class="task-description">Diseño de tarjetas de noticias y layout tipo blog</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-title">LEV-73: Crear estilos CSS para Footer (Footer.css)</div>
+                        <div class="task-description">Footer con redes sociales, enlaces y copyright</div>
+                        <div class="task-meta">
+                            <span class="task-type">Tarea</span>
+                            <span class="task-priority priority-low">Low</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <button class="button-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+
+    <script>
+        console.log('📋 Tareas Jira - Level-Up Gamer');
+        console.log('Total: 47 tareas');
+        console.log('High: 15 | Medium: 25 | Low: 7');
+    </script>
+
+</body>
+</html>

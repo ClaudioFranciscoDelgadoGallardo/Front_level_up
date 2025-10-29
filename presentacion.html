@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level-Up Gamer - Presentación</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            padding: 60px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            color: #39FF14;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+        }
+
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 40px;
+            color: #39FF14;
+            border-bottom: 4px solid #1E90FF;
+            padding-bottom: 20px;
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin: 30px 0 20px 0;
+            color: #1E90FF;
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: #1E90FF;
+            margin-bottom: 40px;
+        }
+
+        .team {
+            font-size: 1.5rem;
+            line-height: 2.2;
+            color: #ccc;
+            margin-top: 30px;
+        }
+
+        .content {
+            font-size: 1.4rem;
+            line-height: 2;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            margin-top: 30px;
+        }
+
+        .column {
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 2px solid rgba(57, 255, 20, 0.3);
+        }
+
+        .column h3 {
+            color: #ff4444;
+            margin-bottom: 20px;
+        }
+
+        .column.solution h3 {
+            color: #39FF14;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        li {
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 1.3rem;
+        }
+
+        li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #39FF14;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .problem li:before {
+            content: "✗";
+            color: #ff4444;
+        }
+
+        pre {
+            background: #0a0a0a;
+            border: 2px solid #39FF14;
+            border-radius: 10px;
+            padding: 25px;
+            font-size: 1.1rem;
+            overflow-x: auto;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
+        }
+
+        code {
+            color: #39FF14;
+            font-family: 'Courier New', monospace;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 20px;
+            z-index: 1000;
+        }
+
+        button {
+            background: #39FF14;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #1E90FF;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            background: #333;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .slide-number {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            font-size: 1.5rem;
+            color: #666;
+            z-index: 1000;
+        }
+
+        .highlight {
+            color: #39FF14;
+            font-weight: bold;
+        }
+
+        .highlight-blue {
+            color: #1E90FF;
+            font-weight: bold;
+        }
+
+        .tech-stack {
+            background: rgba(30, 144, 255, 0.1);
+            border-left: 5px solid #1E90FF;
+            padding: 20px 30px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            line-height: 2;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-box {
+            background: rgba(57, 255, 20, 0.1);
+            border: 2px solid #39FF14;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 30px;
+            background: rgba(30, 144, 255, 0.1);
+            border: 2px solid #1E90FF;
+            border-radius: 15px;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            color: #39FF14;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            color: #ccc;
+        }
+
+        .centro {
+            text-align: center;
+        }
+
+        .grande {
+            font-size: 2.5rem;
+            margin: 40px 0;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-number">
+        <span id="currentSlide">1</span> / <span id="totalSlides">15</span>
+    </div>
+
+    <!-- SLIDE 1: PORTADA -->
+    <div class="slide active" data-slide="1">
+        <h1 class="centro">🎮 LEVEL-UP GAMER</h1>
+        <p class="subtitle centro">E-commerce Gaming con React</p>
+        
+        <div class="team centro">
+            <p><strong>Desarrolladores:</strong></p>
+            <p>👤 Rodrigo (Frontend + Carrito)</p>
+            <p>👤 Claudio (Backend + Admin)</p>
+            <p>👤 Giovanni (UI/UX + Testing)</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: PROBLEMA Y SOLUCIÓN -->
+    <div class="slide" data-slide="2">
+        <h2>El Problema y Nuestra Solución</h2>
+        <div class="two-columns">
+            <div class="column problem">
+                <h3>❌ PROBLEMA</h3>
+                <ul>
+                    <li>Gamers necesitan plataforma confiable</li>
+                    <li>Tiendas necesitan gestión eficiente</li>
+                    <li>Sin control de inventario en tiempo real</li>
+                </ul>
+            </div>
+            <div class="column solution">
+                <h3>✅ SOLUCIÓN</h3>
+                <ul>
+                    <li>Catálogo dinámico con búsqueda</li>
+                    <li>Panel admin completo (CRUD)</li>
+                    <li>Carrito persistente</li>
+                    <li>Autenticación con roles</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: STACK TECNOLÓGICO -->
+    <div class="slide" data-slide="3">
+        <h2>Stack Tecnológico</h2>
+        <div class="tech-stack">
+            <strong style="color: #39FF14; font-size: 1.5rem;">STACK PRINCIPAL</strong><br>
+            ├── React 19.2.0          → Framework UI<br>
+            ├── React Router 7.9.4    → SPA Navigation<br>
+            ├── Context API           → Estado global<br>
+            ├── Bootstrap 5           → Responsive design<br>
+            └── LocalStorage          → Persistencia<br><br>
+            
+            <strong style="color: #1E90FF; font-size: 1.5rem;">TESTING & BUILD</strong><br>
+            ├── Karma + Jasmine       → Testing<br>
+            ├── Webpack + Babel       → Build tools<br>
+            └── Git/GitHub            → Version control
+        </div>
+    </div>
+
+    <!-- SLIDE 4: FUNCIONALIDADES USUARIO -->
+    <div class="slide" data-slide="4">
+        <h2>Experiencia de Usuario</h2>
+        <div class="features">
+            <div class="feature-box">✓ Catálogo con filtros por categoría</div>
+            <div class="feature-box">✓ Búsqueda en tiempo real</div>
+            <div class="feature-box">✓ Sistema de valoraciones ⭐</div>
+            <div class="feature-box">✓ Carrito persistente</div>
+            <div class="feature-box">✓ Diseño 100% responsive</div>
+            <div class="feature-box">✓ Notificaciones en tiempo real</div>
+        </div>
+        <p class="centro grande" style="margin-top: 60px;">
+            <span class="highlight">🎬 DEMOSTRACIÓN EN VIVO 🎬</span>
+        </p>
+    </div>
+
+    <!-- SLIDE 5: PANEL ADMIN -->
+    <div class="slide" data-slide="5">
+        <h2>Panel de Administración</h2>
+        <div class="content">
+            <ul>
+                <li>Dashboard con estadísticas en tiempo real</li>
+                <li>CRUD Productos completo</li>
+                <li>CRUD Usuarios y gestión de roles</li>
+                <li>Gestión de productos destacados</li>
+                <li>Sistema de logs y auditoría</li>
+                <li>Rutas protegidas por autenticación</li>
+            </ul>
+        </div>
+        <p class="centro grande" style="margin-top: 60px;">
+            <span class="highlight-blue">🔐 DEMO ADMIN 🔐</span>
+        </p>
+    </div>
+
+    <!-- SLIDE 6: CONTEXT API -->
+    <div class="slide" data-slide="6">
+        <h2>Context API - Estado Global</h2>
+        <pre><code>// CarritoContext.js
+const CarritoProvider = ({ children }) => {
+  const [carrito, setCarrito] = useState([]);
+
+  // Persistencia automática
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }, [carrito]);
+
+  const agregarAlCarrito = (producto, qty = 1) => {
+    if (producto.stock <= 0) {
+      notificar('Sin stock', 'error');
+      return;
+    }
+    
+    setCarrito(prev => [...prev, {...producto, qty}]);
+  };
+
+  return (
+    &lt;CarritoContext.Provider value={{ carrito, agregarAlCarrito }}&gt;
+      {children}
+    &lt;/CarritoContext.Provider&gt;
+  );
+};</code></pre>
+    </div>
+
+    <!-- SLIDE 7: PROTECTED ROUTE -->
+    <div class="slide" data-slide="7">
+        <h2>Rutas Protegidas</h2>
+        <pre><code>// ProtectedRoute.js
+export default function ProtectedRoute({ children }) {
+  const usuario = JSON.parse(
+    localStorage.getItem('usuarioActual') || 'null'
+  );
+  
+  const esAdmin = usuario?.rol === 'admin';
+
+  if (!esAdmin) {
+    return &lt;Navigate to="/login" replace /&gt;;
+  }
+
+  return children;
+}
+
+// Uso en App.js
+&lt;Route 
+  path="/admin" 
+  element={
+    &lt;ProtectedRoute&gt;
+      &lt;AdminHome /&gt;
+    &lt;/ProtectedRoute&gt;
+  } 
+/&gt;</code></pre>
+    </div>
+
+    <!-- SLIDE 8: VALIDACIONES -->
+    <div class="slide" data-slide="8">
+        <h2>Validaciones Reutilizables</h2>
+        <pre><code>// validaciones.js - Funciones puras y testables
+
+export const validarEmailVacio = (email) => {
+  return email && email.trim().length > 0;
+};
+
+export const validarFormatoEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+export const validarCredenciales = (credentials) => {
+  const usuarios = JSON.parse(
+    localStorage.getItem('usuarios') || '[]'
+  );
+  return usuarios.some(u => 
+    u.correo === credentials.email && 
+    u.password === credentials.password
+  );
+};
+
+export const validarStock = (producto, cantidad) => {
+  return producto.stock >= cantidad;
+};</code></pre>
+    </div>
+
+    <!-- SLIDE 9: TESTING FRAMEWORK -->
+    <div class="slide" data-slide="9">
+        <h2>Estrategia de Testing</h2>
+        <div class="tech-stack">
+            <strong style="color: #39FF14; font-size: 1.5rem;">FRAMEWORK DE TESTING</strong><br><br>
+            ├── Karma 6.4.2           → Test Runner (Chrome real)<br>
+            ├── Jasmine 5.12.0        → Framework de testing<br>
+            ├── Webpack 5.102.1       → Bundling de tests<br>
+            └── 10 tests              → 100% pasando ✓
+        </div>
+        <p class="centro grande" style="margin-top: 60px;">
+            <span class="highlight">🧪 Tests ejecutándose en navegador real 🧪</span>
+        </p>
+    </div>
+
+    <!-- SLIDE 10: EJEMPLO TEST -->
+    <div class="slide" data-slide="10">
+        <h2>Ejemplo de Test Unitario</h2>
+        <pre><code>describe('Login Component Tests', function() {
+  
+  it('validates email format', function() {
+    expect(validarFormatoEmail('invalid')).toBe(false);
+    expect(validarFormatoEmail('valid@email.com')).toBe(true);
+  });
+
+  it('validates user credentials', function() {
+    var usuarios = [{
+      correo: 'test@email.com',
+      password: 'test123'
+    }];
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+    expect(validarCredenciales({
+      email: 'test@email.com',
+      password: 'test123'
+    })).toBe(true);
+
+    // Credenciales incorrectas
+    expect(validarCredenciales({
+      email: 'test@email.com',
+      password: 'wrong'
+    })).toBe(false);
+  });
+});</code></pre>
+    </div>
+
+    <!-- SLIDE 11: COBERTURA TESTS -->
+    <div class="slide" data-slide="11">
+        <h2>Cobertura de Tests (10 total)</h2>
+        <div class="two-columns">
+            <div class="column solution">
+                <h3>LOGIN (4 tests)</h3>
+                <ul>
+                    <li>Validar email vacío</li>
+                    <li>Validar formato email</li>
+                    <li>Validar password vacío</li>
+                    <li>Validar credenciales</li>
+                </ul>
+                
+                <h3 style="margin-top: 40px;">CARRITO (2 tests)</h3>
+                <ul>
+                    <li>Agregar producto</li>
+                    <li>Validar stock</li>
+                </ul>
+            </div>
+            <div class="column solution">
+                <h3>REGISTRO (4 tests)</h3>
+                <ul>
+                    <li>Validar formato RUN</li>
+                    <li>Validar longitud nombre</li>
+                    <li>Validar longitud apellidos</li>
+                    <li>Prevenir emails duplicados</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 12: GIT FLOW -->
+    <div class="slide" data-slide="12">
+        <h2>Git Flow - Trabajo en Equipo</h2>
+        <div class="tech-stack">
+            <strong style="color: #39FF14; font-size: 1.5rem;">ESTRATEGIA DE BRANCHES</strong><br><br>
+            main (producción)<br>
+            &nbsp;&nbsp;└── origin/main<br><br>
+            
+            develop (desarrollo)<br>
+            &nbsp;&nbsp;├── origin/RodrigoDev<br>
+            &nbsp;&nbsp;├── origin/ClaudioDev<br>
+            &nbsp;&nbsp;└── origin/GiovanniDev
+        </div>
+        <p class="centro grande" style="margin-top: 60px;">
+            Cada desarrollador en su branch → <br>
+            Sin conflictos → Desarrollo paralelo eficiente
+        </p>
+    </div>
+
+    <!-- SLIDE 13: COLABORACIÓN -->
+    <div class="slide" data-slide="13">
+        <h2>Distribución del Trabajo</h2>
+        <div class="two-columns">
+            <div class="column">
+                <h3 style="color: #39FF14;">👤 Rodrigo</h3>
+                <ul>
+                    <li>Header y navegación</li>
+                    <li>Sistema de carrito (Context API)</li>
+                    <li>Integración de componentes</li>
+                </ul>
+                
+                <h3 style="color: #39FF14; margin-top: 40px;">👤 Giovanni</h3>
+                <ul>
+                    <li>Páginas públicas (Home, Productos)</li>
+                    <li>Diseño CSS responsive</li>
+                    <li>Pruebas unitarias</li>
+                </ul>
+            </div>
+            <div class="column">
+                <h3 style="color: #39FF14;">👤 Claudio</h3>
+                <ul>
+                    <li>Panel de administración</li>
+                    <li>CRUD productos y usuarios</li>
+                    <li>Sistema de logs y auditoría</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 14: LOGROS -->
+    <div class="slide" data-slide="14">
+        <h2>Resultados Alcanzados</h2>
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-number">23</span>
+                <span class="stat-label">Componentes React</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">15</span>
+                <span class="stat-label">Páginas/Vistas</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">3,500+</span>
+                <span class="stat-label">Líneas de código</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">0</span>
+                <span class="stat-label">Errores en producción</span>
+            </div>
+        </div>
+        <div class="features" style="margin-top: 60px;">
+            <div class="feature-box">✓ E-commerce completo funcional</div>
+            <div class="feature-box">✓ CRUD productos y usuarios</div>
+            <div class="feature-box">✓ Autenticación con roles</div>
+            <div class="feature-box">✓ Carrito persistente</div>
+            <div class="feature-box">✓ Panel admin profesional</div>
+            <div class="feature-box">✓ Sistema de logs</div>
+            <div class="feature-box">✓ 100% responsive</div>
+            <div class="feature-box">✓ 10 tests pasando</div>
+        </div>
+    </div>
+
+    <!-- SLIDE 15: CIERRE -->
+    <div class="slide" data-slide="15">
+        <h1 class="centro">LEVEL-UP GAMER</h1>
+        <p class="grande centro">
+            Demuestra que con las <span class="highlight">herramientas correctas</span><br>
+            y <span class="highlight-blue">trabajo en equipo</span>, es posible crear<br>
+            una aplicación web <span class="highlight">profesional y escalable</span>.
+        </p>
+        
+        <div class="tech-stack" style="margin-top: 60px;">
+            <strong style="color: #1E90FF; font-size: 1.5rem;">PRÓXIMOS PASOS</strong><br><br>
+            → Backend con Node.js + PostgreSQL<br>
+            → Pasarela de pagos (Transbank)<br>
+            → App móvil con React Native
+        </div>
+
+        <h2 class="centro" style="margin-top: 80px; border: none;">
+            ¡Gracias por su atención! 🎮
+        </h2>
+        <p class="centro" style="font-size: 2rem; margin-top: 30px;">
+            ¿Preguntas?
+        </p>
+    </div>
+
+    <div class="navigation">
+        <button id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = document.querySelectorAll('.slide').length;
+
+        document.getElementById('totalSlides').textContent = totalSlides;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            
+            if (n > totalSlides) currentSlide = totalSlides;
+            if (n < 1) currentSlide = 1;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide - 1].classList.add('active');
+            
+            document.getElementById('currentSlide').textContent = currentSlide;
+            
+            // Actualizar botones
+            document.getElementById('prevBtn').disabled = currentSlide === 1;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides;
+        }
+
+        function changeSlide(n) {
+            currentSlide += n;
+            showSlide(currentSlide);
+        }
+
+        // Navegación con teclado
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                changeSlide(1);
+            } else if (event.key === 'ArrowLeft') {
+                changeSlide(-1);
+            } else if (event.key === 'Home') {
+                currentSlide = 1;
+                showSlide(currentSlide);
+            } else if (event.key === 'End') {
+                currentSlide = totalSlides;
+                showSlide(currentSlide);
+            }
+        });
+
+        // Inicializar
+        showSlide(currentSlide);
+    </script>
+</body>
+</html>

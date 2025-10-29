@@ -1,0 +1,726 @@
+{
+  "projects": [
+    {
+      "name": "Level-UP a REACT",
+      "key": "LVL",
+      "description": "Migración de e-commerce Level-Up Gamer de JavaScript vanilla a React. Incluye catálogo dinámico, carrito persistente, panel administrativo completo con CRUD, sistema de autenticación con roles y testing automatizado.",
+      "lead": "Rodrigo Yarzu",
+      "type": "software",
+      "template": "com.pyxis.greenhopper.jira:gh-scrum-template",
+      "issueTypes": ["Epic", "Task", "Story", "Bug"],
+      "components": [
+        {
+          "name": "Seguridad",
+          "description": "Autenticación, autorización y rutas protegidas"
+        },
+        {
+          "name": "Autenticación",
+          "description": "Login, registro y gestión de sesiones"
+        },
+        {
+          "name": "Panel Admin",
+          "description": "Dashboard administrativo y CRUD completo"
+        },
+        {
+          "name": "Productos",
+          "description": "Catálogo, detalle y gestión de productos"
+        },
+        {
+          "name": "Carrito",
+          "description": "Shopping cart y checkout"
+        },
+        {
+          "name": "Testing",
+          "description": "Tests unitarios y configuración"
+        },
+        {
+          "name": "Utilidades",
+          "description": "Funciones helper y utilidades compartidas"
+        },
+        {
+          "name": "Componentes",
+          "description": "Componentes React reutilizables"
+        },
+        {
+          "name": "Páginas Públicas",
+          "description": "Páginas informativas (Nosotros, Contacto, Noticias)"
+        },
+        {
+          "name": "Estilos",
+          "description": "CSS y diseño visual"
+        },
+        {
+          "name": "Configuración",
+          "description": "Build tools y configuración del proyecto"
+        },
+        {
+          "name": "Desarrollo",
+          "description": "Herramientas de desarrollo y debugging"
+        }
+      ],
+      "versions": [
+        {
+          "name": "EVA2",
+          "description": "Level-UP a REACT - Segunda Evaluación",
+          "released": false,
+          "releaseDate": "2025-01-30"
+        }
+      ]
+    }
+  ],
+  "epics": [
+    {
+      "summary": "Sprint 1: Configuración y Setup del Proyecto",
+      "issueType": "Epic",
+      "description": "Configuración inicial del proyecto React, instalación de dependencias, estructura de carpetas y setup de herramientas de desarrollo",
+      "project": "LVL",
+      "startDate": "2025-09-15",
+      "endDate": "2025-09-21",
+      "labels": ["sprint-1", "setup", "configuracion"]
+    },
+    {
+      "summary": "Sprint 2: Autenticación y Seguridad",
+      "issueType": "Epic",
+      "description": "Implementación completa del sistema de autenticación con roles, login, registro y protección de rutas administrativas",
+      "project": "LVL",
+      "startDate": "2025-09-22",
+      "endDate": "2025-09-28",
+      "labels": ["sprint-2", "autenticacion", "seguridad"]
+    },
+    {
+      "summary": "Sprint 3: Catálogo de Productos y Carrito",
+      "issueType": "Epic",
+      "description": "Desarrollo del catálogo de productos con filtros, página de detalle, carrito de compras y Context API para estado global",
+      "project": "LVL",
+      "startDate": "2025-09-29",
+      "endDate": "2025-10-05",
+      "labels": ["sprint-3", "productos", "carrito"]
+    },
+    {
+      "summary": "Sprint 4: Panel de Administración - CRUD",
+      "issueType": "Epic",
+      "description": "Panel administrativo completo con dashboard, CRUD de productos, CRUD de usuarios y gestión de destacados",
+      "project": "LVL",
+      "startDate": "2025-10-06",
+      "endDate": "2025-10-12",
+      "labels": ["sprint-4", "admin", "crud"]
+    },
+    {
+      "summary": "Sprint 5: Auditoría y Componentes UI",
+      "issueType": "Epic",
+      "description": "Sistema de logs/auditoría, componentes reutilizables (modales, notificaciones) y páginas informativas",
+      "project": "LVL",
+      "startDate": "2025-10-13",
+      "endDate": "2025-10-19",
+      "labels": ["sprint-5", "logs", "ui-components"]
+    },
+    {
+      "summary": "Sprint 6: Testing y Estilos",
+      "issueType": "Epic",
+      "description": "Configuración de testing con Karma/Jasmine, tests unitarios y estilos CSS para todas las páginas",
+      "project": "LVL",
+      "startDate": "2025-10-20",
+      "endDate": "2025-10-26",
+      "labels": ["sprint-6", "testing", "estilos"]
+    },
+    {
+      "summary": "Sprint 7: Refinamiento y Entrega Final",
+      "issueType": "Epic",
+      "description": "Pulido final, debugging, páginas secundarias y preparación para entrega EVA2",
+      "project": "LVL",
+      "startDate": "2025-10-27",
+      "endDate": "2025-11-02",
+      "labels": ["sprint-7", "polish", "entrega"]
+    }
+  ],
+  "issues": [
+    {
+      "summary": "Instalar y configurar Webpack + Babel",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Setup completo de Webpack 5 con Babel para bundling y transpilación",
+      "labels": ["build", "webpack", "babel", "sprint-1"],
+      "components": ["Configuración"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 1: Configuración y Setup del Proyecto"
+    },
+    {
+      "summary": "Configurar scripts de testing en package.json",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Agregar scripts npm test, test:watch para ejecutar tests",
+      "labels": ["testing", "npm", "scripts", "sprint-1"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 2,
+      "project": "LVL",
+      "epic": "Sprint 1: Configuración y Setup del Proyecto"
+    },
+    {
+      "summary": "Crear inicializarDatos.js (carga de datos iniciales)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Script para poblar localStorage con productos y usuarios de prueba",
+      "labels": ["utilidades", "datos", "inicializacion", "sprint-1"],
+      "components": ["Utilidades"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 1: Configuración y Setup del Proyecto"
+    },
+    {
+      "summary": "Crear validaciones.js (validación email, RUN, stock, etc.)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Módulo centralizado con funciones de validación reutilizables",
+      "labels": ["validacion", "utilidades", "core", "sprint-1"],
+      "components": ["Utilidades"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 1: Configuración y Setup del Proyecto"
+    },
+    {
+      "summary": "Crear componente ProtectedRoute para rutas administrativas",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Implementar HOC que valide rol de usuario y redirija a login si no es admin",
+      "labels": ["autenticacion", "seguridad", "react", "sprint-2"],
+      "components": ["Seguridad"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 2: Autenticación y Seguridad"
+    },
+    {
+      "summary": "Implementar sistema de autenticación con roles (admin/usuario)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Sistema que diferencie entre usuarios normales y administradores en localStorage",
+      "labels": ["autenticacion", "roles", "seguridad", "sprint-2"],
+      "components": ["Seguridad"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 8,
+      "project": "LVL",
+      "epic": "Sprint 2: Autenticación y Seguridad"
+    },
+    {
+      "summary": "Crear página Login con validación de credenciales",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Página completa de login con validación de email/password y manejo de errores",
+      "labels": ["autenticacion", "ui", "validacion", "sprint-2"],
+      "components": ["Autenticación"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 2: Autenticación y Seguridad"
+    },
+    {
+      "summary": "Crear página Registro con validación de formulario",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Formulario de registro con validación de RUN, email, contraseña, región/comuna",
+      "labels": ["registro", "validacion", "ui", "sprint-2"],
+      "components": ["Autenticación"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 2: Autenticación y Seguridad"
+    },
+    {
+      "summary": "Implementar persistencia de sesión en localStorage",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Guardar usuario actual en localStorage y mantener sesión activa",
+      "labels": ["autenticacion", "persistencia", "storage", "sprint-2"],
+      "components": ["Seguridad"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 2: Autenticación y Seguridad"
+    },
+    {
+      "summary": "Implementar validación de correos duplicados",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Validar que no se registren usuarios con correos ya existentes",
+      "labels": ["validacion", "usuarios", "registro", "sprint-2"],
+      "components": ["Autenticación"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 2: Autenticación y Seguridad"
+    },
+    {
+      "summary": "Crear estilos CSS para Login/Registro (Login.css y Registro.css)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Diseño de formularios de autenticación con tema gaming",
+      "labels": ["css", "estilos", "auth", "sprint-2"],
+      "components": ["Estilos"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 2: Autenticación y Seguridad"
+    },
+    {
+      "summary": "Crear página Productos con filtros y búsqueda",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Catálogo completo con filtros por categoría, búsqueda en tiempo real y paginación",
+      "labels": ["productos", "catalogo", "filtros", "sprint-3"],
+      "components": ["Productos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 8,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear página Detalle de producto con zoom de imagen",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Vista detallada de producto con galería de imágenes, zoom, stock y valoraciones",
+      "labels": ["productos", "ui", "zoom", "sprint-3"],
+      "components": ["Productos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear página Carrito completa (resumen, totales, finalizar compra)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Página dedicada con tabla de productos, cantidades, subtotales, descuentos y botón finalizar",
+      "labels": ["carrito", "compras", "ui", "sprint-3"],
+      "components": ["Carrito"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 8,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Implementar actualización de stock al finalizar compra",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Reducir stock de productos automáticamente al confirmar compra",
+      "labels": ["carrito", "stock", "logica", "sprint-3"],
+      "components": ["Carrito"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Implementar descuento automático en carrito al finalizar compra",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Aplicar 20% de descuento automático para usuarios con correo @duoc.cl",
+      "labels": ["carrito", "descuentos", "logica", "sprint-3"],
+      "components": ["Carrito"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear zoomManager.js (zoom de imágenes en detalle)",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Utilidad para manejar zoom de imágenes en página de detalle de producto",
+      "labels": ["utilidades", "zoom", "imagenes", "sprint-3"],
+      "components": ["Utilidades"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear estilos CSS para catálogo Productos (Productos.css)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Grid de productos, filtros, búsqueda y paginación responsive",
+      "labels": ["css", "estilos", "productos", "sprint-3"],
+      "components": ["Estilos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear estilos CSS para página Detalle (Detalle.css)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Diseño de galería de imágenes, zoom, información y botón agregar al carrito",
+      "labels": ["css", "estilos", "productos", "sprint-3"],
+      "components": ["Estilos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear estilos CSS para página Carrito (Carrito.css)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Diseño responsive de tabla de carrito, totales y botones",
+      "labels": ["css", "estilos", "carrito", "sprint-3"],
+      "components": ["Estilos"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear estilos CSS para Homepage (Home.css)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Estilos de hero section y carrusel de productos destacados",
+      "labels": ["css", "estilos", "home", "sprint-3"],
+      "components": ["Estilos"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 3: Catálogo de Productos y Carrito"
+    },
+    {
+      "summary": "Crear página AdminHome (dashboard con estadísticas)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Dashboard con KPIs: total productos, usuarios, stock bajo, productos destacados",
+      "labels": ["admin", "dashboard", "estadisticas", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Crear página AdminProductos (gestión CRUD completa)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Panel administrativo con tabla de productos, búsqueda y acciones CRUD",
+      "labels": ["admin", "crud", "productos", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 8,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Crear componente AdminProductoForm (crear/editar productos)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Formulario completo para agregar/editar productos con validaciones",
+      "labels": ["admin", "productos", "form", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Implementar funcionalidad eliminar productos con confirmación",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Eliminar productos con modal de confirmación y actualización de stock",
+      "labels": ["admin", "productos", "crud", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Crear página AdminUsuarios (listado CRUD)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Página administrativa con tabla de usuarios, filtros y acciones CRUD",
+      "labels": ["admin", "crud", "usuarios", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 8,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Crear componente AdminUsuarioForm (crear/editar usuarios)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Formulario reutilizable para crear y editar usuarios desde el panel admin",
+      "labels": ["admin", "usuarios", "form", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Implementar funcionalidad eliminar usuarios",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Permitir a administradores eliminar usuarios con confirmación modal",
+      "labels": ["admin", "usuarios", "crud", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Crear página AdminDestacados (gestión productos destacados en carrusel)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Panel para seleccionar hasta 6 productos destacados que aparecen en homepage",
+      "labels": ["admin", "productos", "destacados", "sprint-4"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Crear estilos CSS para Panel Administrativo (Admin.css)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Estilos completos para todas las páginas del panel admin",
+      "labels": ["css", "estilos", "admin", "sprint-4"],
+      "components": ["Estilos"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 4: Panel de Administración - CRUD"
+    },
+    {
+      "summary": "Crear página AdminLogs (auditoría de acciones)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Sistema de logs con filtros por tipo, fecha y usuario para auditoría completa",
+      "labels": ["admin", "logs", "auditoria", "sprint-5"],
+      "components": ["Panel Admin"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Implementar logManager.js (sistema de registro de eventos)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Utilidad para registrar todas las acciones administrativas (CRUD, login, etc.)",
+      "labels": ["utilidades", "logs", "auditoria", "sprint-5"],
+      "components": ["Utilidades"],
+      "assignee": "Claudio Francisco Delgado Gallardo",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear componente ModalConfirmacion (confirmación de acciones destructivas)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Modal reutilizable para confirmar eliminaciones y acciones irreversibles",
+      "labels": ["components", "ui", "modal", "sprint-5"],
+      "components": ["Componentes"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear página Contacto con formulario y validación",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Formulario de contacto con validaciones, mapa y datos de contacto",
+      "labels": ["paginas", "contacto", "form", "sprint-5"],
+      "components": ["Páginas Públicas"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear página Nosotros (información de la empresa)",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Página institucional con misión, visión, historia y equipo",
+      "labels": ["paginas", "nosotros", "institucional", "sprint-5"],
+      "components": ["Páginas Públicas"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear página Noticias (contenido gaming)",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Sección de noticias sobre gaming, lanzamientos y eventos",
+      "labels": ["paginas", "noticias", "contenido", "sprint-5"],
+      "components": ["Páginas Públicas"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear estilos CSS para Header (Header.css)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Navegación responsive con dropdown de carrito y menú mobile",
+      "labels": ["css", "estilos", "header", "sprint-5"],
+      "components": ["Estilos"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear estilos CSS para página Contacto (Contacto.css)",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Estilos de formulario, mapa y sección de información de contacto",
+      "labels": ["css", "estilos", "contacto", "sprint-5"],
+      "components": ["Estilos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 2,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear estilos CSS para página Nosotros (Nosotros.css)",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Diseño de secciones institucionales (misión, visión, equipo)",
+      "labels": ["css", "estilos", "nosotros", "sprint-5"],
+      "components": ["Estilos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 2,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Crear estilos CSS para página Noticias (Noticias.css)",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Diseño de tarjetas de noticias y layout tipo blog",
+      "labels": ["css", "estilos", "noticias", "sprint-5"],
+      "components": ["Estilos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 2,
+      "project": "LVL",
+      "epic": "Sprint 5: Auditoría y Componentes UI"
+    },
+    {
+      "summary": "Configurar Karma + Jasmine para testing",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Instalar y configurar Karma como test runner y Jasmine como framework",
+      "labels": ["testing", "configuracion", "karma", "sprint-6"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 8,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Configurar karma.conf.js completo",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Archivo de configuración de Karma con Chrome launcher, Webpack y reporters",
+      "labels": ["testing", "karma", "configuracion", "sprint-6"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Configurar Webpack para bundling de tests",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Setup de Webpack con Babel para transpilar tests a ES5",
+      "labels": ["testing", "webpack", "configuracion", "sprint-6"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Instalar y configurar Testing Library",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Instalar @testing-library/react, jest-dom y user-event para testing avanzado",
+      "labels": ["testing", "dependencias", "configuracion", "sprint-6"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Crear tests de Login (4 tests)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Tests unitarios: email vacío, formato email, password vacío, validar credenciales",
+      "labels": ["testing", "login", "validacion", "sprint-6"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Crear tests de Registro (4 tests)",
+      "issueType": "Task",
+      "priority": "High",
+      "description": "Tests: formato RUN, longitud nombre, longitud apellidos, emails duplicados",
+      "labels": ["testing", "registro", "validacion", "sprint-6"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 5,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Crear tests de Carrito (2 tests)",
+      "issueType": "Task",
+      "priority": "Medium",
+      "description": "Tests: agregar producto al carrito, validar stock disponible",
+      "labels": ["testing", "carrito", "validacion", "sprint-6"],
+      "components": ["Testing"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 3,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Crear estilos CSS para Footer (Footer.css)",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Footer con redes sociales, enlaces y copyright",
+      "labels": ["css", "estilos", "footer", "sprint-6"],
+      "components": ["Estilos"],
+      "assignee": "Giovanni Antonio Orellana Muñoz",
+      "storyPoints": 2,
+      "project": "LVL",
+      "epic": "Sprint 6: Testing y Estilos"
+    },
+    {
+      "summary": "Crear componente CarritoDebug para desarrollo",
+      "issueType": "Task",
+      "priority": "Low",
+      "description": "Componente de debugging que muestra estado del carrito en tiempo real",
+      "labels": ["debug", "carrito", "dev", "sprint-7"],
+      "components": ["Desarrollo"],
+      "assignee": "Rodrigo Yarzu",
+      "storyPoints": 2,
+      "project": "LVL",
+      "epic": "Sprint 7: Refinamiento y Entrega Final"
+    }
+  ]
+}

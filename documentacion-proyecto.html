@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Level-Up - Documentación Proyecto</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; line-height: 1.6; color: #333; }
+        h1 { color: #1E90FF; border-bottom: 3px solid #39FF14; padding-bottom: 10px; }
+        h2 { color: #1E90FF; margin-top: 30px; }
+        h3 { color: #555; }
+        .section { background: #f9f9f9; padding: 20px; margin: 20px 0; border-left: 4px solid #1E90FF; }
+        .test-item { background: white; padding: 15px; margin: 10px 0; border: 1px solid #ddd; }
+        .success { color: #39FF14; font-weight: bold; }
+        .code { background: #2d2d2d; color: #f8f8f2; padding: 10px; border-radius: 5px; font-family: 'Courier New', monospace; margin: 10px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #1E90FF; color: white; }
+        .highlight { background: yellow; padding: 2px 5px; }
+    </style>
+</head>
+<body>
+
+<h1>📱 LEVEL-UP a REACT - Documentación Completa</h1>
+
+<div class="section">
+    <h2>🎯 Resumen del Proyecto</h2>
+    <p><strong>Nombre:</strong> Level-Up Gamer</p>
+    <p><strong>Tipo:</strong> E-commerce gaming con React 19.2.0</p>
+    <p><strong>Equipo:</strong> Rodrigo Yarzu, Claudio Delgado, Giovanni Orellana</p>
+    <p><strong>Periodo:</strong> 15 Sept - 2 Nov 2025</p>
+    <p><strong>Stack:</strong> React, React Router 7.9.4, Context API, Bootstrap 5, localStorage</p>
+</div>
+
+<div class="section">
+    <h2>📊 Estructura del Proyecto</h2>
+    <table>
+        <tr>
+            <th>Componente</th>
+            <th>Descripción</th>
+        </tr>
+        <tr>
+            <td>Context API</td>
+            <td>CarritoContext - Estado global del carrito</td>
+        </tr>
+        <tr>
+            <td>Pages</td>
+            <td>Home, Productos, Detalle, Carrito, Login, Registro, Admin (7 módulos)</td>
+        </tr>
+        <tr>
+            <td>Utils</td>
+            <td>Validaciones, datos mock, gestión de carrito</td>
+        </tr>
+        <tr>
+            <td>Persistencia</td>
+            <td>localStorage (productos, usuarios, carrito, logs)</td>
+        </tr>
+    </table>
+</div>
+
+<h1>🧪 TESTS UNITARIOS - ANÁLISIS DETALLADO</h1>
+
+<div class="section">
+    <h2>⚙️ Configuración de Testing</h2>
+    <h3>Tecnologías:</h3>
+    <ul>
+        <li><strong>Karma 6.4.2:</strong> Test runner (ejecuta en Chrome)</li>
+        <li><strong>Jasmine 5.12.0:</strong> Framework de assertions</li>
+        <li><strong>Webpack 5:</strong> Bundling de tests</li>
+        <li><strong>Babel:</strong> Transpilación ES6+</li>
+    </ul>
+
+    <h3>Configuración karma.conf.js:</h3>
+    <div class="code">
+frameworks: ['jasmine']
+files: ['src/**/*.spec.js']
+browsers: ['Chrome']
+port: 9876
+autoWatch: true
+    </div>
+
+    <h3>Resultado de Ejecución:</h3>
+    <div class="code">
+Chrome 141.0.0.0 (Windows 10): Executed 10 of 10 <span class="success">SUCCESS</span>
+TOTAL: <span class="success">10 SUCCESS</span>
+Tiempo: 0.002 segundos
+    </div>
+</div>
+
+<h2>📝 SUITE 1: TESTS DE CARRITO (2 tests)</h2>
+<p><strong>Archivo:</strong> src/tests/carrito.spec.js</p>
+
+<div class="test-item">
+    <h3>✅ Test 1: Agregar producto al carrito</h3>
+    <p><strong>Descripción:</strong> Verifica que un producto se agregue correctamente al carrito</p>
+    
+    <p><strong>Función testeada:</strong> <code>agregarProductoAlCarrito(producto, cantidad)</code></p>
+    
+    <p><strong>Datos de entrada:</strong></p>
+    <div class="code">
+producto = {
+  codigo: 'PROD001',
+  nombre: 'Test Product',
+  precio: 1000,
+  stock: 5
+}
+cantidad = 1
+    </div>
+
+    <p><strong>Validaciones:</strong></p>
+    <ul>
+        <li>La función retorna <code>true</code></li>
+        <li>localStorage contiene exactamente 1 producto</li>
+        <li>Los datos del producto se guardan correctamente</li>
+    </ul>
+
+    <p><strong>Código del test:</strong></p>
+    <div class="code">
+it('adds product to cart', function() {
+  var producto = { codigo: 'PROD001', nombre: 'Test Product', precio: 1000, stock: 5 };
+  expect(agregarProductoAlCarrito(producto, 1)).toBe(true);
+  var carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+  expect(carrito.length).toBe(1);
+});
+    </div>
+
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<div class="test-item">
+    <h3>✅ Test 2: Validar stock disponible</h3>
+    <p><strong>Descripción:</strong> Previene agregar más cantidad que el stock disponible</p>
+    
+    <p><strong>Función testeada:</strong> <code>validarStock(producto, cantidad)</code></p>
+    
+    <p><strong>Escenarios probados:</strong></p>
+    <table>
+        <tr>
+            <th>Stock</th>
+            <th>Cantidad solicitada</th>
+            <th>Resultado esperado</th>
+            <th>Razón</th>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>3</td>
+            <td>false</td>
+            <td>No hay suficiente stock</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>1</td>
+            <td>true</td>
+            <td>Stock disponible</td>
+        </tr>
+    </table>
+
+    <p><strong>Código del test:</strong></p>
+    <div class="code">
+it('validates stock before adding to cart', function() {
+  var producto = { codigo: 'PROD001', nombre: 'Test Product', precio: 1000, stock: 2 };
+  expect(validarStock(producto, 3)).toBe(false);  // No hay stock
+  expect(validarStock(producto, 1)).toBe(true);   // Stock OK
+});
+    </div>
+
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<h2>🔐 SUITE 2: TESTS DE LOGIN (4 tests)</h2>
+<p><strong>Archivo:</strong> src/tests/Login.spec.js</p>
+
+<div class="test-item">
+    <h3>✅ Test 3: Validar email vacío</h3>
+    <p><strong>Función:</strong> <code>validarEmailVacio(email)</code></p>
+    <p><strong>Prueba:</strong> Email = '' debe retornar <code>false</code></p>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<div class="test-item">
+    <h3>✅ Test 4: Validar formato de email</h3>
+    <p><strong>Función:</strong> <code>validarFormatoEmail(email)</code></p>
+    <p><strong>Casos probados:</strong></p>
+    <ul>
+        <li>'invalid-email' → <code>false</code></li>
+        <li>'valid@email.com' → <code>true</code></li>
+    </ul>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<div class="test-item">
+    <h3>✅ Test 5: Validar password vacío</h3>
+    <p><strong>Función:</strong> <code>validarPasswordVacio(password)</code></p>
+    <p><strong>Prueba:</strong> Password = '' debe retornar <code>false</code></p>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<div class="test-item">
+    <h3>✅ Test 6: Validar credenciales de usuario</h3>
+    <p><strong>Función:</strong> <code>validarCredenciales(credentials)</code></p>
+    
+    <p><strong>Setup del test:</strong></p>
+    <div class="code">
+// Mock de usuario en localStorage
+usuarios = [{
+  correo: 'test@email.com',
+  password: 'test123'
+}]
+    </div>
+
+    <p><strong>Validaciones:</strong></p>
+    <ul>
+        <li>Credenciales correctas (email + password) → <code>true</code></li>
+        <li>Email correcto pero password incorrecta → <code>false</code></li>
+        <li>Consulta correctamente desde localStorage</li>
+    </ul>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<h2>📝 SUITE 3: TESTS DE REGISTRO (4 tests)</h2>
+<p><strong>Archivo:</strong> src/tests/Registro.spec.js</p>
+
+<div class="test-item">
+    <h3>✅ Test 7: Validar formato RUN</h3>
+    <p><strong>Función:</strong> <code>validarRUN(run)</code></p>
+    <p><strong>Regla de negocio:</strong> RUN debe tener al menos 6 dígitos</p>
+    <table>
+        <tr>
+            <th>Input</th>
+            <th>Output</th>
+            <th>Explicación</th>
+        </tr>
+        <tr>
+            <td>'123456789'</td>
+            <td>true</td>
+            <td>9 dígitos válido</td>
+        </tr>
+        <tr>
+            <td>'12345'</td>
+            <td>false</td>
+            <td>Menos de 6 dígitos</td>
+        </tr>
+    </table>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<div class="test-item">
+    <h3>✅ Test 8: Validar longitud de nombre</h3>
+    <p><strong>Función:</strong> <code>validarNombreLength(nombre)</code></p>
+    <p><strong>Regla:</strong> Nombre máximo 50 caracteres</p>
+    <ul>
+        <li>51 caracteres → <code>false</code></li>
+        <li>'Juan' → <code>true</code></li>
+    </ul>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<div class="test-item">
+    <h3>✅ Test 9: Validar longitud de apellidos</h3>
+    <p><strong>Función:</strong> <code>validarApellidosLength(apellidos)</code></p>
+    <p><strong>Regla:</strong> Apellidos máximo 100 caracteres</p>
+    <ul>
+        <li>101 caracteres → <code>false</code></li>
+        <li>'Pérez González' → <code>true</code></li>
+    </ul>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<div class="test-item">
+    <h3>✅ Test 10: Prevenir email duplicado</h3>
+    <p><strong>Función:</strong> <code>validarEmailDuplicado(email)</code></p>
+    
+    <p><strong>Setup:</strong></p>
+    <div class="code">
+// Usuario existente en localStorage
+usuarios = [{
+  correo: 'existing@email.com',
+  nombre: 'Existing User'
+}]
+    </div>
+
+    <p><strong>Validaciones:</strong></p>
+    <ul>
+        <li>'existing@email.com' → <code>false</code> (ya existe)</li>
+        <li>'new@email.com' → <code>true</code> (disponible)</li>
+    </ul>
+    <p><strong>Resultado:</strong> <span class="success">✓ PASS</span></p>
+</div>
+
+<h2>📈 RESUMEN DE COBERTURA</h2>
+
+<div class="section">
+    <table>
+        <tr>
+            <th>Suite</th>
+            <th>Tests</th>
+            <th>Estado</th>
+            <th>Funciones cubiertas</th>
+        </tr>
+        <tr>
+            <td>Carrito</td>
+            <td>2</td>
+            <td class="success">✓ PASS</td>
+            <td>agregarProductoAlCarrito, validarStock</td>
+        </tr>
+        <tr>
+            <td>Login</td>
+            <td>4</td>
+            <td class="success">✓ PASS</td>
+            <td>validarEmailVacio, validarFormatoEmail, validarPasswordVacio, validarCredenciales</td>
+        </tr>
+        <tr>
+            <td>Registro</td>
+            <td>4</td>
+            <td class="success">✓ PASS</td>
+            <td>validarRUN, validarNombreLength, validarApellidosLength, validarEmailDuplicado</td>
+        </tr>
+        <tr>
+            <th>TOTAL</th>
+            <th>10</th>
+            <th class="success">✓ 100% PASS</th>
+            <th>10 funciones</th>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>🎯 Características de los Tests</h2>
+    <ul>
+        <li><strong>Aislamiento:</strong> <code>beforeEach()</code> limpia localStorage antes de cada test</li>
+        <li><strong>Cobertura:</strong> Funcionalidades críticas (auth, validaciones, carrito)</li>
+        <li><strong>Casos límite:</strong> Strings vacíos, longitudes máximas, duplicados</li>
+        <li><strong>Integración:</strong> Tests de interacción con localStorage</li>
+        <li><strong>Rapidez:</strong> 10 tests en 2ms</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h2>🚀 Comando de Ejecución</h2>
+    <div class="code">
+npm test
+# Karma se ejecuta en Chrome
+# Modo watch activo (detecta cambios)
+# Puerto: http://localhost:9876
+    </div>
+</div>
+
+<div class="section">
+    <h2>📦 Funcionalidades Principales del Proyecto</h2>
+    <ul>
+        <li><strong>Autenticación:</strong> Login/Registro con validaciones completas</li>
+        <li><strong>Carrito:</strong> Agregar/eliminar productos, validación de stock, cálculo de totales</li>
+        <li><strong>Admin:</strong> CRUD productos/usuarios, logs de actividad, destacados</li>
+        <li><strong>Productos:</strong> Listado, filtros, detalle, stock dinámico</li>
+        <li><strong>Persistencia:</strong> localStorage para datos y sesión</li>
+    </ul>
+</div>
+
+</body>
+</html>

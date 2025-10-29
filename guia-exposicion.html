@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Exposición - Level-Up Gamer</title>
+    <style>
+        @media print {
+            body {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+            .no-print {
+                display: none;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 100%);
+            color: #39FF14;
+            padding: 40px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: #1E90FF;
+        }
+
+        h2 {
+            background: linear-gradient(135deg, #1E90FF 0%, #39FF14 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin: 40px 0 20px 0;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: #1E90FF;
+            font-size: 1.5rem;
+            margin: 25px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #39FF14;
+        }
+
+        h4 {
+            color: #39FF14;
+            background: #0a0a0a;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .box {
+            background: white;
+            border: 3px solid #1E90FF;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .success {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border-color: #0dcaf0;
+        }
+
+        .danger {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        pre {
+            background: #0a0a0a;
+            color: #39FF14;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.95rem;
+            border: 2px solid #39FF14;
+            margin: 15px 0;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 40px;
+        }
+
+        li {
+            margin: 8px 0;
+            font-size: 1.05rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 2px solid #ddd;
+        }
+
+        th {
+            background: #1E90FF;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+
+        .timeline {
+            background: linear-gradient(to right, #39FF14 0%, #1E90FF 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .persona {
+            background: #0a0a0a;
+            color: #39FF14;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 15px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .script {
+            background: #e3f2fd;
+            border-left: 5px solid #1E90FF;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .accion {
+            background: #fff9e6;
+            border-left: 5px solid #ffc107;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .checklist {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .checklist li {
+            list-style-type: none;
+        }
+
+        .checklist li:before {
+            content: "☐ ";
+            font-size: 1.3rem;
+            margin-right: 10px;
+        }
+
+        .tip {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+
+        .tip:before {
+            content: "💡 ";
+            font-size: 1.5rem;
+        }
+
+        .button-print {
+            background: #1E90FF;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .button-print:hover {
+            background: #39FF14;
+            color: #000;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="button-print no-print" onclick="window.print()">🖨️ Imprimir como PDF</button>
+
+    <div class="header">
+        <h1>🎮 LEVEL-UP GAMER</h1>
+        <p class="subtitle">Guía de Exposición Profesional</p>
+        <p style="margin-top: 20px; color: #ccc;">15 minutos | 3 personas × 5 min c/u</p>
+    </div>
+
+    <!-- CRONOMETRAJE -->
+    <h2>⏱️ DISTRIBUCIÓN DEL TIEMPO</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Persona</th>
+                <th>Sección</th>
+                <th>Tiempo</th>
+                <th>Acumulado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Rodrigo</strong></td>
+                <td>Introducción + Stack</td>
+                <td>2 min</td>
+                <td>2 min</td>
+            </tr>
+            <tr>
+                <td><strong>Rodrigo</strong></td>
+                <td>Demo Usuario</td>
+                <td>3 min</td>
+                <td>5 min</td>
+            </tr>
+            <tr>
+                <td><strong>Claudio</strong></td>
+                <td>Demo Admin</td>
+                <td>2.5 min</td>
+                <td>7.5 min</td>
+            </tr>
+            <tr>
+                <td><strong>Claudio</strong></td>
+                <td>Código Técnico</td>
+                <td>2.5 min</td>
+                <td>10 min</td>
+            </tr>
+            <tr>
+                <td><strong>Giovanni</strong></td>
+                <td>Testing</td>
+                <td>2 min</td>
+                <td>12 min</td>
+            </tr>
+            <tr>
+                <td><strong>Giovanni</strong></td>
+                <td>Git + Conclusión</td>
+                <td>3 min</td>
+                <td>15 min</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="page-break"></div>
+
+    <!-- PERSONA 1: RODRIGO -->
+    <h2>👤 PERSONA 1: RODRIGO (5 MINUTOS)</h2>
+
+    <h3>📊 PARTE 1.1: Introducción (1 minuto)</h3>
+
+    <h4>SLIDE 1: Portada</h4>
+    <div class="box">
+        <strong>Contenido del slide:</strong>
+        <ul>
+            <li>Título: LEVEL-UP GAMER</li>
+            <li>Subtítulo: E-commerce Gaming con React</li>
+            <li>Desarrolladores: Rodrigo, Claudio, Giovanni</li>
+        </ul>
+    </div>
+
+    <div class="script">
+        <strong>SCRIPT (30 seg):</strong><br>
+        "Buenos días. Somos el equipo Level-Up y presentamos nuestro e-commerce especializado en productos gaming. Una aplicación web completa desarrollada con React que permite a usuarios comprar productos y a administradores gestionar el inventario en tiempo real."
+    </div>
+
+    <h4>SLIDE 2: Problema y Solución</h4>
+    <div class="box">
+        <strong>PROBLEMA:</strong>
+        <ul>
+            <li>❌ Gamers necesitan plataforma confiable</li>
+            <li>❌ Tiendas necesitan gestión eficiente</li>
+            <li>❌ Sin control de inventario en tiempo real</li>
+        </ul>
+        <strong>SOLUCIÓN:</strong>
+        <ul>
+            <li>✅ Catálogo dinámico con búsqueda</li>
+            <li>✅ Panel admin completo (CRUD)</li>
+            <li>✅ Carrito persistente</li>
+            <li>✅ Autenticación con roles</li>
+        </ul>
+    </div>
+
+    <div class="script">
+        <strong>SCRIPT (30 seg):</strong><br>
+        "Identificamos que los gamers chilenos necesitan una plataforma intuitiva. Level-Up resuelve esto con un catálogo dinámico, sistema de carrito persistente y un panel administrativo profesional."
+    </div>
+
+    <h3>📊 PARTE 1.2: Stack Tecnológico (1 minuto)</h3>
+
+    <h4>SLIDE 3: Tecnologías</h4>
+    <div class="box info">
+        <strong>STACK PRINCIPAL:</strong>
+        <pre style="background: #0a0a0a; color: #39FF14;">
+├── React 19.2.0          → Framework UI
+├── React Router 7.9.4    → SPA Navigation
+├── Context API           → Estado global
+├── Bootstrap 5           → Responsive design
+├── LocalStorage          → Persistencia
+
+TESTING & BUILD:
+├── Karma + Jasmine       → Testing
+├── Webpack + Babel       → Build tools
+└── Git/GitHub            → Version control</pre>
+    </div>
+
+    <div class="script">
+        <strong>SCRIPT (1 min):</strong><br>
+        "Utilizamos React 19 como framework principal, aprovechando Hooks modernos y Context API para manejo de estado global. React Router nos permite navegación sin recargas. Para persistencia usamos LocalStorage, perfecto para este proyecto educativo. Implementamos testing con Karma y Jasmine, y usamos Git con estrategia de branches para trabajo colaborativo."
+    </div>
+
+    <h3>🎬 PARTE 1.3: Demo Usuario (3 minutos)</h3>
+
+    <h4>SLIDE 4: Funcionalidades Usuario</h4>
+    <div class="box success">
+        <ul>
+            <li>✓ Catálogo con filtros</li>
+            <li>✓ Búsqueda en tiempo real</li>
+            <li>✓ Sistema de valoraciones</li>
+            <li>✓ Carrito persistente</li>
+            <li>✓ Responsive design</li>
+        </ul>
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 1: Homepage (30 seg)</strong>
+        <ol>
+            <li>Mostrar carrusel de productos destacados</li>
+            <li>Señalar valoraciones con estrellas</li>
+            <li>Abrir DevTools → Cambiar a vista mobile</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "En la homepage tenemos un carrusel con productos destacados, sistema de valoraciones de 5 estrellas y diseño completamente responsive."
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 2: Catálogo (1 min)</strong>
+        <ol>
+            <li>Ir a "Productos"</li>
+            <li>Clic en filtro "Accesorios"</li>
+            <li>Buscar: "Control"</li>
+            <li>Mostrar stock disponible</li>
+            <li>Clic en un producto</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "El catálogo permite filtrar por categorías y buscar en tiempo real. Pueden ver el stock disponible. Al hacer clic, accedemos al detalle completo."
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 3: Agregar al Carrito (45 seg)</strong>
+        <ol>
+            <li>Ajustar cantidad a 2</li>
+            <li>Clic en "Agregar al carrito"</li>
+            <li>Abrir dropdown del carrito</li>
+            <li>Mostrar totales calculados</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "Ajustamos cantidad y agregamos. El carrito se actualiza en tiempo real y calcula automáticamente subtotal, descuentos y total."
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 4: Finalizar Compra (45 seg)</strong>
+        <ol>
+            <li>Ir a página de carrito</li>
+            <li>Mostrar resumen de compra</li>
+            <li>Clic en "Finalizar Compra"</li>
+            <li>Verificar stock actualizado</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "Al finalizar, el sistema actualiza automáticamente el stock disponible. Observen cómo el stock disminuyó."
+    </div>
+
+    <div class="timeline">
+        <strong>TRANSICIÓN A CLAUDIO:</strong> "Hasta aquí la experiencia de usuario. Ahora Claudio les mostrará el panel de administración."
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- PERSONA 2: CLAUDIO -->
+    <h2>👤 PERSONA 2: CLAUDIO (5 MINUTOS)</h2>
+
+    <h3>🔐 PARTE 2.1: Demo Panel Admin (2.5 minutos)</h3>
+
+    <h4>SLIDE 5: Panel de Administración</h4>
+    <div class="box">
+        <strong>Funcionalidades Admin:</strong>
+        <ul>
+            <li>✓ Dashboard con estadísticas</li>
+            <li>✓ CRUD Productos completo</li>
+            <li>✓ CRUD Usuarios</li>
+            <li>✓ Gestión de destacados</li>
+            <li>✓ Sistema de logs/auditoría</li>
+            <li>✓ Rutas protegidas</li>
+        </ul>
+    </div>
+
+    <div class="box warning">
+        <strong>Credenciales Admin:</strong>
+        <pre>Email: admin@levelup.cl
+Password: admin123</pre>
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 1: Login Admin (20 seg)</strong>
+        <ol>
+            <li>Ir a /login</li>
+            <li>Ingresar credenciales</li>
+            <li>Hacer login</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "El sistema tiene autenticación con roles. Los administradores acceden a un panel exclusivo."
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 2: Dashboard (30 seg)</strong>
+        <ol>
+            <li>Mostrar estadísticas en tiempo real</li>
+            <li>Señalar productos destacados</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "El dashboard muestra estadísticas en tiempo real: total de productos, usuarios registrados y alertas de stock bajo."
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 3: CRUD Productos (1 min)</strong>
+        <ol>
+            <li>Ir a "Productos" en menú admin</li>
+            <li>Clic en "Nuevo Producto"</li>
+            <li>Llenar formulario rápido:
+                <ul>
+                    <li>Código: TEST001</li>
+                    <li>Nombre: Producto Demo</li>
+                    <li>Precio: 9990</li>
+                    <li>Stock: 5</li>
+                </ul>
+            </li>
+            <li>Guardar</li>
+            <li>Editar → Cambiar stock a 10</li>
+            <li>Eliminar → Confirmar en modal</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "Los administradores pueden crear, editar y eliminar productos. El sistema valida todos los campos y confirma acciones destructivas."
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN 4: Logs (40 seg)</strong>
+        <ol>
+            <li>Ir a "Logs"</li>
+            <li>Mostrar registro de acciones</li>
+            <li>Mostrar filtros por tipo y fecha</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "Cada acción queda registrada: quién hizo qué y cuándo. Esto permite auditoría completa."
+    </div>
+
+    <h3>💻 PARTE 2.2: Código Técnico (2.5 minutos)</h3>
+
+    <h4>SLIDE 6: Context API</h4>
+    <pre><code>// CarritoContext.js - Estado Global
+const CarritoProvider = ({ children }) => {
+  const [carrito, setCarrito] = useState([]);
+
+  // Persistencia automática
+  useEffect(() => {
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+  }, [carrito]);
+
+  const agregarAlCarrito = (producto, qty = 1) => {
+    if (producto.stock <= 0) {
+      notificar('Sin stock', 'error');
+      return;
+    }
+    
+    setCarrito(prev => [...prev, {...producto, qty}]);
+  };
+
+  return (
+    &lt;CarritoContext.Provider value={{ carrito, agregarAlCarrito }}&gt;
+      {children}
+    &lt;/CarritoContext.Provider&gt;
+  );
+};</code></pre>
+
+    <div class="script">
+        <strong>SCRIPT (1 min):</strong><br>
+        "Implementamos Context API para gestión de estado global del carrito. Esto permite acceder al carrito desde cualquier componente sin prop drilling. Cada cambio se persiste automáticamente en localStorage usando useEffect."
+    </div>
+
+    <h4>SLIDE 7: Rutas Protegidas</h4>
+    <pre><code>// ProtectedRoute.js
+export default function ProtectedRoute({ children }) {
+  const usuario = JSON.parse(
+    localStorage.getItem('usuarioActual') || 'null'
+  );
+  
+  const esAdmin = usuario?.rol === 'admin';
+
+  if (!esAdmin) {
+    return &lt;Navigate to="/login" replace /&gt;;
+  }
+
+  return children;
+}</code></pre>
+
+    <div class="script">
+        <strong>SCRIPT (45 seg):</strong><br>
+        "Para proteger rutas administrativas usamos un Higher-Order Component. Solo usuarios con rol 'admin' pueden acceder. Sin permisos, se redirigen automáticamente al login."
+    </div>
+
+    <h4>SLIDE 8: Validaciones</h4>
+    <pre><code>// validaciones.js - Funciones puras
+export const validarFormatoEmail = (email) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+export const validarStock = (producto, cantidad) => {
+  return producto.stock >= cantidad;
+};</code></pre>
+
+    <div class="script">
+        <strong>SCRIPT (45 seg):</strong><br>
+        "Centralizamos validaciones en funciones puras y reutilizables. Esto facilita el testing y mantiene consistencia en toda la aplicación."
+    </div>
+
+    <div class="timeline">
+        <strong>TRANSICIÓN A GIOVANNI:</strong> "Giovanni cerrará mostrando nuestras pruebas y metodología de trabajo."
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- PERSONA 3: GIOVANNI -->
+    <h2>👤 PERSONA 3: GIOVANNI (5 MINUTOS)</h2>
+
+    <h3>🧪 PARTE 3.1: Pruebas Unitarias (2 minutos)</h3>
+
+    <h4>SLIDE 9: Testing Framework</h4>
+    <div class="box info">
+        <strong>Estrategia de Testing:</strong>
+        <pre style="background: #0a0a0a; color: #39FF14;">
+├── Karma 6.4.2           → Test Runner (Chrome)
+├── Jasmine 5.12.0        → Framework de testing
+├── Webpack 5.102.1       → Bundling de tests
+└── 10 tests              → 100% pasando ✓</pre>
+    </div>
+
+    <h4>SLIDE 10: Ejemplo de Test</h4>
+    <pre><code>describe('Login Tests', function() {
+  
+  it('validates email format', function() {
+    expect(validarFormatoEmail('invalid')).toBe(false);
+    expect(validarFormatoEmail('valid@email.com')).toBe(true);
+  });
+
+  it('validates credentials', function() {
+    var usuarios = [{
+      correo: 'test@email.com',
+      password: 'test123'
+    }];
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+    expect(validarCredenciales({
+      email: 'test@email.com',
+      password: 'test123'
+    })).toBe(true);
+  });
+});</code></pre>
+
+    <div class="script">
+        <strong>SCRIPT (30 seg):</strong><br>
+        "Implementamos pruebas unitarias con Jasmine. Cada validación crítica tiene su test: formato de email, credenciales, stock del carrito."
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN: Ejecutar Tests (1 min)</strong>
+        <ol>
+            <li>Terminal: <code>npm test</code></li>
+            <li>Mostrar navegador Karma</li>
+            <li>Señalar tests pasando</li>
+        </ol>
+    </div>
+
+    <div class="script">
+        "Aquí pueden ver los tests ejecutándose en un navegador real. Tenemos 10 pruebas cubriendo funcionalidades críticas: autenticación, validaciones y carrito. Todos pasan exitosamente."
+    </div>
+
+    <h4>SLIDE 11: Cobertura de Tests</h4>
+    <div class="box success">
+        <strong>10 Tests Total:</strong>
+        <ul>
+            <li><strong>LOGIN (4 tests):</strong> Email vacío, Formato email, Password vacío, Credenciales</li>
+            <li><strong>REGISTRO (4 tests):</strong> Formato RUN, Longitud nombre, Longitud apellidos, Emails duplicados</li>
+            <li><strong>CARRITO (2 tests):</strong> Agregar producto, Validar stock</li>
+        </ul>
+    </div>
+
+    <h3>🔀 PARTE 3.2: Git y Trabajo en Equipo (1.5 minutos)</h3>
+
+    <h4>SLIDE 12: Git Flow</h4>
+    <div class="box info">
+        <pre style="background: #0a0a0a; color: #39FF14;">
+main (producción)
+  └── origin/main
+
+develop (desarrollo)
+  ├── origin/RodrigoDev
+  ├── origin/ClaudioDev
+  └── origin/GiovanniDev</pre>
+    </div>
+
+    <div class="accion">
+        <strong>ACCIÓN:</strong> Terminal → <code>git branch -a</code>
+    </div>
+
+    <div class="script">
+        <strong>SCRIPT (45 seg):</strong><br>
+        "Trabajamos con Git Flow: cada desarrollador en su branch. Rodrigo en header y carrito, Claudio en panel admin, yo en UI/UX y testing. Esto evitó conflictos y permitió desarrollo paralelo eficiente."
+    </div>
+
+    <h4>SLIDE 13: Colaboración</h4>
+    <div class="box">
+        <strong>Distribución del Trabajo:</strong>
+        <ul>
+            <li><strong>Rodrigo:</strong> Header, Carrito (Context API), Integración</li>
+            <li><strong>Claudio:</strong> Panel Admin, CRUD, Sistema de logs</li>
+            <li><strong>Giovanni:</strong> Páginas públicas, CSS responsive, Tests</li>
+        </ul>
+    </div>
+
+    <div class="script">
+        <strong>SCRIPT (45 seg):</strong><br>
+        "Dividimos trabajo por especialización. Commits descriptivos, pull requests para revisar código y merges frecuentes. Resultado: 3,500+ líneas sin conflictos mayores."
+    </div>
+
+    <h3>🎯 PARTE 3.3: Conclusiones (1.5 minutos)</h3>
+
+    <h4>SLIDE 14: Logros</h4>
+    <div class="box success">
+        <strong>Resultados Alcanzados:</strong>
+        <table>
+            <tr>
+                <td><strong>23</strong> Componentes React</td>
+                <td><strong>15</strong> Páginas/Vistas</td>
+            </tr>
+            <tr>
+                <td><strong>3,500+</strong> Líneas de código</td>
+                <td><strong>0</strong> Errores en producción</td>
+            </tr>
+        </table>
+        <ul>
+            <li>✓ E-commerce completo funcional</li>
+            <li>✓ CRUD productos y usuarios</li>
+            <li>✓ Autenticación con roles</li>
+            <li>✓ Carrito persistente</li>
+            <li>✓ Panel admin profesional</li>
+            <li>✓ Sistema de logs</li>
+            <li>✓ 100% responsive</li>
+            <li>✓ 10 tests pasando</li>
+        </ul>
+    </div>
+
+    <div class="script">
+        <strong>SCRIPT (45 seg):</strong><br>
+        "Logramos un e-commerce completo con todas las funcionalidades. 23 componentes React, 15 páginas, más de 3,500 líneas de código. Lo más importante: cero errores en producción."
+    </div>
+
+    <h4>SLIDE 15: Cierre</h4>
+    <div class="box info">
+        <h3 style="text-align: center; color: #39FF14;">LEVEL-UP GAMER</h3>
+        <p style="text-align: center; font-size: 1.3rem; margin: 20px 0;">
+            Demuestra que con las <strong>herramientas correctas</strong> y <strong>trabajo en equipo</strong>, 
+            es posible crear una aplicación web <strong>profesional y escalable</strong>.
+        </p>
+        <strong>Próximos pasos:</strong>
+        <ul>
+            <li>→ Backend con Node.js + PostgreSQL</li>
+            <li>→ Pasarela de pagos (Transbank)</li>
+            <li>→ App móvil con React Native</li>
+        </ul>
+    </div>
+
+    <div class="script">
+        <strong>SCRIPT (45 seg):</strong><br>
+        "Level-Up Gamer demuestra que con React, trabajo en equipo y buenas prácticas, podemos crear aplicaciones de nivel profesional. Estamos listos para sus preguntas. Muchas gracias."
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- CHECKLIST -->
+    <h2>✅ CHECKLIST PRE-EXPOSICIÓN</h2>
+
+    <h3>RODRIGO</h3>
+    <div class="checklist box">
+        <ul>
+            <li>Proyecto corriendo en localhost:3000</li>
+            <li>Carrito vacío</li>
+            <li>Al menos 3 productos con stock</li>
+            <li>Cerrar sesión si hay alguna activa</li>
+            <li>Slides 1-4 listas</li>
+        </ul>
+    </div>
+
+    <h3>CLAUDIO</h3>
+    <div class="checklist box">
+        <ul>
+            <li>Credenciales: admin@levelup.cl / admin123</li>
+            <li>Al menos 5 productos en BD</li>
+            <li>Slides 5-8 con código legible</li>
+            <li>Producto de prueba para CRUD (TEST001)</li>
+        </ul>
+    </div>
+
+    <h3>GIOVANNI</h3>
+    <div class="checklist box">
+        <ul>
+            <li>Tests pasando: <code>npm test</code></li>
+            <li>Terminal lista para <code>git branch -a</code></li>
+            <li>Navegador Karma abierto</li>
+            <li>Slides 9-15 preparadas</li>
+        </ul>
+    </div>
+
+    <h3>TODOS</h3>
+    <div class="checklist box">
+        <ul>
+            <li>Reloj visible para cada uno</li>
+            <li>Agua disponible</li>
+            <li>Presentación en modo presentador</li>
+            <li>Transiciones ensayadas</li>
+            <li>Celulares en silencio</li>
+        </ul>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- PREGUNTAS FRECUENTES -->
+    <h2>❓ PREGUNTAS FRECUENTES (30 seg c/u)</h2>
+
+    <div class="box">
+        <h4>¿Por qué React y no otros frameworks?</h4>
+        <p><strong>Respuesta:</strong> "Comunidad más grande, excelente documentación y alta demanda laboral en Chile."</p>
+    </div>
+
+    <div class="box">
+        <h4>¿Por qué LocalStorage y no base de datos?</h4>
+        <p><strong>Respuesta:</strong> "Proyecto educativo sin backend. En producción usaríamos PostgreSQL o MongoDB con backend Node.js."</p>
+    </div>
+
+    <div class="box">
+        <h4>¿Cómo manejan la seguridad?</h4>
+        <p><strong>Respuesta:</strong> "Validación en cliente y servidor (futuro), encriptación de contraseñas con bcrypt y tokens JWT para autenticación."</p>
+    </div>
+
+    <div class="box">
+        <h4>¿La aplicación escala?</h4>
+        <p><strong>Respuesta:</strong> "Sí, la arquitectura modular permite migrar a Redux si crece, agregar lazy loading y dividir en microfrontends."</p>
+    </div>
+
+    <div class="box">
+        <h4>¿Es mobile-first?</h4>
+        <p><strong>Respuesta:</strong> "Completamente responsive. Usamos Bootstrap con breakpoints personalizados. Funciona perfecto en mobile, tablet y desktop."</p>
+    </div>
+
+    <div class="box">
+        <h4>¿Implementarán pagos reales?</h4>
+        <p><strong>Respuesta:</strong> "El siguiente paso sería integrar Transbank o MercadoPago. Ya tenemos la estructura del carrito lista."</p>
+    </div>
+
+    <div class="page-break"></div>
+
+    <!-- TIPS FINALES -->
+    <h2>💡 TIPS PARA UNA EXPOSICIÓN EXITOSA</h2>
+
+    <h3>✅ HACER</h3>
+    <div class="tip">
+        <ul>
+            <li>Hablar con <strong>energía y confianza</strong></li>
+            <li>Mirar a la audiencia, no solo la pantalla</li>
+            <li>Demos <strong>fluidas</strong> sin dudar</li>
+            <li>Transiciones <strong>claras</strong> entre personas</li>
+            <li>Usar ejemplos concretos del código</li>
+        </ul>
+    </div>
+
+    <h3>❌ EVITAR</h3>
+    <div class="box danger">
+        <ul>
+            <li>Leer las slides palabra por palabra</li>
+            <li>Muletillas ("ehh", "este", "o sea")</li>
+            <li>Explicar cada línea de código</li>
+            <li>Pasarse del tiempo asignado</li>
+            <li>Ponerse nervioso si algo falla</li>
+        </ul>
+    </div>
+
+    <h3>⏰ Gestión del Tiempo</h3>
+    <div class="box warning">
+        <p><strong>Si hay tiempo extra:</strong></p>
+        <ul>
+            <li>Mostrar más funcionalidades en la demo</li>
+            <li>Explicar más detalles del código técnico</li>
+            <li>Responder preguntas adicionales</li>
+        </ul>
+        <p><strong>Si se acaba el tiempo:</strong></p>
+        <ul>
+            <li>Saltar slides de código si la demo fue clara</li>
+            <li>Resumir aprendizajes en 2 frases</li>
+            <li>Ir directo al cierre</li>
+        </ul>
+    </div>
+
+    <h3>🚨 Plan B (Si algo falla)</h3>
+    <div class="box warning">
+        <ul>
+            <li><strong>Servidor no carga:</strong> Tener screenshots de cada pantalla, explicar verbalmente</li>
+            <li><strong>Tests fallan:</strong> Mostrar el código de los tests, explicar qué deberían hacer</li>
+            <li><strong>Git no funciona:</strong> Mostrar screenshot de <code>git branch -a</code></li>
+        </ul>
+    </div>
+
+    <!-- CREDENCIALES -->
+    <h2>🔑 CREDENCIALES Y RECURSOS</h2>
+
+    <div class="box info">
+        <h4>Usuarios de Prueba:</h4>
+        <pre>Admin:  admin@levelup.cl / admin123
+User:   usuario@levelup.cl / user123</pre>
+    </div>
+
+    <div class="box">
+        <h4>Repositorio GitHub:</h4>
+        <pre>https://github.com/ClaudioFranciscoDelgadoGallardo/Front_level_up</pre>
+    </div>
+
+    <div class="box">
+        <h4>Demo en vivo:</h4>
+        <pre>http://localhost:3000</pre>
+    </div>
+
+    <!-- MENSAJE FINAL -->
+    <div class="header" style="margin-top: 40px;">
+        <h2 style="color: #39FF14; background: none; padding: 0;">🚀 MENSAJE FINAL</h2>
+        <p style="font-size: 1.5rem; margin-top: 20px; color: white;">
+            "Construimos algo profesional, funcional y testeado.<br>
+            Conocemos cada línea de código.<br>
+            Trabajamos como equipo real.<br>
+            <strong style="color: #39FF14;">¡Confianza! 💪</strong>"
+        </p>
+    </div>
+
+    <div style="text-align: center; margin: 40px 0; padding: 30px; background: linear-gradient(135deg, #1E90FF 0%, #39FF14 100%); border-radius: 15px; color: white;">
+        <h2 style="margin: 0; font-size: 2rem;">¡ÉXITO EN LA EXPOSICIÓN! 🎮💚</h2>
+        <p style="margin-top: 15px; font-size: 1.2rem;">Equipo Level-Up - Octubre 2025</p>
+    </div>
+
+</body>
+</html>

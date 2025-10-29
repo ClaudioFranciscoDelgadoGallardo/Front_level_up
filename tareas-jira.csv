@@ -1,0 +1,50 @@
+Summary,Issue Type,Priority,Description,Labels,Component,Assignee,Story Points
+"Crear componente ProtectedRoute para rutas administrativas",Task,High,"Implementar HOC que valide rol de usuario y redirija a login si no es admin","autenticacion,seguridad,react","Seguridad","Rodrigo Yarzu",5
+"Implementar sistema de autenticación con roles (admin/usuario)",Task,High,"Sistema que diferencie entre usuarios normales y administradores en localStorage","autenticacion,roles,seguridad","Seguridad","Rodrigo Yarzu",8
+"Crear página Login con validación de credenciales",Task,High,"Página completa de login con validación de email/password y manejo de errores","autenticacion,ui,validacion","Autenticación","Rodrigo Yarzu",5
+"Crear página AdminUsuarios (listado CRUD)",Task,High,"Página administrativa con tabla de usuarios, filtros y acciones CRUD","admin,crud,usuarios","Panel Admin","Claudio Francisco Delgado Gallardo",8
+"Crear página Productos con filtros y búsqueda",Task,High,"Catálogo completo con filtros por categoría, búsqueda en tiempo real y paginación","productos,catalogo,filtros","Productos","Giovanni Antonio Orellana Muñoz",8
+"Crear página Detalle de producto con zoom de imagen",Task,High,"Vista detallada de producto con galería de imágenes, zoom, stock y valoraciones","productos,ui,zoom","Productos","Giovanni Antonio Orellana Muñoz",5
+"Crear página AdminProductos (gestión CRUD completa)",Task,High,"Panel administrativo con tabla de productos, búsqueda y acciones CRUD","admin,crud,productos","Panel Admin","Claudio Francisco Delgado Gallardo",8
+"Crear página Carrito completa (resumen, totales, finalizar compra)",Task,High,"Página dedicada con tabla de productos, cantidades, subtotales, descuentos y botón finalizar","carrito,compras,ui","Carrito","Rodrigo Yarzu",8
+"Implementar actualización de stock al finalizar compra",Task,High,"Reducir stock de productos automáticamente al confirmar compra","carrito,stock,logica","Carrito","Rodrigo Yarzu",5
+"Crear página AdminHome (dashboard con estadísticas)",Task,High,"Dashboard con KPIs: total productos, usuarios, stock bajo, productos destacados","admin,dashboard,estadisticas","Panel Admin","Claudio Francisco Delgado Gallardo",5
+"Configurar Karma + Jasmine para testing",Task,High,"Instalar y configurar Karma como test runner y Jasmine como framework","testing,configuracion,karma","Testing","Giovanni Antonio Orellana Muñoz",8
+"Crear tests de Login (4 tests)",Task,High,"Tests unitarios: email vacío, formato email, password vacío, validar credenciales","testing,login,validacion","Testing","Giovanni Antonio Orellana Muñoz",5
+"Crear tests de Registro (4 tests)",Task,High,"Tests: formato RUN, longitud nombre, longitud apellidos, emails duplicados","testing,registro,validacion","Testing","Giovanni Antonio Orellana Muñoz",5
+"Crear validaciones.js (validación email, RUN, stock, etc.)",Task,High,"Módulo centralizado con funciones de validación reutilizables","validacion,utilidades,core","Utilidades","Rodrigo Yarzu",5
+"Crear página Registro con validación de formulario",Task,Medium,"Formulario de registro con validación de RUN, email, contraseña, región/comuna","registro,validacion,ui","Autenticación","Rodrigo Yarzu",5
+"Implementar persistencia de sesión en localStorage",Task,Medium,"Guardar usuario actual en localStorage y mantener sesión activa","autenticacion,persistencia,storage","Seguridad","Rodrigo Yarzu",3
+"Crear componente AdminUsuarioForm (crear/editar usuarios)",Task,Medium,"Formulario reutilizable para crear y editar usuarios desde el panel admin","admin,usuarios,form","Panel Admin","Claudio Francisco Delgado Gallardo",5
+"Implementar funcionalidad eliminar usuarios",Task,Medium,"Permitir a administradores eliminar usuarios con confirmación modal","admin,usuarios,crud","Panel Admin","Claudio Francisco Delgado Gallardo",3
+"Implementar validación de correos duplicados",Task,Medium,"Validar que no se registren usuarios con correos ya existentes","validacion,usuarios,registro","Autenticación","Rodrigo Yarzu",3
+"Crear componente AdminProductoForm (crear/editar productos)",Task,Medium,"Formulario completo para agregar/editar productos con validaciones","admin,productos,form","Panel Admin","Claudio Francisco Delgado Gallardo",5
+"Implementar funcionalidad eliminar productos con confirmación",Task,Medium,"Eliminar productos con modal de confirmación y actualización de stock","admin,productos,crud","Panel Admin","Claudio Francisco Delgado Gallardo",3
+"Crear página AdminDestacados (gestión productos destacados en carrusel)",Task,Medium,"Panel para seleccionar hasta 6 productos destacados que aparecen en homepage","admin,productos,destacados","Panel Admin","Claudio Francisco Delgado Gallardo",5
+"Implementar descuento automático en carrito al finalizar compra",Task,Medium,"Aplicar 20% de descuento automático para usuarios con correo @duoc.cl","carrito,descuentos,logica","Carrito","Rodrigo Yarzu",3
+"Crear página AdminLogs (auditoría de acciones)",Task,Medium,"Sistema de logs con filtros por tipo, fecha y usuario para auditoría completa","admin,logs,auditoria","Panel Admin","Claudio Francisco Delgado Gallardo",5
+"Implementar logManager.js (sistema de registro de eventos)",Task,Medium,"Utilidad para registrar todas las acciones administrativas (CRUD, login, etc.)","utilidades,logs,auditoria","Utilidades","Claudio Francisco Delgado Gallardo",3
+"Crear componente ModalConfirmacion (confirmación de acciones destructivas)",Task,Medium,"Modal reutilizable para confirmar eliminaciones y acciones irreversibles","components,ui,modal","Componentes","Giovanni Antonio Orellana Muñoz",3
+"Crear página Contacto con formulario y validación",Task,Medium,"Formulario de contacto con validaciones, mapa y datos de contacto","paginas,contacto,form","Páginas Públicas","Giovanni Antonio Orellana Muñoz",5
+"Crear tests de Carrito (2 tests)",Task,Medium,"Tests: agregar producto al carrito, validar stock disponible","testing,carrito,validacion","Testing","Giovanni Antonio Orellana Muñoz",3
+"Configurar Webpack para bundling de tests",Task,Medium,"Setup de Webpack con Babel para transpilar tests a ES5","testing,webpack,configuracion","Testing","Giovanni Antonio Orellana Muñoz",5
+"Crear inicializarDatos.js (carga de datos iniciales)",Task,Medium,"Script para poblar localStorage con productos y usuarios de prueba","utilidades,datos,inicializacion","Utilidades","Rodrigo Yarzu",3
+"Crear estilos CSS para Panel Administrativo (Admin.css)",Task,Medium,"Estilos completos para todas las páginas del panel admin","css,estilos,admin","Estilos","Claudio Francisco Delgado Gallardo",5
+"Crear estilos CSS para página Carrito (Carrito.css)",Task,Medium,"Diseño responsive de tabla de carrito, totales y botones","css,estilos,carrito","Estilos","Rodrigo Yarzu",3
+"Crear estilos CSS para página Detalle (Detalle.css)",Task,Medium,"Diseño de galería de imágenes, zoom, información y botón agregar al carrito","css,estilos,productos","Estilos","Giovanni Antonio Orellana Muñoz",3
+"Crear estilos CSS para Homepage (Home.css)",Task,Medium,"Estilos de hero section y carrusel de productos destacados","css,estilos,home","Estilos","Rodrigo Yarzu",3
+"Crear estilos CSS para Login/Registro (Login.css y Registro.css)",Task,Medium,"Diseño de formularios de autenticación con tema gaming","css,estilos,auth","Estilos","Rodrigo Yarzu",3
+"Crear estilos CSS para catálogo Productos (Productos.css)",Task,Medium,"Grid de productos, filtros, búsqueda y paginación responsive","css,estilos,productos","Estilos","Giovanni Antonio Orellana Muñoz",3
+"Crear estilos CSS para Header (Header.css)",Task,Medium,"Navegación responsive con dropdown de carrito y menú mobile","css,estilos,header","Estilos","Rodrigo Yarzu",3
+"Configurar karma.conf.js completo",Task,Medium,"Archivo de configuración de Karma con Chrome launcher, Webpack y reporters","testing,karma,configuracion","Testing","Giovanni Antonio Orellana Muñoz",3
+"Instalar y configurar Testing Library",Task,Medium,"Instalar @testing-library/react, jest-dom y user-event para testing avanzado","testing,dependencias,configuracion","Testing","Giovanni Antonio Orellana Muñoz",3
+"Instalar y configurar Webpack + Babel",Task,Medium,"Setup completo de Webpack 5 con Babel para bundling y transpilación","build,webpack,babel","Configuración","Giovanni Antonio Orellana Muñoz",5
+"Configurar scripts de testing en package.json",Task,Medium,"Agregar scripts npm test, test:watch para ejecutar tests","testing,npm,scripts","Testing","Giovanni Antonio Orellana Muñoz",2
+"Crear componente CarritoDebug para desarrollo",Task,Low,"Componente de debugging que muestra estado del carrito en tiempo real","debug,carrito,dev","Desarrollo","Rodrigo Yarzu",2
+"Crear página Nosotros (información de la empresa)",Task,Low,"Página institucional con misión, visión, historia y equipo","paginas,nosotros,institucional","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3
+"Crear página Noticias (contenido gaming)",Task,Low,"Sección de noticias sobre gaming, lanzamientos y eventos","paginas,noticias,contenido","Páginas Públicas","Giovanni Antonio Orellana Muñoz",3
+"Crear zoomManager.js (zoom de imágenes en detalle)",Task,Low,"Utilidad para manejar zoom de imágenes en página de detalle de producto","utilidades,zoom,imagenes","Utilidades","Giovanni Antonio Orellana Muñoz",3
+"Crear estilos CSS para página Contacto (Contacto.css)",Task,Low,"Estilos de formulario, mapa y sección de información de contacto","css,estilos,contacto","Estilos","Giovanni Antonio Orellana Muñoz",2
+"Crear estilos CSS para página Nosotros (Nosotros.css)",Task,Low,"Diseño de secciones institucionales (misión, visión, equipo)","css,estilos,nosotros","Estilos","Giovanni Antonio Orellana Muñoz",2
+"Crear estilos CSS para página Noticias (Noticias.css)",Task,Low,"Diseño de tarjetas de noticias y layout tipo blog","css,estilos,noticias","Estilos","Giovanni Antonio Orellana Muñoz",2
+"Crear estilos CSS para Footer (Footer.css)",Task,Low,"Footer con redes sociales, enlaces y copyright","css,estilos,footer","Estilos","Giovanni Antonio Orellana Muñoz",2
