@@ -37,24 +37,10 @@ export default function Carrito() {
       return;
     }
     
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-    items.forEach(item => {
-      const index = productos.findIndex(p => p.codigo === item.codigo);
-      if (index !== -1 && productos[index].stock >= item.qty) {
-        productos[index].stock -= item.qty;
-      }
-    });
-    localStorage.setItem('productos', JSON.stringify(productos));
-    
-    vaciarCarrito();
-    
     if (window.notificar) {
-      window.notificar('¡Gracias por tu compra!', 'success', 2000);
+      window.notificar('¡Gracias por tu compra!', 'success', 3000);
     }
-    
-    setTimeout(() => {
-      window.location.href = '/productos';
-    }, 2000);
+    vaciarCarrito();
   };
 
   const handleIrAProductos = () => {
