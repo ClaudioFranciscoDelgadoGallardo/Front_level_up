@@ -1,0 +1,345 @@
+{
+  "info": {
+    "name": "Level Up - Microservicios API",
+    "description": "Colección de endpoints para probar todos los microservicios de Level Up",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth Service",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@levelup.cl\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"run\": \"12345678\",\n  \"nombre\": \"Juan\",\n  \"apellidos\": \"Pérez González\",\n  \"correo\": \"juan@test.cl\",\n  \"password\": \"pass123\",\n  \"telefono\": \"912345678\",\n  \"direccion\": \"Santiago, Chile\",\n  \"fechaNac\": \"1990-01-01\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Validate Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:8081/api/auth/validate",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "auth", "validate"]
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8081/api/auth/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["api", "auth", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Product Service",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/productos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "productos"]
+            }
+          }
+        },
+        {
+          "name": "Get Featured Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/productos/destacados",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "productos", "destacados"]
+            }
+          }
+        },
+        {
+          "name": "Get Product by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/productos/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "productos", "1"]
+            }
+          }
+        },
+        {
+          "name": "Search by Name",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8083/api/productos/buscar?nombre=mouse",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "productos", "buscar"],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "mouse"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Mouse Gamer RGB\",\n  \"descripcion\": \"Mouse gaming con iluminación RGB y 6 botones programables\",\n  \"precio\": 29990,\n  \"categoria\": \"Perifericos\",\n  \"stock\": 50,\n  \"imagenUrl\": \"https://example.com/mouse.jpg\",\n  \"destacado\": true,\n  \"marca\": \"Logitech\",\n  \"descuento\": 0\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8083/api/productos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "productos"]
+            }
+          }
+        },
+        {
+          "name": "Update Stock",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "http://localhost:8083/api/productos/1/stock?cantidad=-5",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8083",
+              "path": ["api", "productos", "1", "stock"],
+              "query": [
+                {
+                  "key": "cantidad",
+                  "value": "-5"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Order Service",
+      "item": [
+        {
+          "name": "Get All Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8084/api/ordenes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "ordenes"]
+            }
+          }
+        },
+        {
+          "name": "Get Order by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8084/api/ordenes/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "ordenes", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get Orders by User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8084/api/ordenes/usuario/1",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "ordenes", "usuario", "1"]
+            }
+          }
+        },
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuarioId\": 1,\n  \"usuarioNombre\": \"Admin Level Up\",\n  \"usuarioCorreo\": \"admin@levelup.cl\",\n  \"direccionEnvio\": \"Santiago Centro, Chile\",\n  \"metodoPago\": \"Tarjeta de Credito\",\n  \"detalles\": [\n    {\n      \"productoId\": 1,\n      \"productoNombre\": \"Mouse Gamer RGB\",\n      \"cantidad\": 2,\n      \"precioUnitario\": 29990\n    },\n    {\n      \"productoId\": 2,\n      \"productoNombre\": \"Teclado Mecanico\",\n      \"cantidad\": 1,\n      \"precioUnitario\": 79990\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8084/api/ordenes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "ordenes"]
+            }
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "http://localhost:8084/api/ordenes/1/estado?estado=PROCESANDO",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8084",
+              "path": ["api", "ordenes", "1", "estado"],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "PROCESANDO"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "API Gateway",
+      "item": [
+        {
+          "name": "Login via Gateway",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@levelup.cl\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Products via Gateway",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/productos",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "productos"]
+            }
+          }
+        },
+        {
+          "name": "Get Orders via Gateway",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:8080/api/ordenes",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "ordenes"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
+

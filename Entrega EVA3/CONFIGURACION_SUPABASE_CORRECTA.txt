@@ -1,0 +1,285 @@
+═══════════════════════════════════════════════════════════════
+   CONFIGURACIÓN CORRECTA DE SUPABASE - GUÍA PASO A PASO
+═══════════════════════════════════════════════════════════════
+
+PROBLEMA DETECTADO:
+───────────────────────────────────────────────────────────────
+Error: java.net.UnknownHostException: aws-1-us-east-1.pooler.supabase.com
+
+Esto significa que:
+1. La URL de conexión es incorrecta
+2. O los datos de conexión han cambiado en Supabase
+3. O hay un problema de red/firewall
+
+
+SOLUCIÓN: OBTENER DATOS CORRECTOS DE SUPABASE
+═══════════════════════════════════════════════════════════════
+
+PASO 1: ACCEDER A TU PROYECTO SUPABASE
+───────────────────────────────────────────────────────────────
+1. Abre tu navegador
+2. Ve a: https://supabase.com/dashboard
+3. Inicia sesión si es necesario
+4. Selecciona tu proyecto "LevelUp" o el nombre que hayas usado
+
+
+PASO 2: IR A DATABASE SETTINGS
+───────────────────────────────────────────────────────────────
+1. En el menú lateral izquierdo, click en "Project Settings" (⚙️)
+2. Click en "Database"
+3. Busca la sección "Connection string"
+
+
+PASO 3: COPIAR CONNECTION STRING CORRECTA
+───────────────────────────────────────────────────────────────
+Verás varias opciones de conexión:
+
+┌────────────────────────────────────────────────────────────┐
+│ Connection string                                          │
+├────────────────────────────────────────────────────────────┤
+│ ▼ Transaction Mode                                         │
+│   postgresql://postgres.xxx:[YOUR-PASSWORD]@xxx.supabase. │
+│   co:6543/postgres                                         │
+│                                                            │
+│ ▼ Session Mode                                             │
+│   postgresql://postgres.xxx:[YOUR-PASSWORD]@xxx.supabase. │
+│   co:5432/postgres                                         │
+│                                                            │
+│ ▼ Direct Connection                                        │
+│   postgresql://postgres.xxx:[YOUR-PASSWORD]@xxx.supabase. │
+│   co:5432/postgres                                         │
+└────────────────────────────────────────────────────────────┘
+
+IMPORTANTE:
+• Selecciona "Transaction Mode" (puerto 6543)
+• Copia la connection string COMPLETA
+• Reemplaza [YOUR-PASSWORD] con tu password real
+
+
+PASO 4: EXTRAER DATOS DE LA CONNECTION STRING
+───────────────────────────────────────────────────────────────
+Tu connection string se verá así:
+postgresql://postgres.XXXXX:PASSWORD@aws-0-us-east-1.pooler.supabase.com:6543/postgres
+
+Extrae estos datos:
+┌─────────────────┬──────────────────────────────────────────┐
+│ HOST            │ aws-0-us-east-1.pooler.supabase.com     │
+│ PUERTO          │ 6543                                     │
+│ USUARIO         │ postgres.XXXXX                          │
+│ PASSWORD        │ TU_PASSWORD_REAL                        │
+│ DATABASE        │ postgres                                 │
+└─────────────────┴──────────────────────────────────────────┘
+
+
+PASO 5: VERIFICAR DATOS EN SUPABASE DASHBOARD
+───────────────────────────────────────────────────────────────
+En la misma página de Database Settings, verifica:
+
+Host: db.XXXXXXXXXX.supabase.co
+Port: 6543 (Transaction pooler)
+Database: postgres
+User: postgres.XXXXXXXXXX
+Password: [El que creaste al crear el proyecto]
+
+
+PASO 6: ACTUALIZAR application.properties
+───────────────────────────────────────────────────────────────
+Con los datos que obtuviste, actualiza el archivo:
+LevelUp_User_service/src/main/resources/application.properties
+
+Cambia estas líneas:
+
+spring.datasource.url=jdbc:postgresql://[HOST]:[PUERTO]/postgres?sslmode=require&prepareThreshold=0
+spring.datasource.username=[USUARIO_COMPLETO]
+spring.datasource.password=[TU_PASSWORD]
+
+Ejemplo con datos reales:
+spring.datasource.url=jdbc:postgresql://db.xsgpfadjkjgbnnxgnqhp.supabase.co:6543/postgres?sslmode=require&prepareThreshold=0
+spring.datasource.username=postgres.xsgpfadjkjgbnnxgnqhp
+spring.datasource.password=TuPasswordReal123
+
+
+CONFIGURACIONES ADICIONALES DE SUPABASE
+═══════════════════════════════════════════════════════════════
+
+OPCIÓN 1: CONNECTION POOLING (RECOMENDADO)
+───────────────────────────────────────────────────────────────
+Usar Transaction Pooler:
+• Puerto: 6543
+• Mejor para aplicaciones web/microservicios
+• Maneja múltiples conexiones eficientemente
+
+URL Format:
+jdbc:postgresql://[HOST]:6543/postgres?sslmode=require&prepareThreshold=0
+
+
+OPCIÓN 2: DIRECT CONNECTION
+───────────────────────────────────────────────────────────────
+Conexión directa:
+• Puerto: 5432
+• Solo si tienes pocas conexiones
+• Límite de conexiones más bajo
+
+URL Format:
+jdbc:postgresql://[HOST]:5432/postgres?sslmode=require
+
+
+VERIFICAR CONFIGURACIÓN DE RED EN SUPABASE
+═══���═══════════════════════════════════════════════════════════
+
+PASO 1: VERIFICAR IP ALLOWLIST
+───────────────────────────────────────────────────────────────
+1. Ve a: Project Settings > Database
+2. Busca "Network Restrictions" o "IP Allowlist"
+3. Asegúrate que tu IP esté permitida o usa "Allow all IPs" para testing
+
+
+PASO 2: VERIFICAR SSL/TLS
+───────────────────────────────────────────────────────────────
+1. Supabase requiere SSL por defecto
+2. En application.properties debe tener: ?sslmode=require
+3. Si tienes problemas, prueba temporalmente: ?sslmode=disable
+   (NO RECOMENDADO para producción)
+
+
+VERIFICAR CERTIFICADO SSL (SI HAY PROBLEMAS)
+───────────────────────────────────────────────────────────────
+Si aparece error de certificado SSL, agrega a application.properties:
+
+spring.datasource.url=jdbc:postgresql://[HOST]:6543/postgres?sslmode=require&sslrootcert=classpath:prod-ca-2021.crt
+
+Y descarga el certificado:
+1. https://supabase.com/docs/guides/database/connecting-to-postgres
+2. Descarga prod-ca-2021.crt
+3. Cópialo a: src/main/resources/
+
+
+COMANDOS DE VERIFICACIÓN
+═══════════════════════════════════════════════════════════════
+
+VERIFICAR CONECTIVIDAD DESDE TERMINAL (WINDOWS)
+───────────────────────────────────────────────────────────────
+Test de ping (para verificar DNS):
+ping db.xsgpfadjkjgbnnxgnqhp.supabase.co
+
+Test de puerto (PowerShell):
+Test-NetConnection -ComputerName db.xsgpfadjkjgbnnxgnqhp.supabase.co -Port 6543
+
+Test con psql (si tienes PostgreSQL instalado):
+psql "postgresql://postgres.xxx:PASSWORD@HOST:6543/postgres"
+
+
+VERIFICAR EN SUPABASE SQL EDITOR
+───────────────────────────────────────────────────────────────
+1. Ve a: SQL Editor en Supabase Dashboard
+2. Ejecuta para verificar que la tabla usuarios existe:
+
+SELECT COUNT(*) FROM usuarios;
+
+3. Verifica que el usuario admin existe:
+
+SELECT id, correo, rol, activo FROM usuarios WHERE correo = 'admin@levelup.cl';
+
+4. Si no existe, ejecuta primero:
+   - schema_completo.sql
+   - datos_iniciales_completo.sql
+
+
+EJEMPLO DE CONFIGURACIÓN COMPLETA
+═══════════════════════════════════════════════════════════════
+
+application.properties CORRECTO:
+───────────────────────────────────────────────────────────────
+spring.application.name=user-service
+server.port=8082
+
+# Supabase Database - Transaction Pooler
+spring.datasource.url=jdbc:postgresql://db.xsgpfadjkjgbnnxgnqhp.supabase.co:6543/postgres?sslmode=require&prepareThreshold=0
+spring.datasource.username=postgres.xsgpfadjkjgbnnxgnqhp
+spring.datasource.password=TuPasswordReal123
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# HikariCP Settings
+spring.datasource.hikari.maximum-pool-size=5
+spring.datasource.hikari.minimum-idle=2
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.idle-timeout=300000
+spring.datasource.hikari.max-lifetime=600000
+
+# JPA/Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+# JWT
+jwt.secret=levelup-secret-key-super-secure-2024
+jwt.expiration=86400000
+
+
+ERRORES COMUNES Y SOLUCIONES
+═══════════════════════════════════════════════════════════════
+
+ERROR: UnknownHostException
+───────────────────────────────────────────────────────────────
+Causa: Host incorrecto o problema de DNS
+Solución:
+1. Verifica el host en Supabase Dashboard
+2. Usa el host completo: db.XXXXX.supabase.co (NO aws-1-us-east-1.pooler.supabase.com)
+3. Verifica tu conexión a internet
+
+
+ERROR: Connection refused
+───────────────────────────────────────────────────────────────
+Causa: Puerto incorrecto o firewall
+Solución:
+1. Usa puerto 6543 para Transaction Pooler
+2. Verifica que tu firewall permita conexiones salientes al puerto 6543
+
+
+ERROR: SSL error
+───────────────────────────────────────────────────────────────
+Causa: Problema con certificado SSL
+Solución:
+1. Temporalmente usa: ?sslmode=disable (solo para testing)
+2. O descarga el certificado SSL de Supabase
+
+
+ERROR: Authentication failed
+───────────────────────────────────────────────────────────────
+Causa: Usuario o password incorrecto
+Solución:
+1. Verifica el password en Supabase Dashboard
+2. El usuario debe ser: postgres.XXXXXXXXXXXXX (con el prefijo postgres.)
+
+
+PASOS SIGUIENTES DESPUÉS DE CONFIGURAR
+═══════════════════════════════════════════════════════════════
+
+1. Actualiza application.properties con los datos correctos
+2. Reinicia el servicio:
+   cd LevelUp_User_service
+   .\mvnw.cmd spring-boot:run
+
+3. Verifica en los logs que la conexión sea exitosa:
+   "HikariPool-1 - Start completed"
+
+4. Prueba el login en Postman según la guía QUICK_START_POSTMAN.txt
+
+
+INFORMACIÓN QUE NECESITO DE TI
+═══════════════════════════════════════════════════════════════
+
+Por favor, accede a tu Supabase Dashboard y proporcióname:
+
+1. HOST (ejemplo: db.xsgpfadjkjgbnnxgnqhp.supabase.co)
+2. PUERTO (debería ser 6543)
+3. USUARIO (ejemplo: postgres.xsgpfadjkjgbnnxgnqhp)
+4. DATABASE NAME (debería ser: postgres)
+
+NO compartas tu password aquí, solo actualízalo directamente en el archivo.
+
+
+═══════════════════════════════════════════════════════════════
+Con esta información podré actualizar correctamente tu configuración
+═══════════════════════════════════════════════════════════════
+

@@ -1,0 +1,319 @@
+═══════════════════════════════════════════════════════════════
+   GUIA COMPLETA: LOGIN EN POSTMAN - PASO A PASO
+═══════════════════════════════════════════════════════════════
+
+ENDPOINT DE LOGIN
+═══════════════════════════════════════════════════════════════
+URL: http://localhost:8082/api/usuarios/login
+Método: POST
+Puerto: 8082 (LevelUp_User_service)
+
+
+PASO 1: ABRIR POSTMAN Y CREAR NUEVA PETICIÓN
+═══════════════════════════════════════════════════════════════
+1. Abre Postman
+2. Click en "New" o "+" para crear nueva petición
+3. Cambia el método a "POST" (dropdown a la izquierda de la URL)
+4. Pega la URL: http://localhost:8082/api/usuarios/login
+
+
+PASO 2: CONFIGURAR AUTHORIZATION (MUY IMPORTANTE)
+═══════════════════════════════════════════════════════════════
+1. Click en la pestaña "Authorization"
+2. En el dropdown "Type" selecciona: "No Auth"
+3. ✅ DEJAR EN "No Auth" - El login NO necesita token
+
+
+PASO 3: CONFIGURAR HEADERS
+═══════════════════════════════════════════════════════════════
+1. Click en la pestaña "Headers"
+2. Verifica que exista (Postman lo agrega automáticamente):
+
+   Key: Content-Type
+   Value: application/json
+
+3. Si no existe, agrégalo manualmente
+4. ✅ Debe estar ACTIVADO (checkbox marcado)
+
+
+PASO 4: CONFIGURAR BODY (EL MÁS IMPORTANTE)
+═══════════════════════════════════════════════════════════════
+1. Click en la pestaña "Body"
+2. Selecciona el radio button: "raw"
+3. En el dropdown de la derecha selecciona: "JSON"
+4. Pega EXACTAMENTE este JSON (copia desde aquí):
+
+{
+  "correo": "admin@levelup.cl",
+  "password": "admin123"
+}
+
+⚠️ IMPORTANTE:
+- Usa "correo" (NO "email")
+- Usa comillas dobles " (NO simples ')
+- Respeta mayúsculas/minúsculas
+- No agregues comas extras al final
+
+
+PASO 5: ENVIAR LA PETICIÓN
+═══════════════════════════════════════════════════════════════
+1. Click en el botón azul "Send"
+2. Espera la respuesta (aparece abajo)
+
+
+PASO 6: RESPUESTA EXITOSA (STATUS 200 OK)
+═══════════════════════════════════════════════════════════════
+Si todo está correcto, recibirás:
+
+Status: 200 OK
+
+Body (JSON):
+{
+  "token": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOi...(muy largo)...XkE",
+  "type": "Bearer",
+  "usuario": {
+    "id": 1,
+    "run": "12345678-9",
+    "nombre": "Admin",
+    "apellidos": "Level Up",
+    "correo": "admin@levelup.cl",
+    "telefono": "912345678",
+    "direccion": "Av. Providencia 123",
+    "comuna": "Providencia",
+    "ciudad": "Santiago",
+    "region": "Región Metropolitana",
+    "rol": "ADMIN",
+    "activo": true,
+    "verificado": true
+  }
+}
+
+
+PASO 7: COPIAR EL TOKEN
+═══════════════════════════════════════════════════════════════
+1. En la respuesta, busca el campo "token"
+2. SELECCIONA TODO el valor (desde eyJ hasta el final)
+3. Click derecho → Copy
+4. Guárdalo en un lugar seguro (lo necesitarás para otras peticiones)
+
+⚠️ El token es MUY LARGO (varios cientos de caracteres)
+⚠️ NO copies las comillas, solo el contenido
+
+
+PASO 8 (OPCIONAL): GUARDAR TOKEN AUTOMÁTICAMENTE
+═══════════════════════════════════════════════════════════════
+Para no copiar manualmente el token cada vez:
+
+1. Ve a la pestaña "Tests" (junto a Body)
+2. Pega este código JavaScript:
+
+const response = pm.response.json();
+if (response && response.token) {
+    pm.environment.set("auth_token", response.token);
+    console.log("✅ Token guardado en variable auth_token");
+}
+
+3. Ahora, cada vez que hagas login, el token se guardará automáticamente
+4. Podrás usarlo en otras peticiones con: {{auth_token}}
+
+
+═══════════════════════════════════════════════════════════════
+   CREDENCIALES DISPONIBLES
+═══════════════════════════════════════════════════════════════
+
+USUARIO ADMIN:
+{
+  "correo": "admin@levelup.cl",
+  "password": "admin123"
+}
+
+USUARIO NORMAL:
+{
+  "correo": "usuario@test.cl",
+  "password": "user123"
+}
+
+VENDEDOR:
+{
+  "correo": "vendedor@levelup.cl",
+  "password": "vendedor123"
+}
+
+
+═══════════════════════════════════════════════════════════════
+   USAR EL TOKEN EN OTRAS PETICIONES
+═══════════════════════════════════════════════════════════════
+
+Ejemplo: Listar todos los usuarios (requiere token de ADMIN)
+
+URL: http://localhost:8082/api/usuarios
+Método: GET
+
+OPCIÓN A - Usando Authorization Tab:
+1. Pestaña "Authorization"
+2. Type: "Bearer Token"
+3. Token: pegar el token completo (o usar {{auth_token}} si usaste Tests)
+
+OPCIÓN B - Usando Headers:
+1. Pestaña "Headers"
+2. Agregar nuevo header:
+   Key: Authorization
+   Value: Bearer eyJhbGciOiJIUzUxMiJ9...(tu token completo)
+
+⚠️ IMPORTANTE: Debe tener "Bearer " (con espacio) antes del token
+
+
+═══════════════════════════════════════════════════════════════
+   SOLUCIÓN DE PROBLEMAS
+═══════════════════════════════════════════════════════════════
+
+ERROR 401 UNAUTHORIZED
+─────────────────────────────────────────────────────────────
+Causa 1: El servicio no está corriendo
+Solución: Abre cmd.exe y ejecuta:
+   cd "C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service"
+   .\mvnw.cmd spring-boot:run
+
+Causa 2: Usuario no existe en la base de datos
+Solución: Verifica en Supabase SQL Editor:
+   SELECT * FROM usuarios WHERE correo = 'admin@levelup.cl';
+
+Causa 3: Contraseña incorrecta
+Solución: Usa exactamente "admin123" (sin espacios)
+
+Causa 4: Usuario inactivo
+Solución: Verifica que activo = true en la BD
+
+
+ERROR 400 BAD REQUEST
+─────────────────────────────────────────────────────────────
+Causa 1: JSON mal formado
+Solución: Verifica:
+   - Comillas dobles "
+   - Comas correctas
+   - Llaves { } balanceadas
+
+Causa 2: Campo incorrecto
+Solución: Usa "correo" (NO "email")
+
+Causa 3: Validación fallida
+Solución:
+   - Password mínimo 6 caracteres
+   - Correo formato válido (con @)
+
+
+ERROR: CANNOT CONNECT
+─────────────────────────────────────────────────────────────
+Solución 1: Verifica que el servicio esté corriendo
+   - En cmd donde ejecutaste spring-boot:run debe decir "Started"
+
+Solución 2: Verifica el puerto
+   - Debe ser 8082, no 8080
+
+Solución 3: Verifica la URL
+   - http://localhost:8082/api/usuarios/login
+   - Sin espacios, sin caracteres extra
+
+
+ERROR CORS
+─────────────────────────────────────────────────────────────
+Si aparece: "...allowedOrigins cannot contain..."
+
+Solución: Reinicia el servicio:
+   1. Ctrl+C en la terminal donde corre
+   2. .\mvnw.cmd spring-boot:run
+
+
+═══════════════════════════════════════════════════════════════
+   VERIFICACIÓN RÁPIDA
+═══════════════════════════════════════════════════════════════
+
+Antes de probar el login, verifica:
+
+✅ Servicio corriendo (cmd muestra "Started LevelUpUserServiceApplication")
+✅ Puerto correcto (8082)
+✅ Base de datos con usuario admin (ejecutaste datos_iniciales_completo.sql)
+✅ Postman configurado:
+   - Method: POST
+   - URL: http://localhost:8082/api/usuarios/login
+   - Authorization: No Auth
+   - Body: raw, JSON
+   - Content-Type: application/json
+
+
+═══════════════════════════════════════════════════════════════
+   COMANDOS ÚTILES (CMD.EXE)
+═══════════════════════════════════════════════════════════════
+
+Compilar el servicio:
+cd "C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service"
+.\mvnw.cmd clean package -DskipTests
+
+Iniciar el servicio:
+.\mvnw.cmd spring-boot:run
+
+Verificar con curl (cmd):
+curl -X POST http://localhost:8082/api/usuarios/login -H "Content-Type: application/json" -d "{\"correo\":\"admin@levelup.cl\",\"password\":\"admin123\"}"
+
+
+═══════════════════════════════════════════════════════════════
+   RESUMEN VISUAL POSTMAN
+═══════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────┐
+│ POST ▼ http://localhost:8082/api/usuarios/login      Send  │
+├─────────────────────────────────────────────────────────────┤
+│ Params  Authorization  Headers  Body  Pre-request  Tests   │
+│                                   ▲                          │
+│         ┌──────────────────────────────────────────┐        │
+│ ○ none  │                                          │        │
+│ ○ form-data                                        │        │
+│ ● raw   │  {                                       │        │
+│ ○ binary│    "correo": "admin@levelup.cl",        │        │
+│         │    "password": "admin123"                │        │
+│   Text ▼│  }                                       │        │
+│   JSON ▼│                                          │        │
+│         └──────────────────────────────────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════
+   EJEMPLO COMPLETO DE FLUJO
+═══════════════════════════════════════════════════════════════
+
+1️⃣ LOGIN (obtener token):
+   POST http://localhost:8082/api/usuarios/login
+   Body: {"correo": "admin@levelup.cl", "password": "admin123"}
+   → Copiar token de la respuesta
+
+2️⃣ LISTAR USUARIOS:
+   GET http://localhost:8082/api/usuarios
+   Authorization: Bearer {token}
+   → Ver lista de usuarios
+
+3️⃣ CREAR USUARIO:
+   POST http://localhost:8082/api/usuarios/registro
+   Body: {run, nombre, apellidos, correo, password, ...}
+   → Usuario creado
+
+4️⃣ ACTUALIZAR USUARIO:
+   PUT http://localhost:8082/api/usuarios/{id}
+   Authorization: Bearer {token}
+   Body: {datos actualizados}
+   → Usuario actualizado
+
+
+═══════════════════════════════════════════════════════════════
+¿NECESITAS MÁS AYUDA?
+═══════════════════════════════════════════════════════════════
+
+Si sigues teniendo problemas:
+
+1. Copia el ERROR COMPLETO que aparece en Postman
+2. Copia los LOGS del servicio (terminal donde corre)
+3. Verifica en Supabase que el usuario existe:
+   SELECT * FROM usuarios WHERE correo = 'admin@levelup.cl';
+4. Comparte esa información para ayudarte mejor
+
+═══════════════════════════════════════════════════════════════
+

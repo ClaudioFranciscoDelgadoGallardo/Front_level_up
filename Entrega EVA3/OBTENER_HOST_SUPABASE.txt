@@ -1,0 +1,142 @@
+╔════════════════════════════════════════════════════════════════╗
+║  SOLUCIÓN: OBTENER HOST CORRECTO DE SUPABASE                 ║
+╚════════════════════════════════════════════════════════════════╝
+
+🔴 PROBLEMA DETECTADO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Error: UnknownHostException: db.xsgpfadjkjgbnnxgnqhp.supabase.co
+
+CAUSA: El host está incorrecto o no existe.
+
+
+✅ SOLUCIÓN (3 PASOS):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASO 1: OBTENER STRING DE CONEXIÓN CORRECTA
+───────────────────────────────────────────────────────────────
+1. Ve a: https://supabase.com/dashboard
+2. Inicia sesión
+3. Selecciona tu proyecto "LevelUp" (o el nombre que usaste)
+4. Click en "Project Settings" ⚙️ (abajo izquierda)
+5. Click en "Database"
+6. Scroll hasta "Connection string"
+
+
+PASO 2: COPIAR CONNECTION STRING
+───────────────────────────────────────────────────────────────
+Verás algo como:
+
+┌────────────────────────────────────────────────────────────┐
+│ Connection string                                          │
+│                                                            │
+│ ▼ Transaction Mode (Recommended)                          │
+│                                                            │
+│ postgresql://postgres.[PROJECT-REF]:[YOUR-PASSWORD]@      │
+│ aws-0-us-east-1.pooler.supabase.com:6543/postgres         │
+└────────────────────────────────────────────────────────────┘
+
+IMPORTANTE:
+• Selecciona "Transaction Mode"
+• NO copies todavía, solo observa el formato
+
+
+PASO 3: IDENTIFICAR EL HOST CORRECTO
+───────────────────────────────────────────────────────────────
+En la connection string, el HOST es la parte después de @ y antes de :
+
+Formato: aws-0-us-east-1.pooler.supabase.com
+
+Puede ser:
+• aws-0-us-east-1.pooler.supabase.com
+• aws-0-us-west-1.pooler.supabase.com
+• db.[project-id].supabase.co
+
+COPIA AQUÍ EL HOST COMPLETO que ves en tu dashboard.
+
+
+🔍 INFORMACIÓN ADICIONAL EN SUPABASE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+En la misma página "Database Settings", busca:
+
+┌────────────────────────────────────────────────────────────┐
+│ Connection Info                                            │
+├────────────────────────────────────────────────────────────┤
+│ Host:    [AQUÍ ESTÁ EL HOST CORRECTO]                     │
+│ Port:    6543 (Transaction pooler)                        │
+│ Database name: postgres                                    │
+│ User:    postgres.[project-ref]                           │
+│ Password: [tu password]                                    │
+└────────────────────────────────────────────────────────────┘
+
+COPIA EXACTAMENTE lo que dice en "Host:"
+
+
+📝 EJEMPLO DE DATOS CORRECTOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Ejemplo 1 (Transaction Pooler):
+Host: aws-0-us-east-1.pooler.supabase.com
+Port: 6543
+User: postgres.xsgpfadjkjgbnnxgnqhp
+Database: postgres
+
+Ejemplo 2 (Direct Connection):
+Host: db.xsgpfadjkjgbnnxgnqhp.supabase.co
+Port: 5432
+User: postgres.xsgpfadjkjgbnnxgnqhp
+Database: postgres
+
+
+🎯 QUÉ HACER DESPUÉS DE OBTENER EL HOST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Una vez que tengas el host correcto, dame SOLO esta información:
+
+1. Host: [pega aquí]
+2. Port: [pega aquí]
+3. User: [pega aquí]
+4. Database: [pega aquí]
+
+NO compartas tu password aquí.
+
+
+🔧 VERIFICACIÓN RÁPIDA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Test de conectividad (PowerShell):
+
+Test-NetConnection -ComputerName [HOST] -Port [PORT]
+
+Ejemplo:
+Test-NetConnection -ComputerName aws-0-us-east-1.pooler.supabase.com -Port 6543
+
+Si retorna "TcpTestSucceeded : True" → El host es correcto
+Si retorna "TcpTestSucceeded : False" → El host es incorrecto
+
+
+💡 NOTA IMPORTANTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+El formato "db.[project-id].supabase.co" que usamos antes
+puede NO ser el correcto para tu proyecto.
+
+Supabase usa diferentes formatos según:
+• Región del proyecto (us-east, us-west, eu-central, etc.)
+• Tipo de conexión (pooler vs direct)
+• Fecha de creación del proyecto
+
+Por eso es CRÍTICO que copies EXACTAMENTE el host que aparece
+en tu dashboard de Supabase.
+
+
+═══════════════════════════════════════════════════════════════
+RESPONDE CON:
+1. Host (ejemplo: aws-0-us-east-1.pooler.supabase.com)
+2. Port (ejemplo: 6543)
+3. User (ejemplo: postgres.xsgpfadjkjgbnnxgnqhp)
+4. Database (ejemplo: postgres)
+
+Con esa información actualizaré tu application.properties
+═══════════════════════════════════════════════════════════════
+

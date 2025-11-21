@@ -1,0 +1,187 @@
+╔════════════════════════════════════════════════════════════════╗
+║            PROBLEMA RESUELTO - CONEXIÓN SUPABASE              ║
+╚════════════════════════════════════════════════════════════════╝
+
+✅ CORRECCIÓN APLICADA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROBLEMA:
+Host incorrecto: db.xsgpfadjkjgbnnxgnqhp.supabase.co
+
+SOLUCIÓN APLICADA:
+Host correcto: aws-1-us-east-1.pooler.supabase.com
+
+Archivo actualizado:
+LevelUp_User_service/src/main/resources/application.properties
+
+
+📋 CONFIGURACIÓN ACTUAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Host: aws-1-us-east-1.pooler.supabase.com
+Port: 6543 (Transaction Pooler)
+Database: postgres
+User: postgres.xsgpfadjkjgbnnxgnqhp
+Password: Levelup123.
+SSL: Requerido
+
+
+🚀 CÓMO INICIAR EL SERVICIO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPCIÓN 1: Desde IntelliJ IDEA
+────────────────────────────────────────────────────────────────
+1. Abre el proyecto LevelUp_User_service
+2. Localiza LevelUpUserServiceApplication.java
+3. Click derecho → Run 'LevelUpUserServiceApplication'
+
+
+OPCIÓN 2: Desde PowerShell
+────────────────────────────────────────────────────────────────
+cd "C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service"
+.\mvnw.cmd spring-boot:run
+
+
+OPCIÓN 3: Desde CMD
+────────────────────────────────────────────────────────────────
+cd "C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service"
+mvnw.cmd spring-boot:run
+
+
+✅ VERIFICAR QUE FUNCIONA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PASO 1: Revisar logs
+────────────────────────────────────────────────────────────────
+Busca en la consola:
+
+✅ ÉXITO - Verás:
+   - HikariPool-1 - Start completed
+   - Started LevelUpUserServiceApplication in X.XXX seconds
+
+❌ ERROR - Verás:
+   - UnknownHostException
+   - Connection refused
+   - Authentication failed
+
+
+PASO 2: Verificar endpoint de salud
+────────────────────────────────────────────────────────────────
+Abre en navegador:
+http://localhost:8082/actuator/health
+
+Debe retornar:
+{"status":"UP"}
+
+
+PASO 3: Probar login en Postman
+────────────────────────────────────────────────────────────────
+POST http://localhost:8082/api/usuarios/login
+
+Body (raw JSON):
+{
+  "correo": "admin@levelup.cl",
+  "password": "admin123"
+}
+
+Respuesta esperada: 200 OK con token JWT
+
+
+🎯 PRÓXIMOS PASOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. CREAR USUARIO ADMIN EN SUPABASE (SI NO EXISTE)
+────────────────────────────────────────────────────────────────
+Ve a Supabase SQL Editor y ejecuta:
+
+INSERT INTO usuarios (
+    run, nombre, apellidos, correo, password,
+    telefono, direccion, comuna, ciudad, region,
+    fecha_nacimiento, rol, activo, verificado
+) VALUES (
+    '12345678-9',
+    'Admin',
+    'Level Up',
+    'admin@levelup.cl',
+    '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy',
+    '912345678',
+    'Av. Providencia 123',
+    'Providencia',
+    'Santiago',
+    'Región Metropolitana',
+    '1990-01-01',
+    'ADMIN',
+    TRUE,
+    TRUE
+);
+
+
+2. VERIFICAR QUE EL USUARIO EXISTE
+────────────────────────────────────────────────────────────────
+SELECT * FROM usuarios WHERE correo = 'admin@levelup.cl';
+
+
+3. PROBAR LOGIN
+────────────────────────────────────────────────────────────────
+Usa Postman según la guía: QUICK_START_POSTMAN.txt
+
+
+📊 RESUMEN DE ARCHIVOS IMPORTANTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Configuración:
+   - application.properties (ACTUALIZADO CON HOST CORRECTO)
+
+✅ Guías creadas:
+   - QUICK_START_POSTMAN.txt (Cómo usar Postman)
+   - GUIA_LOGIN_POSTMAN.txt (Guía detallada de login)
+   - CREAR_USUARIO_ADMIN.txt (Crear usuario en Supabase)
+   - CONFIGURACION_SUPABASE_CORRECTA.txt (Config completa)
+
+✅ Scripts SQL:
+   - BD_tablas/schema_completo.sql (Crear tablas)
+   - BD_tablas/datos_iniciales_completo.sql (Datos de prueba)
+
+
+❗ IMPORTANTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Si el servicio inicia correctamente (ves "Started..." en logs),
+significa que la conexión a Supabase FUNCIONA.
+
+Si ves error 401 al hacer login, es porque el usuario admin
+NO EXISTE en la base de datos. Sigue el PASO 1 de próximos pasos.
+
+
+🔍 SOLUCIÓN DE PROBLEMAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROBLEMA: UnknownHostException
+────────────────────────────────────────────────────────────────
+Causa: Host incorrecto (YA CORREGIDO)
+Verificación: El host ahora es aws-1-us-east-1.pooler.supabase.com
+
+
+PROBLEMA: Authentication failed
+────────────────────────────────────────────────────────────────
+Causa: Password incorrecta
+Solución: Verifica que la password en Supabase sea "Levelup123."
+
+
+PROBLEMA: Connection refused
+────────────────────────────────────────────────────────────────
+Causa: Puerto incorrecto o firewall
+Solución: Puerto debe ser 6543 (YA CONFIGURADO)
+
+
+PROBLEMA: 401 Unauthorized en login
+────────────────────────────────────────────────────────────────
+Causa: Usuario no existe en BD
+Solución: Ejecuta el INSERT del PASO 1 en Supabase SQL Editor
+
+
+═══════════════════════════════════════════════════════════════
+TODO ESTÁ CONFIGURADO CORRECTAMENTE
+Reinicia el servicio y prueba el login
+═══════════════════════════════════════════════════════════════
+

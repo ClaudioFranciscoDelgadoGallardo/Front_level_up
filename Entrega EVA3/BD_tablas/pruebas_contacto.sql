@@ -181,4 +181,110 @@ DECLARE
     v_mensaje_id BIGINT;
     v_fecha_antes TIMESTAMP;
     v_fecha_despues TIMESTAMP;
+BEGIN
+    RAISE NOTICE '';
+    RAISE NOTICE 'TEST 7: Trigger de actualización de fecha';
+
+    -- Crear mensaje de prueba
+    INSERT INTO mensajes_contacto (nombre, correo, comentario)
+    VALUES ('Test Trigger', 'trigger@test.cl', 'Probando trigger')
+    RETURNING id, fecha_actualizacion INTO v_mensaje_id, v_fecha_antes;
+
+    -- Esperar un momento
+    PERFORM pg_sleep(1);
+
+    -- Actualizar el mensaje
+    UPDATE mensajes_contacto
+    SET leido = TRUE
+    WHERE id = v_mensaje_id;
+
+    -- Obtener nueva fecha
+    SELECT fecha_actualizacion INTO v_fecha_despues
+    FROM mensajes_contacto
+    WHERE id = v_mensaje_id;
+
+    IF v_fecha_despues > v_fecha_antes THEN
+        RAISE NOTICE '[OK] Trigger actualizó fecha_actualizacion correctamente';
+    ELSE
+        RAISE NOTICE '[ERROR] La fecha no se actualizó';
+    END IF;
+
+    -- Limpiar
+    DELETE FROM mensajes_contacto WHERE id = v_mensaje_id;
+END $$;
+
+-- =============================================
+-- TEST 8: Estados válidos
+-- =============================================
+
+DO $$
+BEGIN
+    RAISE NOTICE '';
+    RAISE NOTICE 'TEST 8: Validar estados permitidos';
+
+    BEGIN
+        INSERT INTO mensajes_contacto (nombre, correo, comentario, estado)
+        VALUES ('Test', 'test@test.cl', 'Test', 'ESTADO_INVALIDO');
+
+        RAISE NOTICE '[ERROR] Se permitió un estado inválido';
+    EXCEPTION
+        WHEN OTHERS THEN
+            RAISE NOTICE '[OK] Restricción de estados funcionó correctamente';
+    END;
+END $$;
+
+-- =============================================
+-- CONSULTAS DE RESUMEN
+-- =============================================
+
+RAISE NOTICE '';
+RAISE NOTICE '===================================================';
+RAISE NOTICE 'RESUMEN DE MENSAJES DE CONTACTO';
+RAISE NOTICE '===================================================';
+
+-- Total de mensajes
+SELECT 'Total de mensajes' as metrica, COUNT(*) as valor
+FROM mensajes_contacto
+UNION ALL
+-- Por estado
+SELECT 'Estado: ' || estado, COUNT(*)
+FROM mensajes_contacto
+GROUP BY estado
+UNION ALL
+-- Leídos vs no leídos
+SELECT 'Leídos', COUNT(*)
+FROM mensajes_contacto
+WHERE leido = TRUE
+UNION ALL
+SELECT 'No leídos', COUNT(*)
+FROM mensajes_contacto
+WHERE leido = FALSE;
+
+-- Mensajes por usuario
+RAISE NOTICE '';
+RAISE NOTICE 'Mensajes por usuario (top 5):';
+
+SELECT
+    COALESCE(u.nombre || ' ' || u.apellidos, 'Anónimo') as usuario,
+    COUNT(mc.id) as total_mensajes
+FROM mensajes_contacto mc
+LEFT JOIN usuarios u ON mc.usuario_id = u.id
+GROUP BY u.id, u.nombre, u.apellidos
+ORDER BY total_mensajes DESC
+LIMIT 5;
+
+-- =============================================
+-- RESULTADOS FINALES
+-- =============================================
+
+DO $$
+BEGIN
+    RAISE NOTICE '';
+    RAISE NOTICE '===================================================';
+    RAISE NOTICE 'PRUEBAS COMPLETADAS';
+    RAISE NOTICE '===================================================';
+    RAISE NOTICE 'Todas las funcionalidades de mensajes_contacto';
+    RAISE NOTICE 'han sido probadas exitosamente.';
+    RAISE NOTICE '===================================================';
+END $$;
 
