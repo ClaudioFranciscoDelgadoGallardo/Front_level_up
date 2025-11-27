@@ -1,0 +1,101 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpUserServiceApplication<LevelUp_User_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "levelup.levelup_user_service.LevelUpUserServiceApplication",
+            "projectName": "LevelUp_User_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=64359 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=LevelUp_User_service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpProductServiceApplication<LevelUp_Product_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "levelup.levelup_product_service.LevelUpProductServiceApplication",
+            "projectName": "LevelUp_Product_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=54206 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=LevelUp_Product_service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpAuthServiceApplication<LevelUp_Auth_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "levelup.levelup_auth_service.LevelUpAuthServiceApplication",
+            "projectName": "LevelUp_Auth_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=50234 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=LevelUp_Auth_service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpOrderServiceApplication<LevelUp_Order_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "levelup.levelup_order_service.LevelUpOrderServiceApplication",
+            "projectName": "LevelUp_Order_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=53540 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=LevelUp_Order_service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpNotificationServiceApplication<LevelUp_Notification_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "levelup.levelup_notification_service.LevelUpNotificationServiceApplication",
+            "projectName": "LevelUp_Notification_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=59641 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=LevelUp_Notification_service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpFileServiceApplication<LevelUp_File_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "levelup.levelup_file_service.LevelUpFileServiceApplication",
+            "projectName": "LevelUp_File_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=63020 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=LevelUp_File_service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpAnalyticsServiceApplication<LevelUp_Analytics_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "cl.duoc.cladelgado.levelup_analytics_service.LevelUpAnalyticsServiceApplication",
+            "projectName": "LevelUp_Analytics_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpConfigServiceApplication<LevelUp_Config_service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "levelup.levelup_config_service.LevelUpConfigServiceApplication",
+            "projectName": "LevelUp_Config_service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=59000 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=LevelUp_Config_service"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-LevelUpApiGatewayApplication<LevelUp_Api_gateway>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "cl.duoc.cladelgado.levelup_api_gateway.LevelUpApiGatewayApplication",
+            "projectName": "LevelUp_Api_gateway",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

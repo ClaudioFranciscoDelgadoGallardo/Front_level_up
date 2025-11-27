@@ -1,0 +1,10 @@
+levelup\levelup_product_service\dto\ActualizarProductoRequest.class
+levelup\levelup_product_service\config\CorsConfig.class
+levelup\levelup_product_service\model\Producto.class
+levelup\levelup_product_service\controller\ProductoController.class
+levelup\levelup_product_service\service\ProductoService.class
+levelup\levelup_product_service\model\Producto$ProductoBuilder.class
+levelup\levelup_product_service\config\DataInitializer.class
+levelup\levelup_product_service\dto\ActualizarProductoRequest$ActualizarProductoRequestBuilder.class
+levelup\levelup_product_service\LevelUpProductServiceApplication.class
+levelup\levelup_product_service\repository\ProductoRepository.class
