@@ -22,6 +22,13 @@ import AdminUsuarios from './pages/AdminUsuarios';
 import AdminUsuarioForm from './pages/AdminUsuarioForm';
 import AdminDestacados from './pages/AdminDestacados';
 import AdminLogs from './pages/AdminLogs';
+import MisOrdenes from './pages/MisOrdenes';
+import Perfil from './pages/Perfil';
+import VendedorHome from './pages/VendedorHome';
+import VendedorProductos from './pages/VendedorProductos';
+import VendedorProductoForm from './pages/VendedorProductoForm';
+import VendedorDestacados from './pages/VendedorDestacados';
+import VendedorPerfil from './pages/VendedorPerfil';
 
 function App() {
   return (
@@ -41,15 +48,28 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/registro" element={<Registro />} />
             
-            <Route path="/admin" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
-            <Route path="/admin/logs" element={<ProtectedRoute><AdminLogs /></ProtectedRoute>} />
-            <Route path="/admin/productos" element={<ProtectedRoute><AdminProductos /></ProtectedRoute>} />
-            <Route path="/admin/productos/nuevo" element={<ProtectedRoute><AdminProductoForm /></ProtectedRoute>} />
-            <Route path="/admin/productos/editar/:codigo" element={<ProtectedRoute><AdminProductoForm /></ProtectedRoute>} />
-            <Route path="/admin/destacados" element={<ProtectedRoute><AdminDestacados /></ProtectedRoute>} />
-            <Route path="/admin/usuarios" element={<ProtectedRoute><AdminUsuarios /></ProtectedRoute>} />
-            <Route path="/admin/usuarios/nuevo" element={<ProtectedRoute><AdminUsuarioForm /></ProtectedRoute>} />
-            <Route path="/admin/usuarios/editar/:correo" element={<ProtectedRoute><AdminUsuarioForm /></ProtectedRoute>} />
+            {/* Rutas de Usuario */}
+            <Route path="/perfil" element={<ProtectedRoute allowedRoles={['usuario']}><Perfil /></ProtectedRoute>} />
+            <Route path="/mis-ordenes" element={<ProtectedRoute allowedRoles={['usuario']}><MisOrdenes /></ProtectedRoute>} />
+            
+            {/* Rutas de Vendedor */}
+            <Route path="/vendedor" element={<ProtectedRoute allowedRoles={['vendedor']}><VendedorHome /></ProtectedRoute>} />
+            <Route path="/vendedor/productos" element={<ProtectedRoute allowedRoles={['vendedor']}><VendedorProductos /></ProtectedRoute>} />
+            <Route path="/vendedor/productos/nuevo" element={<ProtectedRoute allowedRoles={['vendedor']}><VendedorProductoForm /></ProtectedRoute>} />
+            <Route path="/vendedor/productos/editar/:codigo" element={<ProtectedRoute allowedRoles={['vendedor']}><VendedorProductoForm /></ProtectedRoute>} />
+            <Route path="/vendedor/destacados" element={<ProtectedRoute allowedRoles={['vendedor']}><VendedorDestacados /></ProtectedRoute>} />
+            <Route path="/vendedor/perfil" element={<ProtectedRoute allowedRoles={['vendedor']}><VendedorPerfil /></ProtectedRoute>} />
+            
+            {/* Rutas de Admin */}
+            <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminHome /></ProtectedRoute>} />
+            <Route path="/admin/logs" element={<ProtectedRoute allowedRoles={['admin']}><AdminLogs /></ProtectedRoute>} />
+            <Route path="/admin/productos" element={<ProtectedRoute allowedRoles={['admin']}><AdminProductos /></ProtectedRoute>} />
+            <Route path="/admin/productos/nuevo" element={<ProtectedRoute allowedRoles={['admin']}><AdminProductoForm /></ProtectedRoute>} />
+            <Route path="/admin/productos/editar/:codigo" element={<ProtectedRoute allowedRoles={['admin']}><AdminProductoForm /></ProtectedRoute>} />
+            <Route path="/admin/destacados" element={<ProtectedRoute allowedRoles={['admin']}><AdminDestacados /></ProtectedRoute>} />
+            <Route path="/admin/usuarios" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsuarios /></ProtectedRoute>} />
+            <Route path="/admin/usuarios/nuevo" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsuarioForm /></ProtectedRoute>} />
+            <Route path="/admin/usuarios/editar/:correo" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsuarioForm /></ProtectedRoute>} />
           </Routes>
           <Footer />
         </div>

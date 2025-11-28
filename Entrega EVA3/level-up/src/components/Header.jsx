@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
 import { registrarLogUsuario } from '../utils/logManager';
 import '../styles/Header.css';
 
 export default function Header() {
   const [showCarrito, setShowCarrito] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const { eliminarDelCarrito, calcularTotales, obtenerCantidadTotal, vaciarCarrito } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
   const location = useLocation();
-  const navigate = useNavigate();
   
+  const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual'));
+  const isUsuarioRole = usuarioActual?.rol === 'usuario';
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isVendedorRoute = location.pathname.startsWith('/vendedor');
 
   const formatearPrecio = (precio) => {
     return `$${precio.toLocaleString('es-CL')}`;
@@ -64,20 +65,15 @@ export default function Header() {
     setShowCarrito(false);
   };
 
-  const handleCerrarSesion = () => {
-    localStorage.removeItem('usuarioActual');
-    if (window.notificar) {
-      window.notificar('Sesión cerrada exitosamente', 'success', 3000);
-    }
-    navigate('/login');
-  };
-
   return (
     <>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark">
           <div className="container">
-            <Link to={isAdminRoute ? "/admin" : "/"} className="navbar-brand d-flex align-items-center">
+            <Link 
+              to={isAdminRoute ? "/admin" : isVendedorRoute ? "/vendedor" : isUsuarioRole ? "/" : "/"} 
+              className="navbar-brand d-flex align-items-center"
+            >
               <img src="/assets/icons/icono.png" alt="Level Up" width="50" height="50" className="me-2" />
               <span className="fw-bold">LEVEL-UP GAMER</span>
             </Link>
@@ -87,7 +83,6 @@ export default function Header() {
               type="button" 
               data-bs-toggle="collapse" 
               data-bs-target="#navbarNav"
-              onClick={() => setMenuOpen(!menuOpen)}
             >
               <span className="navbar-toggler-icon"></span>
             </button>
@@ -100,15 +95,39 @@ export default function Header() {
                   <li className="nav-item"><Link to="/admin/destacados" className="nav-link">Destacados</Link></li>
                   <li className="nav-item"><Link to="/admin/usuarios" className="nav-link">Usuarios</Link></li>
                   <li className="nav-item"><Link to="/admin/logs" className="nav-link">Logs</Link></li>
-                  <li className="nav-item">
-                    <button 
-                      onClick={handleCerrarSesion}
-                      className="btn btn-danger btn-sm ms-2"
-                    >
-                      Cerrar Sesión
-                    </button>
-                  </li>
                 </ul>
+              ) : usuarioActual?.rol === 'vendedor' ? (
+                <ul className="navbar-nav ms-auto">
+                  <li className="nav-item"><Link to="/vendedor" className="nav-link">Dashboard</Link></li>
+                  <li className="nav-item"><Link to="/vendedor/productos" className="nav-link">Productos</Link></li>
+                  <li className="nav-item"><Link to="/vendedor/destacados" className="nav-link">Destacados</Link></li>
+                  <li className="nav-item"><Link to="/vendedor/perfil" className="nav-link">Mi Perfil</Link></li>
+                </ul>
+              ) : isUsuarioRole ? (
+                <>
+                  <ul className="navbar-nav ms-auto">
+                    <li className="nav-item"><Link to="/" className="nav-link">Inicio</Link></li>
+                    <li className="nav-item"><Link to="/productos" className="nav-link">Productos</Link></li>
+                    <li className="nav-item"><Link to="/noticias" className="nav-link">Noticias</Link></li>
+                    <li className="nav-item"><Link to="/nosotros" className="nav-link">Nosotros</Link></li>
+                    <li className="nav-item"><Link to="/contacto" className="nav-link">Contacto</Link></li>
+                    <li className="nav-item"><Link to="/mis-ordenes" className="nav-link">Mis Órdenes</Link></li>
+                    <li className="nav-item"><Link to="/perfil" className="nav-link">Mi Perfil</Link></li>
+                  </ul>
+                  <button 
+                    className="btn btn-link position-relative ms-3" 
+                    onClick={() => setShowCarrito(!showCarrito)}
+                  >
+                    <img src="/assets/icons/carrito.png" alt="Carrito" width="32" height="32" />
+                    {obtenerCantidadTotal() > 0 && (
+                      <span 
+                        className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"
+                      >
+                        {obtenerCantidadTotal()}
+                      </span>
+                    )}
+                  </button>
+                </>
               ) : (
                 <>
                   <ul className="navbar-nav ms-auto">

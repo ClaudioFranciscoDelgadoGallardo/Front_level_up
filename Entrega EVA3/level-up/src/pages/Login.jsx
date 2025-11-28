@@ -58,6 +58,7 @@ export default function Login() {
     
     if (usuario) {
       localStorage.setItem('usuarioActual', JSON.stringify(usuario));
+      window.dispatchEvent(new Event('usuarioActualizado'));
       
       if (usuario.rol === 'admin') {
         registrarLogAdmin(`Inició sesión: ${usuario.nombre} ${usuario.apellidos || ''} (${usuario.correo})`);
@@ -72,8 +73,10 @@ export default function Login() {
       setTimeout(() => {
         if (usuario.rol === 'admin') {
           navigate('/admin');
+        } else if (usuario.rol === 'vendedor') {
+          navigate('/vendedor');
         } else {
-          navigate('/');
+          navigate('/perfil');
         }
       }, 1000);
     } else {

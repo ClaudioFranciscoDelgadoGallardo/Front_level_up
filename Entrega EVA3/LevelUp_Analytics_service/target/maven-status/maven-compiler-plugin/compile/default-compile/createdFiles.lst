@@ -1,1 +1,6 @@
+cl\duoc\cladelgado\levelup_analytics_service\config\CorsConfig.class
+cl\duoc\cladelgado\levelup_analytics_service\dto\AnalyticsResponse$AnalyticsResponseBuilder.class
+cl\duoc\cladelgado\levelup_analytics_service\controller\AnalyticsController.class
 cl\duoc\cladelgado\levelup_analytics_service\LevelUpAnalyticsServiceApplication.class
+cl\duoc\cladelgado\levelup_analytics_service\dto\AnalyticsResponse.class
+cl\duoc\cladelgado\levelup_analytics_service\service\AnalyticsService.class

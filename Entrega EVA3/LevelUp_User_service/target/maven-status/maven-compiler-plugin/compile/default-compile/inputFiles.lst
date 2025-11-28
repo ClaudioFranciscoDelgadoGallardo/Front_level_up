@@ -2,6 +2,7 @@ C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Us
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service\src\main\java\levelup\levelup_user_service\config\SecurityConfig.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service\src\main\java\levelup\levelup_user_service\config\WebConfig.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service\src\main\java\levelup\levelup_user_service\controller\UsuarioController.java
+C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service\src\main\java\levelup\levelup_user_service\dto\ActualizarUsuarioRequest.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service\src\main\java\levelup\levelup_user_service\dto\AuthResponse.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service\src\main\java\levelup\levelup_user_service\dto\ErrorResponse.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_User_service\src\main\java\levelup\levelup_user_service\dto\LoginRequest.java

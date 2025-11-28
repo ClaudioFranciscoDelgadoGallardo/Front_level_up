@@ -35,7 +35,7 @@ public class JwtUtil {
         claims.put("nombre", usuario.getNombre());
         claims.put("apellidos", usuario.getApellidos());
         claims.put("correo", usuario.getCorreo());
-        claims.put("rol", usuario.getRol().name());
+        claims.put("rol", usuario.getRol());
 
         return Jwts.builder()
                 .setClaims(claims)

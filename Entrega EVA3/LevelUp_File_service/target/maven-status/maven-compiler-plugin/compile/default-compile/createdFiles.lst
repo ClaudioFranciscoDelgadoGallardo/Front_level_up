@@ -1,1 +1,4 @@
+levelup\levelup_file_service\controller\FileController.class
+levelup\levelup_file_service\config\CorsConfig.class
 levelup\levelup_file_service\LevelUpFileServiceApplication.class
+levelup\levelup_file_service\service\FileService.class

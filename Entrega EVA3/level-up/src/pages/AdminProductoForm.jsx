@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { registrarLogAdmin } from '../utils/logManager';
+import { uploadFile, validateFile, getFileUrl } from '../services/fileService';
 import '../styles/Admin.css';
 
 export default function AdminProductoForm() {
@@ -17,6 +18,7 @@ export default function AdminProductoForm() {
     descripcion: '',
     imagen: ''
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (esEdicion) {
@@ -41,23 +43,41 @@ export default function AdminProductoForm() {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5000000) {
-        if (window.notificar) {
-          window.notificar('La imagen no puede pesar más de 5MB', 'error', 3000);
-        }
-        return;
-      }
+    if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        if (window.notificar) {
-          window.notificar('Solo se permiten archivos de imagen', 'error', 3000);
-        }
-        return;
+    // Validar archivo
+    const validation = validateFile(file);
+    if (!validation.valid) {
+      if (window.notificar) {
+        window.notificar(validation.error, 'error', 3000);
       }
+      return;
+    }
 
+    setUploadingImage(true);
+
+    try {
+      // Subir archivo al File Service
+      const result = await uploadFile(file, 'productos');
+      
+      // Actualizar formData con la URL del archivo subido
+      setFormData(prev => ({
+        ...prev,
+        imagen: result.fileUrl || result.filename
+      }));
+
+      if (window.notificar) {
+        window.notificar('Imagen subida exitosamente', 'success', 2000);
+      }
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+      if (window.notificar) {
+        window.notificar('Error al subir la imagen. Intenta nuevamente.', 'error', 3000);
+      }
+      
+      // Fallback: usar base64 local si falla el upload
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData(prev => ({
@@ -66,6 +86,8 @@ export default function AdminProductoForm() {
         }));
       };
       reader.readAsDataURL(file);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
@@ -258,9 +280,9 @@ export default function AdminProductoForm() {
             <div className="mb-2">
               <label 
                 htmlFor="imagenFile" 
-                className="btn btn-success w-100 admin-form-imagen-label"
+                className={`btn btn-success w-100 admin-form-imagen-label ${uploadingImage ? 'disabled' : ''}`}
               >
-                📁 Seleccionar Imagen desde el Computador
+                {uploadingImage ? '⏳ Subiendo imagen...' : '📁 Seleccionar Imagen desde el Computador'}
               </label>
               <input
                 type="file"
@@ -268,8 +290,9 @@ export default function AdminProductoForm() {
                 id="imagenFile"
                 accept="image/*"
                 onChange={handleImageChange}
+                disabled={uploadingImage}
               />
-              <small className="admin-form-imagen-info">Formatos: JPG, PNG, GIF. Máximo 5MB</small>
+              <small className="admin-form-imagen-info">Formatos: JPG, PNG, GIF, WEBP. Máximo 5MB</small>
             </div>
             <div className="mb-2 admin-form-url-label">O ingresa una URL:</div>
             <input
@@ -280,12 +303,13 @@ export default function AdminProductoForm() {
               value={formData.imagen}
               onChange={handleChange}
               placeholder="/assets/imgs/producto.png o https://ejemplo.com/imagen.jpg"
+              disabled={uploadingImage}
             />
             {formData.imagen && (
               <div className="mt-3 text-center">
                 <p className="text-white mb-2">Vista previa:</p>
                 <img 
-                  src={formData.imagen} 
+                  src={getFileUrl(formData.imagen)} 
                   alt="Preview"
                   className="admin-form-preview-img"
                   onError={(e) => {
@@ -301,8 +325,9 @@ export default function AdminProductoForm() {
           <button 
             type="submit" 
             className="btn btn-success px-5"
+            disabled={uploadingImage}
           >
-            {esEdicion ? 'Actualizar Producto' : 'Crear Producto'}
+            {uploadingImage ? 'Esperando imagen...' : (esEdicion ? 'Actualizar Producto' : 'Crear Producto')}
           </button>
           <Link 
             to="/admin/productos" 

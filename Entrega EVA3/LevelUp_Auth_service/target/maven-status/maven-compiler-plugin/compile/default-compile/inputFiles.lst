@@ -4,6 +4,7 @@ C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Au
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Auth_service\src\main\java\levelup\levelup_auth_service\dto\AuthResponse.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Auth_service\src\main\java\levelup\levelup_auth_service\dto\LoginRequest.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Auth_service\src\main\java\levelup\levelup_auth_service\dto\RegisterRequest.java
+C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Auth_service\src\main\java\levelup\levelup_auth_service\exception\GlobalExceptionHandler.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Auth_service\src\main\java\levelup\levelup_auth_service\LevelUpAuthServiceApplication.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Auth_service\src\main\java\levelup\levelup_auth_service\model\Usuario.java
 C:\Users\SoraR\OneDrive\Escritorio\Codigo\Front_level_up\Entrega EVA3\LevelUp_Auth_service\src\main\java\levelup\levelup_auth_service\repository\UsuarioRepository.java

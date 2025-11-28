@@ -9,5 +9,6 @@ levelup\levelup_order_service\LevelUpOrderServiceApplication.class
 levelup\levelup_order_service\dto\CrearOrdenRequest$DetalleOrdenDto.class
 levelup\levelup_order_service\model\DetalleOrden$DetalleOrdenBuilder.class
 levelup\levelup_order_service\service\OrdenService.class
+levelup\levelup_order_service\config\CorsConfig.class
 levelup\levelup_order_service\model\DetalleOrden.class
 levelup\levelup_order_service\repository\OrdenRepository.class

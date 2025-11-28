@@ -7,6 +7,7 @@ levelup\levelup_user_service\security\JwtAuthenticationFilter.class
 levelup\levelup_user_service\config\WebConfig.class
 levelup\levelup_user_service\config\DataInitializer.class
 levelup\levelup_user_service\config\SecurityConfig.class
+levelup\levelup_user_service\dto\ActualizarUsuarioRequest$ActualizarUsuarioRequestBuilder.class
 levelup\levelup_user_service\dto\LoginRequest.class
 levelup\levelup_user_service\repository\UsuarioRepository.class
 levelup\levelup_user_service\dto\ErrorResponse$ErrorResponseBuilder.class
@@ -18,6 +19,7 @@ levelup\levelup_user_service\controller\UsuarioController.class
 levelup\levelup_user_service\entity\Usuario$UsuarioBuilder.class
 levelup\levelup_user_service\exception\GlobalExceptionHandler.class
 levelup\levelup_user_service\dto\AuthResponse.class
+levelup\levelup_user_service\dto\ActualizarUsuarioRequest.class
 levelup\levelup_user_service\service\CustomUserDetailsService.class
 levelup\levelup_user_service\dto\RegistroRequest.class
 levelup\levelup_user_service\security\JwtTokenProvider.class

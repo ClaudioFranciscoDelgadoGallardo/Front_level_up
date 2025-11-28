@@ -57,6 +57,7 @@ export default function AdminHome() {
 
   const handleCerrarSesion = () => {
     localStorage.removeItem('usuarioActual');
+    window.dispatchEvent(new Event('usuarioActualizado'));
     navigate('/login');
   };
 

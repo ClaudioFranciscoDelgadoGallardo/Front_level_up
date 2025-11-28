@@ -200,6 +200,7 @@ export default function AdminUsuarioForm() {
               required
             >
               <option value="usuario">Usuario</option>
+              <option value="vendedor">Vendedor</option>
               <option value="admin">Administrador</option>
             </select>
           </div>

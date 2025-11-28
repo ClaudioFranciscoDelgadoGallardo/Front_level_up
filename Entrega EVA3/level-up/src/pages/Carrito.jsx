@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { createOrder } from '../services/orderService';
 import '../styles/Carrito.css';
 
 export default function Carrito() {
+  const navigate = useNavigate();
   const { eliminarDelCarrito, actualizarCantidad, vaciarCarrito, calcularTotales } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
   const [productosStock, setProductosStock] = useState([]);
+  const [processingOrder, setProcessingOrder] = useState(false);
 
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
@@ -29,18 +32,95 @@ export default function Carrito() {
     }
   };
 
-  const handleFinalizarCompra = () => {
+  const handleFinalizarCompra = async () => {
     if (items.length === 0) {
       if (window.notificar) {
         window.notificar('El carrito está vacío', 'error', 3000);
       }
       return;
     }
+
+    // Verificar autenticación
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
     
-    if (window.notificar) {
-      window.notificar('¡Gracias por tu compra!', 'success', 3000);
+    if (!token || !userId) {
+      if (window.notificar) {
+        window.notificar('Debes iniciar sesión para finalizar la compra', 'error', 3000);
+      }
+      navigate('/login', { state: { from: '/carrito' } });
+      return;
     }
-    vaciarCarrito();
+
+    // Verificar stock antes de crear la orden
+    const stockInsuficiente = items.some(item => 
+      item.qty > getStockDisponible(item.codigo)
+    );
+
+    if (stockInsuficiente) {
+      if (window.notificar) {
+        window.notificar('Algunos productos no tienen stock suficiente', 'error', 3000);
+      }
+      return;
+    }
+
+    setProcessingOrder(true);
+
+    try {
+      // Preparar datos de la orden para Order Service
+      const orderData = {
+        userId: userId,
+        items: items.map(item => ({
+          productId: item.codigo,
+          quantity: item.qty,
+          price: item.precio,
+          productName: item.nombre,
+        })),
+        totalAmount: total,
+        subtotalAmount: subtotal,
+        discountAmount: descuento,
+        shippingAddress: 'Dirección predeterminada', // TODO: Implementar gestión de direcciones
+        paymentMethod: 'Pendiente', // TODO: Implementar métodos de pago
+        status: 'PENDING',
+      };
+
+      // Crear orden en el backend
+      const order = await createOrder(orderData);
+
+      // Actualizar stock local (simulado hasta integrar Product Service)
+      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+      items.forEach(item => {
+        const producto = productos.find(p => p.codigo === item.codigo);
+        if (producto) {
+          producto.stock -= item.qty;
+        }
+      });
+      localStorage.setItem('productos', JSON.stringify(productos));
+      window.dispatchEvent(new Event('storage'));
+
+      if (window.notificar) {
+        window.notificar(`¡Orden #${order.id} creada exitosamente!`, 'success', 4000);
+      }
+
+      vaciarCarrito();
+      
+      // Redirigir a mis órdenes después de 2 segundos
+      setTimeout(() => {
+        navigate('/mis-ordenes');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error al crear la orden:', error);
+      if (window.notificar) {
+        window.notificar(
+          error.message || 'Error al procesar la orden. Intenta nuevamente.',
+          'error',
+          4000
+        );
+      }
+    } finally {
+      setProcessingOrder(false);
+    }
   };
 
   const handleIrAProductos = () => {
@@ -189,8 +269,9 @@ export default function Carrito() {
                   <button 
                     className="btn carrito-finalizar-btn"
                     onClick={handleFinalizarCompra}
+                    disabled={processingOrder}
                   >
-                    Finalizar Compra
+                    {processingOrder ? 'Procesando...' : 'Finalizar Compra'}
                   </button>
                 </div>
               </div>

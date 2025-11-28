@@ -58,6 +58,29 @@ export default function Registro() {
       return false;
     }
 
+    // Validar mayor de edad (18 años)
+    if (!formData.fechaNac) {
+      if (window.notificar) {
+        window.notificar('Debes ingresar tu fecha de nacimiento', 'error', 3000);
+      }
+      return false;
+    }
+
+    const fechaNacimiento = new Date(formData.fechaNac);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - fechaNacimiento.getFullYear();
+    const mes = hoy.getMonth() - fechaNacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNacimiento.getDate())) {
+      edad--;
+    }
+
+    if (edad < 18) {
+      if (window.notificar) {
+        window.notificar('Debes ser mayor de 18 años para registrarte', 'error', 3000);
+      }
+      return false;
+    }
+
     return true;
   };
 

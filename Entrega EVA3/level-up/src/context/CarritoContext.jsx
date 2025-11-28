@@ -14,22 +14,50 @@ export const useCarrito = () => {
 export const CarritoProvider = ({ children }) => {
   const [carrito, setCarrito] = useState([]);
 
+  const obtenerKeyCarrito = () => {
+    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual') || 'null');
+    return usuarioActual ? `carrito_${usuarioActual.correo || usuarioActual.email}` : 'carrito_invitado';
+  };
+
   useEffect(() => {
-    const carritoGuardado = localStorage.getItem('carrito');
+    const keyCarrito = obtenerKeyCarrito();
+    const carritoGuardado = localStorage.getItem(keyCarrito);
     if (carritoGuardado) {
       try {
         setCarrito(JSON.parse(carritoGuardado));
       } catch (error) {
         setCarrito([]);
       }
+    } else {
+      setCarrito([]);
     }
   }, []);
 
   useEffect(() => {
+    const handleStorageChange = () => {
+      const keyCarrito = obtenerKeyCarrito();
+      const carritoGuardado = localStorage.getItem(keyCarrito);
+      if (carritoGuardado) {
+        try {
+          setCarrito(JSON.parse(carritoGuardado));
+        } catch (error) {
+          setCarrito([]);
+        }
+      } else {
+        setCarrito([]);
+      }
+    };
+
+    window.addEventListener('usuarioActualizado', handleStorageChange);
+    return () => window.removeEventListener('usuarioActualizado', handleStorageChange);
+  }, []);
+
+  useEffect(() => {
+    const keyCarrito = obtenerKeyCarrito();
     if (carrito.length > 0) {
-      localStorage.setItem('carrito', JSON.stringify(carrito));
+      localStorage.setItem(keyCarrito, JSON.stringify(carrito));
     } else {
-      localStorage.removeItem('carrito');
+      localStorage.removeItem(keyCarrito);
     }
   }, [carrito]);
 
@@ -125,8 +153,9 @@ export const CarritoProvider = ({ children }) => {
   };
 
   const vaciarCarrito = () => {
+    const keyCarrito = obtenerKeyCarrito();
     setCarrito([]);
-    localStorage.removeItem('carrito');
+    localStorage.removeItem(keyCarrito);
   };
 
   const calcularTotales = () => {

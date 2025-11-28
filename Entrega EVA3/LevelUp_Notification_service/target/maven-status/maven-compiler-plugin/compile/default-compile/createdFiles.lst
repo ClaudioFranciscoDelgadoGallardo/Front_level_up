@@ -1,1 +1,5 @@
+levelup\levelup_notification_service\config\CorsConfig.class
+levelup\levelup_notification_service\service\NotificationService.class
+levelup\levelup_notification_service\controller\NotificationController.class
+levelup\levelup_notification_service\dto\EmailRequest.class
 levelup\levelup_notification_service\LevelUpNotificationServiceApplication.class

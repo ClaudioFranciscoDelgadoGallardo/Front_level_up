@@ -48,11 +48,13 @@ public class OrdenService {
 
         Orden orden = Orden.builder()
                 .usuarioId(request.getUsuarioId())
-                .usuarioNombre(request.getUsuarioNombre())
-                .usuarioCorreo(request.getUsuarioCorreo())
+                .clienteNombre(request.getUsuarioNombre())
+                .clienteCorreo(request.getUsuarioCorreo())
                 .direccionEnvio(request.getDireccionEnvio())
                 .metodoPago(request.getMetodoPago())
                 .estado(Orden.EstadoOrden.PENDIENTE)
+                .subtotal(BigDecimal.ZERO)
+                .iva(BigDecimal.ZERO)
                 .total(BigDecimal.ZERO)
                 .build();
 
