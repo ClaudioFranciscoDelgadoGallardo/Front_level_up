@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { obtenerProductos } from '../services/productService';
 import '../styles/Productos.css';
 
 const PRODUCTOS_BASE = [
@@ -43,27 +44,29 @@ export default function Productos() {
   const { agregarAlCarrito } = useCarrito();
 
   useEffect(() => {
-    const cargarProductos = () => {
-      const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
-      
-      const productosValidos = productosLS.length > 0 
-        ? productosLS.filter(p => p.stock > 0).map(p => ({ ...p, id: p.codigo }))
-        : PRODUCTOS_BASE;
-
-      setProductos(productosValidos);
+    const cargarProductos = async () => {
+      try {
+        // Intentar cargar desde el backend
+        const productosBackend = await obtenerProductos();
+        const productosValidos = productosBackend
+          .filter(p => p.stock > 0)
+          .map(p => ({ 
+            ...p, 
+            id: p.codigo,
+            precio: p.precio || p.precioVenta || 0
+          }));
+        setProductos(productosValidos);
+      } catch (error) {
+        console.error('Error al cargar productos desde backend:', error);
+        // Fallback a productos base si falla el backend
+        if (window.notificar) {
+          window.notificar('Usando catálogo local. Backend no disponible.', 'warning', 3000);
+        }
+        setProductos(PRODUCTOS_BASE);
+      }
     };
 
     cargarProductos();
-
-    const handleStorageChange = () => {
-      cargarProductos();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
   }, []);
 
   const categoriasDisponibles = [

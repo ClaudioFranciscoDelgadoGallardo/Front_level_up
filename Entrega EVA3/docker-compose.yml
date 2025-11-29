@@ -15,13 +15,11 @@ services:
       - ./BD_tablas:/docker-entrypoint-initdb.d
     command: >
       postgres
-      -c max_connections=50
-      -c shared_buffers=64MB
-      -c effective_cache_size=128MB
-      -c maintenance_work_mem=16MB
-      -c wal_buffers=2MB
-      -c random_page_cost=1.1
-      -c effective_io_concurrency=200
+      -c max_connections=20
+      -c shared_buffers=32MB
+      -c effective_cache_size=64MB
+      -c maintenance_work_mem=8MB
+      -c wal_buffers=1MB
     ports:
       - "5432:5432"
     networks:
@@ -91,11 +89,11 @@ services:
       - ./LevelUp_Auth_service/target:/app
     command: >
       java
-      -Xmx120m
-      -Xms64m
+      -Xmx200m
+      -Xms100m
       -XX:+UseSerialGC
-      -XX:MaxMetaspaceSize=64m
-      -XX:CompressedClassSpaceSize=16m
+      -XX:MaxMetaspaceSize=128m
+      -XX:CompressedClassSpaceSize=32m
       -Djava.security.egd=file:/dev/./urandom
       -jar LevelUp_Auth_service-0.0.1-SNAPSHOT.jar
     ports:
@@ -114,9 +112,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 140M
+          memory: 256M
         reservations:
-          memory: 80M
+          memory: 128M
 
   # User Service
   user-service:
@@ -128,11 +126,11 @@ services:
       - ./LevelUp_User_service/target:/app
     command: >
       java
-      -Xmx120m
-      -Xms64m
+      -Xmx80m
+      -Xms48m
       -XX:+UseSerialGC
-      -XX:MaxMetaspaceSize=64m
-      -XX:CompressedClassSpaceSize=16m
+      -XX:MaxMetaspaceSize=80m
+      -XX:CompressedClassSpaceSize=20m
       -Djava.security.egd=file:/dev/./urandom
       -jar LevelUp_User_service-0.0.1-SNAPSHOT.jar
     ports:
@@ -151,11 +149,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 140M
+          memory: 256M
         reservations:
-          memory: 80M
+          memory: 128M
 
-  # Product Service
   product-service:
     image: eclipse-temurin:21-jre-alpine
     container_name: levelup_product
@@ -165,11 +162,11 @@ services:
       - ./LevelUp_Product_service/target:/app
     command: >
       java
-      -Xmx120m
-      -Xms64m
+      -Xmx80m
+      -Xms48m
       -XX:+UseSerialGC
-      -XX:MaxMetaspaceSize=64m
-      -XX:CompressedClassSpaceSize=16m
+      -XX:MaxMetaspaceSize=90m
+      -XX:CompressedClassSpaceSize=22m
       -Djava.security.egd=file:/dev/./urandom
       -jar LevelUp_Product_service-0.0.1-SNAPSHOT.jar
     ports:
@@ -188,9 +185,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 140M
+          memory: 256M
         reservations:
-          memory: 80M
+          memory: 128M
 
   # Order Service
   order-service:
@@ -202,11 +199,11 @@ services:
       - ./LevelUp_Order_service/target:/app
     command: >
       java
-      -Xmx110m
-      -Xms64m
+      -Xmx70m
+      -Xms48m
       -XX:+UseSerialGC
-      -XX:MaxMetaspaceSize=64m
-      -XX:CompressedClassSpaceSize=16m
+      -XX:MaxMetaspaceSize=80m
+      -XX:CompressedClassSpaceSize=20m
       -Djava.security.egd=file:/dev/./urandom
       -jar LevelUp_Order_service-0.0.1-SNAPSHOT.jar
     ports:
@@ -225,46 +222,46 @@ services:
     deploy:
       resources:
         limits:
-          memory: 130M
+          memory: 256M
         reservations:
-          memory: 80M
+          memory: 128M
 
-  # Analytics Service
-  analytics-service:
-    image: eclipse-temurin:21-jre-alpine
-    container_name: levelup_analytics
-    restart: unless-stopped
-    working_dir: /app
-    volumes:
-      - ./LevelUp_Analytics_service/target:/app
-    command: >
-      java
-      -Xmx100m
-      -Xms64m
-      -XX:+UseSerialGC
-      -XX:MaxMetaspaceSize=64m
-      -XX:CompressedClassSpaceSize=16m
-      -Djava.security.egd=file:/dev/./urandom
-      -jar LevelUp_Analytics_service-0.0.1-SNAPSHOT.jar
-    ports:
-      - "8085:8085"
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
-      SPRING_DATASOURCE_USERNAME: levelup
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-LevelUp2024!}
-      SERVER_PORT: 8085
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - levelup-network
-    deploy:
-      resources:
-        limits:
-          memory: 120M
-        reservations:
-          memory: 70M
+  # analytics-service:
+  #   Desactivado para ahorrar memoria (no esencial para funcionamiento básico)
+  #   image: eclipse-temurin:21-jre-alpine
+  #   container_name: levelup_analytics
+  #   restart: unless-stopped
+  #   working_dir: /app
+  #   volumes:
+  #     - ./LevelUp_Analytics_service/target:/app
+  #   command: >
+  #     java
+  #     -Xmx100m
+  #     -Xms64m
+  #     -XX:+UseSerialGC
+  #     -XX:MaxMetaspaceSize=64m
+  #     -XX:CompressedClassSpaceSize=16m
+  #     -Djava.security.egd=file:/dev/./urandom
+  #     -jar LevelUp_Analytics_service-0.0.1-SNAPSHOT.jar
+  #   ports:
+  #     - "8085:8085"
+  #   environment:
+  #     SPRING_PROFILES_ACTIVE: prod
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
+  #     SPRING_DATASOURCE_USERNAME: levelup
+  #     SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-LevelUp2024!}
+  #     SERVER_PORT: 8085
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   networks:
+  #     - levelup-network
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 120M
+  #       reservations:
+  #         memory: 70M
 
   # Nginx para Frontend
   nginx:

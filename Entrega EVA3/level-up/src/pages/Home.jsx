@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { obtenerProductos } from '../services/productService';
 import '../styles/Home.css';
 
 const PRODUCTOS_DEFAULT = [
@@ -43,30 +44,36 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const destacadosCodigosLS = JSON.parse(localStorage.getItem('destacados') || '[]');
-    if (destacadosCodigosLS.length > 0) {
-      const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
-      const productosDestacados = destacadosCodigosLS.map(codigo => {
-        const producto = productosLS.find(p => p.codigo === codigo);
-        if (producto && producto.stock > 0) {
-          return {
-            codigo: producto.codigo,
-            categoria: producto.categoria,
-            nombre: producto.nombre,
-            precio: producto.precio,
-            stock: producto.stock,
-            desc: producto.descripcion || producto.desc || 'Producto destacado',
-            img: producto.imagen,
-            imagen: producto.imagen
-          };
+    const cargarProductosDestacados = async () => {
+      try {
+        // Cargar todos los productos del backend
+        const productosBackend = await obtenerProductos();
+        
+        // Tomar los primeros 3 productos con stock
+        const productosConStock = productosBackend
+          .filter(p => p.stock > 0)
+          .slice(0, 3)
+          .map(p => ({
+            codigo: p.codigo,
+            categoria: p.categoria?.nombre || p.categoria || 'General',
+            nombre: p.nombre,
+            precio: p.precio || p.precioVenta || 0,
+            stock: p.stock,
+            desc: p.descripcion || 'Producto destacado',
+            img: p.imagenUrl || p.imagen || '/assets/imgs/default.png',
+            imagen: p.imagenUrl || p.imagen || '/assets/imgs/default.png'
+          }));
+        
+        if (productosConStock.length > 0) {
+          setProductos(productosConStock);
         }
-        return null;
-      }).filter(p => p !== null);
-      
-      if (productosDestacados.length > 0) {
-        setProductos(productosDestacados);
+      } catch (error) {
+        console.error('Error al cargar productos destacados:', error);
+        // Mantener productos por defecto si falla
       }
-    }
+    };
+
+    cargarProductosDestacados();
   }, []);
 
   useEffect(() => {

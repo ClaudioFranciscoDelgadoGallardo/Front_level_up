@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registrarLogUsuario } from '../utils/logManager';
+import { registro } from '../services/authService';
 import '../styles/Registro.css';
 
 export default function Registro() {
@@ -23,9 +24,17 @@ export default function Registro() {
   };
 
   const validarFormulario = () => {
-    if (!formData.run || formData.run.length < 7 || formData.run.length > 9) {
+    // Validar formato RUT chileno: 12345678-9 o 1234567-8
+    const rutRegex = /^\d{7,8}-[0-9Kk]$/;
+    if (!formData.run) {
       if (window.notificar) {
-        window.notificar('El RUN debe tener entre 7 y 9 caracteres', 'error', 3000);
+        window.notificar('El RUN es obligatorio', 'error', 3000);
+      }
+      return false;
+    }
+    if (!rutRegex.test(formData.run)) {
+      if (window.notificar) {
+        window.notificar('El RUN debe tener formato válido: 12345678-9 o 1234567-K', 'error', 3000);
       }
       return false;
     }
@@ -84,43 +93,43 @@ export default function Registro() {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validarFormulario()) {
       return;
     }
 
-    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    
-    if (usuarios.some(u => u.email === formData.correo || u.correo === formData.correo)) {
-      if (window.notificar) {
-        window.notificar('Ya existe un usuario con ese correo', 'error', 3000);
-      }
-      return;
-    }
+    try {
+      // Preparar datos para el backend
+      const userData = {
+        run: formData.run,
+        nombre: formData.nombre,
+        apellidos: formData.apellidos,
+        correo: formData.correo,
+        password: formData.password,
+        fechaNacimiento: formData.fechaNac,
+        rol: 'CLIENTE' // El backend espera roles en mayúsculas
+      };
 
-    usuarios.push({
-      run: formData.run,
-      nombre: formData.nombre,
-      apellidos: formData.apellidos,
-      email: formData.correo,
-      correo: formData.correo,
-      password: formData.password,
-      fechaNac: formData.fechaNac,
-      rol: 'usuario'
-    });
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
-    
-    registrarLogUsuario(`Se registró como nuevo usuario: ${formData.nombre} ${formData.apellidos} (${formData.correo})`);
-    
-    if (window.notificar) {
-      window.notificar(`¡Usuario ${formData.nombre} registrado exitosamente!`, 'success', 3000);
+      // Registrar en el backend
+      const resultado = await registro(userData);
+      
+      registrarLogUsuario(`Se registró como nuevo usuario: ${formData.nombre} ${formData.apellidos} (${formData.correo})`);
+      
+      if (window.notificar) {
+        window.notificar(`¡Usuario ${formData.nombre} registrado exitosamente!`, 'success', 3000);
+      }
+      
+      setTimeout(() => {
+        navigate('/login');
+      }, 1000);
+    } catch (error) {
+      console.error('Error al registrar usuario:', error);
+      if (window.notificar) {
+        window.notificar(error.message || 'Error al registrar usuario. Intenta nuevamente.', 'error', 4000);
+      }
     }
-    
-    setTimeout(() => {
-      navigate('/login');
-    }, 1000);
   };
 
   return (

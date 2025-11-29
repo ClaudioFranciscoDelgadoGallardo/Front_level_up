@@ -27,8 +27,8 @@ public class Usuario {
     private Long id;
 
     @NotBlank(message = "El RUN es obligatorio")
-    @Size(min = 7, max = 9, message = "El RUN debe tener entre 7 y 9 caracteres")
-    @Column(unique = true, nullable = false, length = 9)
+    @Size(min = 7, max = 12, message = "El RUN debe tener entre 7 y 12 caracteres")
+    @Column(unique = true, nullable = false, length = 12)
     private String run;
 
     @NotBlank(message = "El nombre es obligatorio")

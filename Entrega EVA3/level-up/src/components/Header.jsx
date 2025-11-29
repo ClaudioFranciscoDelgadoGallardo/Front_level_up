@@ -11,7 +11,10 @@ export default function Header() {
   const location = useLocation();
   
   const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual'));
-  const isUsuarioRole = usuarioActual?.rol === 'usuario';
+  const rolNormalizado = usuarioActual?.rol ? usuarioActual.rol.toUpperCase() : '';
+  const isClienteRole = rolNormalizado === 'CLIENTE' || rolNormalizado === 'USUARIO';
+  const isVendedorRole = rolNormalizado === 'VENDEDOR';
+  const isAdminRole = rolNormalizado === 'ADMIN';
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isVendedorRoute = location.pathname.startsWith('/vendedor');
 
@@ -71,7 +74,7 @@ export default function Header() {
         <nav className="navbar navbar-expand-lg navbar-dark">
           <div className="container">
             <Link 
-              to={isAdminRoute ? "/admin" : isVendedorRoute ? "/vendedor" : isUsuarioRole ? "/" : "/"} 
+              to={isAdminRoute ? "/admin" : isVendedorRoute ? "/vendedor" : "/"} 
               className="navbar-brand d-flex align-items-center"
             >
               <img src="/assets/icons/icono.png" alt="Level Up" width="50" height="50" className="me-2" />
@@ -88,7 +91,7 @@ export default function Header() {
             </button>
             
             <div className="collapse navbar-collapse" id="navbarNav">
-              {isAdminRoute ? (
+              {isAdminRole && isAdminRoute ? (
                 <ul className="navbar-nav ms-auto">
                   <li className="nav-item"><Link to="/admin" className="nav-link">Dashboard</Link></li>
                   <li className="nav-item"><Link to="/admin/productos" className="nav-link">Productos</Link></li>
@@ -96,14 +99,14 @@ export default function Header() {
                   <li className="nav-item"><Link to="/admin/usuarios" className="nav-link">Usuarios</Link></li>
                   <li className="nav-item"><Link to="/admin/logs" className="nav-link">Logs</Link></li>
                 </ul>
-              ) : usuarioActual?.rol === 'vendedor' ? (
+              ) : isVendedorRole && isVendedorRoute ? (
                 <ul className="navbar-nav ms-auto">
                   <li className="nav-item"><Link to="/vendedor" className="nav-link">Dashboard</Link></li>
                   <li className="nav-item"><Link to="/vendedor/productos" className="nav-link">Productos</Link></li>
                   <li className="nav-item"><Link to="/vendedor/destacados" className="nav-link">Destacados</Link></li>
                   <li className="nav-item"><Link to="/vendedor/perfil" className="nav-link">Mi Perfil</Link></li>
                 </ul>
-              ) : isUsuarioRole ? (
+              ) : isClienteRole ? (
                 <>
                   <ul className="navbar-nav ms-auto">
                     <li className="nav-item"><Link to="/" className="nav-link">Inicio</Link></li>
