@@ -50,4 +50,6 @@ public class ActualizarUsuarioRequest {
     private String codigoPostal;
 
     private LocalDate fechaNacimiento;
+
+    private String fotoPerfil;
 }

@@ -234,6 +234,9 @@ public class UsuarioService {
         if (request.getFechaNacimiento() != null) {
             usuario.setFechaNacimiento(request.getFechaNacimiento());
         }
+        if (request.getFotoPerfil() != null && !request.getFotoPerfil().isEmpty()) {
+            usuario.setFotoPerfil(request.getFotoPerfil());
+        }
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         }

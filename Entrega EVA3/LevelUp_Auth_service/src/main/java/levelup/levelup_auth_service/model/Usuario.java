@@ -56,8 +56,23 @@ public class Usuario {
     @Column(length = 255)
     private String direccion;
 
+    @Column(length = 100)
+    private String comuna;
+
+    @Column(length = 100)
+    private String ciudad;
+
+    @Column(length = 100)
+    private String region;
+
+    @Column(name = "codigo_postal", length = 10)
+    private String codigoPostal;
+
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
+
+    @Column(name = "foto_perfil", columnDefinition = "TEXT")
+    private String fotoPerfil;
 
     @Column(nullable = false, length = 20)
     @Builder.Default

@@ -57,6 +57,9 @@ public class Usuario {
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
 
+    @Column(name = "foto_perfil", columnDefinition = "TEXT")
+    private String fotoPerfil;
+
     @Column(nullable = false, length = 20)
     private String rol = "CLIENTE";
 

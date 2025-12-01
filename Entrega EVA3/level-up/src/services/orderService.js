@@ -1,6 +1,6 @@
 // Servicio para interactuar con Order Service (Puerto 8084)
 const API_BASE_URL = process.env.REACT_APP_API_GATEWAY_URL || 'http://localhost:8080';
-const ORDER_SERVICE_URL = `${API_BASE_URL}/orders`;
+const ORDER_SERVICE_URL = `${API_BASE_URL}/api/ordenes`;
 
 /**
  * Crea una nueva orden de compra
@@ -15,6 +15,8 @@ const ORDER_SERVICE_URL = `${API_BASE_URL}/orders`;
 export const createOrder = async (orderData) => {
   try {
     const token = localStorage.getItem('token');
+    console.log('Datos de orden enviados:', JSON.stringify(orderData, null, 2));
+    
     const response = await fetch(`${ORDER_SERVICE_URL}`, {
       method: 'POST',
       headers: {
@@ -26,7 +28,8 @@ export const createOrder = async (orderData) => {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error al crear la orden: ${response.status}`);
+      console.error('Error del backend:', errorData);
+      throw new Error(errorData.error || errorData.message || `Error al crear la orden: ${response.status}`);
     }
 
     return await response.json();
@@ -43,13 +46,20 @@ export const createOrder = async (orderData) => {
 export const getUserOrders = async () => {
   try {
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
+    let userId = localStorage.getItem('userId');
     
+    // Si no hay userId en localStorage, intentar obtenerlo del usuario actual
     if (!userId) {
-      throw new Error('Usuario no autenticado');
+      const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual') || 'null');
+      if (usuarioActual && usuarioActual.id) {
+        userId = usuarioActual.id;
+        localStorage.setItem('userId', userId);
+      } else {
+        throw new Error('Usuario no autenticado');
+      }
     }
 
-    const response = await fetch(`${ORDER_SERVICE_URL}/user/${userId}`, {
+    const response = await fetch(`${ORDER_SERVICE_URL}/usuario/${userId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -98,31 +108,91 @@ export const getOrderById = async (orderId) => {
 /**
  * Actualiza el estado de una orden
  * @param {string} orderId - ID de la orden
- * @param {string} status - Nuevo estado (PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED)
+ * @param {string} estado - Nuevo estado (PENDIENTE, CONFIRMADA, ENVIADA, ENTREGADA, CANCELADA)
  * @returns {Promise<Object>} Orden actualizada
  */
-export const updateOrderStatus = async (orderId, status) => {
+export const updateOrderStatus = async (orderId, estado) => {
   try {
     const token = localStorage.getItem('token');
-    const response = await fetch(`${ORDER_SERVICE_URL}/${orderId}/status`, {
+    const url = `${ORDER_SERVICE_URL}/${orderId}/estado?estado=${estado}`;
+    console.log(`🔄 Actualizando orden ${orderId} a estado ${estado}`);
+    console.log(`URL: ${url}`);
+    
+    const response = await fetch(url, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': token ? `Bearer ${token}` : '',
       },
-      body: JSON.stringify({ status }),
     });
 
     if (!response.ok) {
-      throw new Error(`Error al actualizar el estado: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`❌ Error ${response.status}:`, errorText);
+      throw new Error(`Error al actualizar el estado: ${response.status} - ${errorText}`);
     }
 
-    return await response.json();
+    const resultado = await response.json();
+    console.log(`✅ Orden actualizada correctamente:`, resultado);
+    return resultado;
   } catch (error) {
-    console.error('Error en updateOrderStatus:', error);
+    console.error('❌ Error en updateOrderStatus:', error);
     throw error;
   }
 };
+
+/**
+ * DESACTIVADO - Progresión automática ahora se maneja con trigger en Supabase
+ * Simula la progresión automática de estados de una orden
+ * PENDIENTE -> (1 min) -> PROCESANDO -> (1 min) -> ENVIADO -> (1 min) -> ENTREGADO
+ * @param {string} orderId - ID de la orden
+ * @param {Function} onUpdate - Callback que se llama cuando cambia el estado
+ */
+export const iniciarProgresionAutomatica = (orderId, onUpdate) => {
+  console.log(`⏰ Progresión automática desactivada - se maneja en Supabase con trigger`);
+  console.log(`   La orden ${orderId} se actualizará automáticamente en la base de datos`);
+  return () => {}; // Función vacía para cancelar
+};
+
+/* FUNCIÓN ORIGINAL COMENTADA - Ahora usa trigger de Supabase
+export const iniciarProgresionAutomatica = (orderId, onUpdate) => {
+  console.log(`⏰ Iniciando progresión automática para orden ${orderId}`);
+  
+  const progresion = [
+    { estado: 'PROCESANDO', delay: 60000 }, // 1 minuto
+    { estado: 'ENVIADO', delay: 60000 },    // 1 minuto adicional
+    { estado: 'ENTREGADO', delay: 60000 }   // 1 minuto adicional
+  ];
+
+  let timeoutIds = [];
+
+  progresion.forEach((paso, index) => {
+    const delayAcumulado = progresion.slice(0, index + 1).reduce((sum, p) => sum + p.delay, 0);
+    const minutos = delayAcumulado / 60000;
+    
+    console.log(`⏰ Programado cambio a ${paso.estado} en ${minutos} minuto(s)`);
+    
+    const timeoutId = setTimeout(async () => {
+      try {
+        console.log(`🔄 Ejecutando cambio a ${paso.estado}...`);
+        const ordenActualizada = await updateOrderStatus(orderId, paso.estado);
+        console.log(`✅ Orden ${orderId} progresó a estado: ${ordenActualizada.estado}`);
+        if (onUpdate) {
+          onUpdate(ordenActualizada);
+        }
+      } catch (error) {
+        console.error(`❌ Error al actualizar orden ${orderId} a ${paso.estado}:`, error);
+      }
+    }, delayAcumulado);
+
+    timeoutIds.push(timeoutId);
+  });
+
+  return () => {
+    timeoutIds.forEach(id => clearTimeout(id));
+  };
+};
+*/
 
 /**
  * Cancela una orden
@@ -130,7 +200,7 @@ export const updateOrderStatus = async (orderId, status) => {
  * @returns {Promise<Object>} Orden cancelada
  */
 export const cancelOrder = async (orderId) => {
-  return updateOrderStatus(orderId, 'CANCELLED');
+  return updateOrderStatus(orderId, 'CANCELADO');
 };
 
 /**
@@ -176,6 +246,7 @@ const orderService = {
   getUserOrders,
   getOrderById,
   updateOrderStatus,
+  iniciarProgresionAutomatica,
   cancelOrder,
   getAllOrders,
 };

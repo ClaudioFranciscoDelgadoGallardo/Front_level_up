@@ -70,11 +70,18 @@ export default function Login() {
         correo: resultado.correo,
         rol: resultado.rol,
         telefono: resultado.telefono,
-        direccion: resultado.direccion
+        direccion: resultado.direccion,
+        comuna: resultado.comuna,
+        ciudad: resultado.ciudad,
+        region: resultado.region,
+        codigoPostal: resultado.codigoPostal,
+        fechaNacimiento: resultado.fechaNacimiento,
+        fotoPerfil: resultado.fotoPerfil
       };
       
       // Guardar token y usuario en localStorage
       localStorage.setItem('token', resultado.token);
+      localStorage.setItem('userId', usuario.id);
       localStorage.setItem('usuarioActual', JSON.stringify(usuario));
       window.dispatchEvent(new Event('usuarioActualizado'));
       
@@ -120,6 +127,7 @@ export default function Login() {
           id="login-email"
           name="email"
           type="email"
+          placeholder="juan.carlos@example.com"
           value={formData.email}
           onChange={handleChange}
         />

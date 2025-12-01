@@ -20,6 +20,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        // Los productos ya están cargados en la BD desde schema_completo.sql
+        logger.info("DataInitializer deshabilitado - productos cargados desde BD");
+        /*
         if (productoRepository.count() == 0) {
             logger.info("Inicializando productos de ejemplo...");
 
@@ -205,5 +208,6 @@ public class DataInitializer implements CommandLineRunner {
         } else {
             logger.info("Productos ya existen en la base de datos. Total: {}", productoRepository.count());
         }
+        */
     }
 }

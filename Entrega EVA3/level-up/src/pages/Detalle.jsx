@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { obtenerProductoPorCodigo } from '../services/productService';
 import '../styles/Detalle.css';
 
 export default function Detalle() {
@@ -8,20 +9,50 @@ export default function Detalle() {
   const navigate = useNavigate();
   const [producto, setProducto] = useState(null);
   const [cantidad, setCantidad] = useState(1);
+  const [loading, setLoading] = useState(true);
   const { agregarAlCarrito } = useCarrito();
 
   useEffect(() => {
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-    const prod = productos.find(p => p.codigo === codigo);
-    
-    if (prod) {
-      setProducto(prod);
-    } else {
-      if (window.notificar) {
-        window.notificar('Producto no encontrado', 'error', 3000);
+    const cargarProducto = async () => {
+      try {
+        setLoading(true);
+        console.log('🔍 Buscando producto con código:', codigo);
+        const prod = await obtenerProductoPorCodigo(codigo);
+        
+        if (prod) {
+          console.log('✅ Producto encontrado:', prod);
+          // Mapear los campos del backend al formato esperado por el componente
+          const productoMapeado = {
+            ...prod,
+            id: prod.id || prod.codigo,
+            codigo: prod.codigo,
+            nombre: prod.nombre,
+            descripcion: prod.descripcion || prod.descripcionCorta || '',
+            categoria: prod.categoria || 'Sin categoría',
+            precio: prod.precioVenta || prod.precioBase || 0,
+            stock: prod.stockActual || 0,
+            imagen: prod.imagenPrincipal || '/assets/imgs/producto-default.png'
+          };
+          setProducto(productoMapeado);
+        } else {
+          console.error('❌ Producto no encontrado');
+          if (window.notificar) {
+            window.notificar('Producto no encontrado', 'error', 3000);
+          }
+          navigate('/productos');
+        }
+      } catch (error) {
+        console.error('❌ Error al cargar producto:', error);
+        if (window.notificar) {
+          window.notificar('Error al cargar el producto', 'error', 3000);
+        }
+        navigate('/productos');
+      } finally {
+        setLoading(false);
       }
-      navigate('/productos');
-    }
+    };
+
+    cargarProducto();
   }, [codigo, navigate]);
 
   const handleAgregarAlCarrito = () => {
@@ -37,11 +68,14 @@ export default function Detalle() {
     return `$${precio.toLocaleString('es-CL')}`;
   };
 
-  if (!producto) {
+  if (loading || !producto) {
     return (
       <main className="container detalle-loading">
         <div className="text-center py-5">
-          <p className="text-secondary">Cargando producto...</p>
+          <div className="spinner-border text-success" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <p className="mt-3 text-secondary">Cargando producto...</p>
         </div>
       </main>
     );

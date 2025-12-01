@@ -10,6 +10,13 @@ export default function MisOrdenes() {
 
   useEffect(() => {
     cargarOrdenes();
+    
+    // Recargar órdenes cada 30 segundos para ver cambios de estado
+    const intervalo = setInterval(() => {
+      cargarOrdenes();
+    }, 30000); // 30 segundos
+
+    return () => clearInterval(intervalo);
   }, []);
 
   const cargarOrdenes = async () => {
@@ -18,7 +25,7 @@ export default function MisOrdenes() {
       const data = await getUserOrders();
       // Ordenar por fecha más reciente primero
       const ordenesOrdenadas = data.sort((a, b) => 
-        new Date(b.createdAt) - new Date(a.createdAt)
+        new Date(b.fechaCreacion) - new Date(a.fechaCreacion)
       );
       setOrdenes(ordenesOrdenadas);
     } catch (err) {
@@ -30,7 +37,10 @@ export default function MisOrdenes() {
   };
 
   const formatearPrecio = (precio) => {
-    return `$${precio.toLocaleString('es-CL')}`;
+    if (precio === undefined || precio === null || isNaN(precio)) {
+      return '$0';
+    }
+    return `$${Math.round(Number(precio)).toLocaleString('es-CL')}`;
   };
 
   const formatearFecha = (fecha) => {
@@ -45,11 +55,11 @@ export default function MisOrdenes() {
 
   const obtenerEstadoBadge = (status) => {
     const badges = {
-      PENDING: { class: 'badge-warning', text: 'Pendiente' },
-      CONFIRMED: { class: 'badge-info', text: 'Confirmada' },
-      SHIPPED: { class: 'badge-primary', text: 'Enviada' },
-      DELIVERED: { class: 'badge-success', text: 'Entregada' },
-      CANCELLED: { class: 'badge-danger', text: 'Cancelada' }
+      PENDIENTE: { class: 'badge-warning', text: 'Pendiente' },
+      PROCESANDO: { class: 'badge-info', text: 'Procesando' },
+      ENVIADO: { class: 'badge-primary', text: 'Enviado' },
+      ENTREGADO: { class: 'badge-success', text: 'Entregado' },
+      CANCELADO: { class: 'badge-danger', text: 'Cancelado' }
     };
     return badges[status] || { class: 'badge-secondary', text: status };
   };
@@ -104,14 +114,14 @@ export default function MisOrdenes() {
       ) : (
         <div className="ordenes-list">
           {ordenes.map((orden) => {
-            const badge = obtenerEstadoBadge(orden.status);
+            const badge = obtenerEstadoBadge(orden.estado);
             return (
               <div key={orden.id} className="orden-card mb-4">
                 <div className="orden-header">
                   <div className="orden-info">
-                    <h5 className="orden-id">Orden #{orden.id}</h5>
+                    <h5 className="orden-id">ORDEN #{orden.numeroOrden || orden.id}</h5>
                     <p className="orden-fecha mb-0">
-                      {formatearFecha(orden.createdAt)}
+                      {formatearFecha(orden.fechaCreacion)}
                     </p>
                   </div>
                   <div className="orden-estado">
@@ -123,59 +133,73 @@ export default function MisOrdenes() {
 
                 <div className="orden-body">
                   <div className="orden-items">
-                    <h6 className="mb-3">Productos:</h6>
-                    {orden.items && orden.items.map((item, index) => (
+                    <h6 className="mb-3">PRODUCTOS:</h6>
+                    {orden.detalles && orden.detalles.map((detalle, index) => (
                       <div key={index} className="orden-item mb-2">
                         <div className="d-flex justify-content-between">
                           <span>
-                            {item.productName || `Producto ${item.productId}`}
-                            <small className="text-muted ms-2">x{item.quantity}</small>
+                            {detalle.productoNombre || detalle.nombreProducto || 'Producto'}
+                            <small className="text-muted ms-2">x{detalle.cantidad}</small>
                           </span>
                           <span className="fw-bold">
-                            {formatearPrecio(item.price * item.quantity)}
+                            {formatearPrecio(detalle.total)}
                           </span>
                         </div>
                       </div>
                     ))}
                   </div>
 
-                  <hr />
+                  <hr className="orden-divider" />
 
                   <div className="orden-totales">
-                    {orden.subtotalAmount && (
+                    {orden.subtotal && (
                       <div className="d-flex justify-content-between mb-1">
                         <span>Subtotal:</span>
-                        <span>{formatearPrecio(orden.subtotalAmount)}</span>
+                        <span>{formatearPrecio(orden.subtotal)}</span>
                       </div>
                     )}
-                    {orden.discountAmount > 0 && (
+                    {orden.iva && (
+                      <div className="d-flex justify-content-between mb-1">
+                        <span>IVA (19%):</span>
+                        <span>{formatearPrecio(orden.iva)}</span>
+                      </div>
+                    )}
+                    {orden.descuentoTotal > 0 && (
                       <div className="d-flex justify-content-between mb-1">
                         <span>Descuento:</span>
                         <span className="text-success">
-                          -{formatearPrecio(orden.discountAmount)}
+                          -{formatearPrecio(orden.descuentoTotal)}
                         </span>
                       </div>
                     )}
-                    <div className="d-flex justify-content-between mb-2">
-                      <strong>Total:</strong>
+                    {orden.envio > 0 && (
+                      <div className="d-flex justify-content-between mb-1">
+                        <span>Envío:</span>
+                        <span>{formatearPrecio(orden.envio)}</span>
+                      </div>
+                    )}
+                    <div className="d-flex justify-content-between mb-2 mt-2">
+                      <strong>TOTAL:</strong>
                       <strong className="orden-total">
-                        {formatearPrecio(orden.totalAmount)}
+                        {formatearPrecio(orden.total)}
                       </strong>
                     </div>
                   </div>
 
-                  {orden.shippingAddress && (
+                  {orden.direccionEnvio && (
                     <div className="orden-envio mt-3">
-                      <small className="text-muted">
-                        <strong>Dirección:</strong> {orden.shippingAddress}
+                      <small>
+                        <strong>Dirección:</strong> {orden.direccionEnvio}
+                        {orden.comunaEnvio && `, ${orden.comunaEnvio}`}
+                        {orden.ciudadEnvio && `, ${orden.ciudadEnvio}`}
                       </small>
                     </div>
                   )}
 
-                  {orden.paymentMethod && (
+                  {orden.metodoPago && (
                     <div className="orden-pago">
-                      <small className="text-muted">
-                        <strong>Método de pago:</strong> {orden.paymentMethod}
+                      <small>
+                        <strong>Método de pago:</strong> {orden.metodoPago}
                       </small>
                     </div>
                   )}

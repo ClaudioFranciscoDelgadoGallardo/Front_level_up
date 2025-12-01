@@ -44,6 +44,17 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.buscarPorNombre(nombre));
     }
 
+    @GetMapping("/codigo/{codigo}")
+    public ResponseEntity<?> obtenerPorCodigo(@PathVariable String codigo) {
+        try {
+            return ResponseEntity.ok(productoService.obtenerPorCodigo(codigo));
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
@@ -114,6 +125,20 @@ public class ProductoController {
             productoService.activar(id);
             Map<String, String> response = new HashMap<>();
             response.put("mensaje", "Producto activado exitosamente");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @PatchMapping("/codigo/{codigo}/stock")
+    public ResponseEntity<?> actualizarStockPorCodigo(@PathVariable String codigo, @RequestParam Integer delta) {
+        try {
+            productoService.actualizarStockDelta(codigo, delta);
+            Map<String, String> response = new HashMap<>();
+            response.put("mensaje", "Stock actualizado exitosamente");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();

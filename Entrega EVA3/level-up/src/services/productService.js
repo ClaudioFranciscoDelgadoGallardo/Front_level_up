@@ -7,7 +7,7 @@ const API_BASE_URL = process.env.REACT_APP_API_GATEWAY_URL || 'http://localhost:
  */
 export const obtenerProductos = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/productos/`, {
+    const response = await fetch(`${API_BASE_URL}/api/productos`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export const obtenerProductos = async () => {
  */
 export const obtenerProductoPorCodigo = async (codigo) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/productos/${codigo}`, {
+    const response = await fetch(`${API_BASE_URL}/api/productos/codigo/${codigo}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ export const obtenerProductoPorCodigo = async (codigo) => {
  */
 export const crearProducto = async (productData, token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/productos/`, {
+    const response = await fetch(`${API_BASE_URL}/api/productos`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -135,31 +135,34 @@ export const eliminarProducto = async (codigo, token) => {
 };
 
 /**
- * Actualiza el stock de un producto
+ * Actualiza el stock de un producto (suma o resta la cantidad)
  * @param {string} codigo - Código del producto
- * @param {number} cantidad - Nueva cantidad de stock
- * @param {string} token - Token de autenticación
+ * @param {number} delta - Cantidad a sumar (positivo) o restar (negativo)
  * @returns {Promise<object>}
  */
-export const actualizarStock = async (codigo, cantidad, token) => {
+export const updateProductStock = async (codigo, delta) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/productos/${codigo}/stock`, {
+    const token = localStorage.getItem('token');
+    
+    console.log(`Actualizando stock de ${codigo}: delta = ${delta}`);
+    
+    // Enviar delta directamente al backend
+    const response = await fetch(`${API_BASE_URL}/api/productos/codigo/${codigo}/stock?delta=${delta}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ stock: cantidad }),
+      }
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Error al actualizar stock');
+      throw new Error(error.error || 'Error al actualizar stock');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('Error al actualizar stock:', error);
+    console.error('Error al actualizar stock del producto:', error);
     throw error;
   }
 };

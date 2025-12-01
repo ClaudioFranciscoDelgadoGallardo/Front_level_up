@@ -58,24 +58,38 @@ public class OrdenService {
                 .total(BigDecimal.ZERO)
                 .build();
 
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal subtotal = BigDecimal.ZERO;
 
         for (CrearOrdenRequest.DetalleOrdenDto detalleDto : request.getDetalles()) {
-            BigDecimal subtotal = detalleDto.getPrecioUnitario()
+            BigDecimal subtotalDetalle = detalleDto.getPrecioUnitario()
                     .multiply(BigDecimal.valueOf(detalleDto.getCantidad()));
+            
+            // Calcular IVA del detalle (19%)
+            BigDecimal ivaDetalle = subtotalDetalle.multiply(BigDecimal.valueOf(0.19));
+            BigDecimal totalDetalle = subtotalDetalle.add(ivaDetalle);
 
             DetalleOrden detalle = DetalleOrden.builder()
                     .productoId(detalleDto.getProductoId())
+                    .productoCodigo(detalleDto.getProductoCodigo())
                     .productoNombre(detalleDto.getProductoNombre())
                     .cantidad(detalleDto.getCantidad())
                     .precioUnitario(detalleDto.getPrecioUnitario())
-                    .subtotal(subtotal)
+                    .precioFinal(detalleDto.getPrecioUnitario())
+                    .subtotal(subtotalDetalle)
+                    .iva(ivaDetalle)
+                    .total(totalDetalle)
                     .build();
 
             orden.agregarDetalle(detalle);
-            total = total.add(subtotal);
+            subtotal = subtotal.add(subtotalDetalle);
         }
 
+        // Calcular IVA (19%)
+        BigDecimal iva = subtotal.multiply(BigDecimal.valueOf(0.19));
+        BigDecimal total = subtotal.add(iva);
+
+        orden.setSubtotal(subtotal);
+        orden.setIva(iva);
         orden.setTotal(total);
 
         Orden ordenGuardada = ordenRepository.save(orden);

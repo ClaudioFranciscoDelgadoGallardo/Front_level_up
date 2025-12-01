@@ -27,6 +27,7 @@ public class UsuarioResponse {
     private String region;
     private String codigoPostal;
     private LocalDate fechaNacimiento;
+    private String fotoPerfil;
     private String rol;
     private Boolean activo;
     private Boolean verificado;
@@ -48,6 +49,7 @@ public class UsuarioResponse {
                 .region(usuario.getRegion())
                 .codigoPostal(usuario.getCodigoPostal())
                 .fechaNacimiento(usuario.getFechaNacimiento())
+                .fotoPerfil(usuario.getFotoPerfil())
                 .rol(usuario.getRol())
                 .activo(usuario.getActivo())
                 .verificado(usuario.getVerificado())

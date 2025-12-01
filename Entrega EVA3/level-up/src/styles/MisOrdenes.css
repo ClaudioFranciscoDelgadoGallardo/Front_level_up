@@ -1,7 +1,18 @@
-/* Estilos para Mis Órdenes */
+/* Estilos para Mis Órdenes - Retro Gaming Theme */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@300;400;500;700&display=swap');
+
 .mis-ordenes-page {
   min-height: 80vh;
   padding: 2rem 0;
+}
+
+.mis-ordenes-page .section-title {
+  font-family: 'Press Start 2P', monospace;
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .ordenes-list {
@@ -10,16 +21,19 @@
 }
 
 .orden-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
+  background: #000000;
+  border: 3px solid #00ff41;
+  border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 65, 0.3), inset 0 0 20px rgba(0, 255, 65, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
+  font-family: 'Roboto', sans-serif;
 }
 
 .orden-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 30px rgba(0, 255, 65, 0.5), inset 0 0 20px rgba(0, 255, 65, 0.2);
+  border-color: #00ff41;
 }
 
 .orden-header {
@@ -27,90 +41,150 @@
   justify-content: space-between;
   align-items: flex-start;
   padding-bottom: 1rem;
-  border-bottom: 2px solid #e9ecef;
+  border-bottom: 2px solid #00ff41;
   margin-bottom: 1rem;
 }
 
 .orden-id {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #00ff41;
   margin-bottom: 0.25rem;
+  text-shadow: 0 0 5px #00ff41;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 1px;
 }
 
 .orden-fecha {
-  font-size: 0.9rem;
-  color: #718096;
+  font-size: 0.85rem;
+  color: #00cc33;
+  font-family: 'Roboto', sans-serif;
 }
 
 .orden-estado .badge {
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   padding: 0.5rem 1rem;
-  border-radius: 20px;
+  border-radius: 4px;
+  font-family: 'Roboto', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid;
 }
 
 .badge-warning {
-  background-color: #fbbf24;
-  color: #78350f;
+  background-color: #1a1a00;
+  color: #ffff00;
+  border-color: #ffff00;
+  text-shadow: 0 0 5px #ffff00;
 }
 
 .badge-info {
-  background-color: #60a5fa;
-  color: #1e3a8a;
+  background-color: #001a1a;
+  color: #00ffff;
+  border-color: #00ffff;
+  text-shadow: 0 0 5px #00ffff;
 }
 
 .badge-primary {
-  background-color: #3b82f6;
-  color: white;
+  background-color: #00001a;
+  color: #0099ff;
+  border-color: #0099ff;
+  text-shadow: 0 0 5px #0099ff;
 }
 
 .badge-success {
-  background-color: #10b981;
-  color: white;
+  background-color: #001a00;
+  color: #00ff41;
+  border-color: #00ff41;
+  text-shadow: 0 0 5px #00ff41;
 }
 
 .badge-danger {
-  background-color: #ef4444;
-  color: white;
+  background-color: #1a0000;
+  color: #ff0000;
+  border-color: #ff0000;
+  text-shadow: 0 0 5px #ff0000;
 }
 
 .badge-secondary {
-  background-color: #6b7280;
-  color: white;
+  background-color: #0a0a0a;
+  color: #888888;
+  border-color: #888888;
 }
 
 .orden-body {
-  color: #2d3748;
+  color: #00ff41;
 }
 
 .orden-items h6 {
-  color: #4a5568;
+  color: #00ff41;
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.875rem;
-  letter-spacing: 0.05em;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 5px #00ff41;
+  font-family: 'Roboto', sans-serif;
 }
 
 .orden-item {
-  padding: 0.5rem;
-  background: #f9fafb;
-  border-radius: 6px;
+  padding: 0.75rem;
+  background: rgba(0, 255, 65, 0.05);
+  border: 1px solid rgba(0, 255, 65, 0.2);
+  border-radius: 4px;
+  color: #00ff41;
+  font-family: 'Roboto', sans-serif;
+}
+
+.orden-item span {
+  color: #00ff41;
+}
+
+.orden-item .text-muted {
+  color: #00cc33 !important;
+}
+
+.orden-divider {
+  border-color: #00ff41;
+  opacity: 0.3;
 }
 
 .orden-totales {
-  background: #f0fdf4;
+  background: rgba(0, 255, 65, 0.08);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 255, 65, 0.3);
+  color: #00ff41;
+  font-family: 'Roboto', sans-serif;
+}
+
+.orden-totales span {
+  color: #00ff41;
 }
 
 .orden-total {
-  color: #059669;
-  font-size: 1.25rem;
+  color: #00ff41 !important;
+  font-size: 1.3rem;
+  text-shadow: 0 0 10px #00ff41;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
 }
 
 .orden-envio,
 .orden-pago {
   margin-top: 0.5rem;
+  color: #00cc33;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.85rem;
+}
+
+.orden-envio small,
+.orden-pago small {
+  color: #00cc33;
+}
+
+.orden-envio strong,
+.orden-pago strong {
+  color: #00ff41;
 }
 
 /* Responsive */

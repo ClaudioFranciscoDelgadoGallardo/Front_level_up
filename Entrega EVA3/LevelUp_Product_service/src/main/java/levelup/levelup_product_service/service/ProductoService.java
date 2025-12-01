@@ -36,12 +36,20 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public List<Producto> buscarPorCategoria(String categoria) {
-        return productoRepository.findByCategoriaAndActivoTrue(categoria);
+        // TODO: Migrar a categoriaId (Long) en lugar de categoria (String)
+        throw new UnsupportedOperationException("Método buscarPorCategoria() pendiente de migración");
+        // return productoRepository.findByCategoriaIdAndActivoTrue(categoriaId);
     }
 
     @Transactional(readOnly = true)
     public List<Producto> buscarPorNombre(String nombre) {
         return productoRepository.findByNombreContainingIgnoreCaseAndActivoTrue(nombre);
+    }
+
+    @Transactional(readOnly = true)
+    public Producto obtenerPorCodigo(String codigo) {
+        return productoRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new RuntimeException("Producto con código " + codigo + " no encontrado"));
     }
 
     @Transactional(readOnly = true)
@@ -58,6 +66,10 @@ public class ProductoService {
 
     @Transactional
     public Producto actualizar(Long id, ActualizarProductoRequest request) {
+        // TODO: Actualizar este método con los nuevos nombres de campos del modelo Producto
+        // (precioBase, precioVenta, categoriaId, stockActual, imagenPrincipal, etc)
+        throw new UnsupportedOperationException("Método actualizar() pendiente de migración a nuevo modelo");
+        /*
         Producto producto = obtenerPorId(id);
 
         // Actualizar solo los campos que vienen en el request (no nulos)
@@ -94,6 +106,7 @@ public class ProductoService {
 
         logger.info("Actualizando producto: {}", producto.getNombre());
         return productoRepository.save(producto);
+        */
     }
 
     @Transactional
@@ -120,16 +133,50 @@ public class ProductoService {
     }
 
     @Transactional
+    public void actualizarStockDelta(String codigo, Integer delta) {
+        Producto producto = obtenerPorCodigo(codigo);
+
+        int nuevoStock = producto.getStockActual() + delta;
+        
+        if (nuevoStock < 0) {
+            throw new RuntimeException("Stock insuficiente. Stock actual: " + producto.getStockActual() + ", intento de restar: " + Math.abs(delta));
+        }
+
+        producto.setStockActual(nuevoStock);
+        productoRepository.save(producto);
+        logger.info("Stock actualizado para producto {} ({}): {} {} = {}", 
+            producto.getCodigo(), producto.getNombre(), producto.getStockActual(), 
+            (delta >= 0 ? "+" : ""), delta, nuevoStock);
+    }
+
+    @Transactional
+    public void actualizarStockPorCodigo(String codigo, Integer nuevaCantidad) {
+        Producto producto = obtenerPorCodigo(codigo);
+
+        if (nuevaCantidad < 0) {
+            throw new RuntimeException("Stock no puede ser negativo");
+        }
+
+        producto.setStockActual(nuevaCantidad);
+        productoRepository.save(producto);
+        logger.info("Stock actualizado para producto {} ({}): {}", producto.getCodigo(), producto.getNombre(), nuevaCantidad);
+    }
+
+    @Transactional
     public void actualizarStock(Long id, Integer cantidad) {
+        // TODO: Actualizar este método con el nuevo campo stockActual
+        throw new UnsupportedOperationException("Método actualizarStock() pendiente de migración a nuevo modelo");
+        /*
         Producto producto = obtenerPorId(id);
 
-        if (producto.getStock() + cantidad < 0) {
+        if (producto.getStockActual() + cantidad < 0) {
             throw new RuntimeException("Stock insuficiente");
         }
 
-        producto.setStock(producto.getStock() + cantidad);
+        producto.setStockActual(producto.getStockActual() + cantidad);
         productoRepository.save(producto);
-        logger.info("Stock actualizado para {}: {}", producto.getNombre(), producto.getStock());
+        logger.info("Stock actualizado para {}: {}", producto.getNombre(), producto.getStockActual());
+        */
     }
 }
 

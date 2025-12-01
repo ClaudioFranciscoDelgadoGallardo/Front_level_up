@@ -46,18 +46,35 @@ export default function Productos() {
   useEffect(() => {
     const cargarProductos = async () => {
       try {
-        // Intentar cargar desde el backend
+        console.log('🔄 Cargando productos desde backend...');
         const productosBackend = await obtenerProductos();
+        console.log('✅ Productos recibidos:', productosBackend.length);
+        
         const productosValidos = productosBackend
-          .filter(p => p.stock > 0)
+          .filter(p => p.stockActual > 0 && p.activo)
           .map(p => ({ 
             ...p, 
-            id: p.codigo,
-            precio: p.precio || p.precioVenta || 0
+            id: p.id || p.codigo,
+            codigo: p.codigo,
+            nombre: p.nombre,
+            descripcion: p.descripcion || p.descripcionCorta || '',
+            categoria: p.categoria || 'Sin categoría',
+            precio: p.precioVenta || p.precioBase || 0,
+            stock: p.stockActual || 0,
+            imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+            destacado: p.destacado || false
           }));
+        
+        console.log('📦 Productos válidos procesados:', productosValidos.length);
         setProductos(productosValidos);
+        
+        if (productosValidos.length === 0) {
+          if (window.notificar) {
+            window.notificar('No hay productos disponibles en este momento.', 'info', 3000);
+          }
+        }
       } catch (error) {
-        console.error('Error al cargar productos desde backend:', error);
+        console.error('❌ Error al cargar productos desde backend:', error);
         // Fallback a productos base si falla el backend
         if (window.notificar) {
           window.notificar('Usando catálogo local. Backend no disponible.', 'warning', 3000);

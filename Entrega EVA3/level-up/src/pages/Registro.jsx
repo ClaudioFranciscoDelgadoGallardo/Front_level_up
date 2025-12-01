@@ -12,6 +12,12 @@ export default function Registro() {
     apellidos: '',
     correo: '',
     password: '',
+    telefono: '',
+    direccion: '',
+    comuna: '',
+    ciudad: '',
+    region: '',
+    codigoPostal: '',
     fechaNac: ''
   });
 
@@ -24,7 +30,6 @@ export default function Registro() {
   };
 
   const validarFormulario = () => {
-    // Validar formato RUT chileno: 12345678-9 o 1234567-8
     const rutRegex = /^\d{7,8}-[0-9Kk]$/;
     if (!formData.run) {
       if (window.notificar) {
@@ -56,6 +61,50 @@ export default function Registro() {
     if (!formData.correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
       if (window.notificar) {
         window.notificar('Debes ingresar un correo válido', 'error', 3000);
+      }
+      return false;
+    }
+
+    // Validar teléfono (9 dígitos para Chile)
+    if (!formData.telefono) {
+      if (window.notificar) {
+        window.notificar('El teléfono es obligatorio', 'error', 3000);
+      }
+      return false;
+    }
+    const telefonoLimpio = formData.telefono.trim().replace(/\s+/g, '');
+    if (!/^\d{9}$/.test(telefonoLimpio)) {
+      if (window.notificar) {
+        window.notificar('El teléfono debe tener exactamente 9 dígitos', 'error', 3000);
+      }
+      return false;
+    }
+
+    if (!formData.comuna || formData.comuna.length < 3 || formData.comuna.length > 100) {
+      if (window.notificar) {
+        window.notificar('La comuna es obligatoria y debe tener entre 3 y 100 caracteres', 'error', 3000);
+      }
+      return false;
+    }
+
+    if (!formData.ciudad || formData.ciudad.length < 3 || formData.ciudad.length > 100) {
+      if (window.notificar) {
+        window.notificar('La ciudad es obligatoria y debe tener entre 3 y 100 caracteres', 'error', 3000);
+      }
+      return false;
+    }
+
+    if (!formData.region || formData.region.length < 3 || formData.region.length > 100) {
+      if (window.notificar) {
+        window.notificar('La región es obligatoria y debe tener entre 3 y 100 caracteres', 'error', 3000);
+      }
+      return false;
+    }
+
+    // Validar código postal (máximo 10 caracteres)
+    if (formData.codigoPostal && formData.codigoPostal.length > 10) {
+      if (window.notificar) {
+        window.notificar('El código postal no puede tener más de 10 caracteres', 'error', 3000);
       }
       return false;
     }
@@ -108,12 +157,18 @@ export default function Registro() {
         apellidos: formData.apellidos,
         correo: formData.correo,
         password: formData.password,
+        telefono: formData.telefono.trim().replace(/\s+/g, ''), // Limpiar espacios
+        direccion: formData.direccion || 'Sin especificar',
+        comuna: formData.comuna,
+        ciudad: formData.ciudad,
+        region: formData.region,
+        codigoPostal: formData.codigoPostal || null,
         fechaNacimiento: formData.fechaNac,
-        rol: 'CLIENTE' // El backend espera roles en mayúsculas
+        rol: 'CLIENTE'
       };
 
       // Registrar en el backend
-      const resultado = await registro(userData);
+      await registro(userData);
       
       registrarLogUsuario(`Se registró como nuevo usuario: ${formData.nombre} ${formData.apellidos} (${formData.correo})`);
       
@@ -140,6 +195,7 @@ export default function Registro() {
         <input 
           id="reg-run"
           name="run"
+          placeholder="12345678-9"
           value={formData.run}
           onChange={handleChange}
         />
@@ -148,6 +204,7 @@ export default function Registro() {
         <input 
           id="reg-nombre"
           name="nombre"
+          placeholder="Juan Carlos"
           value={formData.nombre}
           onChange={handleChange}
         />
@@ -156,6 +213,7 @@ export default function Registro() {
         <input 
           id="reg-apellidos"
           name="apellidos"
+          placeholder="Pérez Gómez"
           value={formData.apellidos}
           onChange={handleChange}
         />
@@ -165,7 +223,68 @@ export default function Registro() {
           id="reg-correo"
           name="correo"
           type="email"
+          placeholder="juan.carlos@example.com"
           value={formData.correo}
+          onChange={handleChange}
+        />
+
+        <label htmlFor="reg-telefono">Teléfono</label>
+        <input 
+          id="reg-telefono"
+          name="telefono"
+          type="tel"
+          placeholder="912345678"
+          value={formData.telefono}
+          onChange={handleChange}
+        />
+
+        <label htmlFor="reg-direccion">Dirección</label>
+        <input 
+          id="reg-direccion"
+          name="direccion"
+          type="text"
+          placeholder="Calle 123, dept.(opcional)"
+          value={formData.direccion}
+          onChange={handleChange}
+        />
+
+        <label htmlFor="reg-comuna">Comuna</label>
+        <input 
+          id="reg-comuna"
+          name="comuna"
+          type="text"
+          placeholder="Santiago, Providencia, etc."
+          value={formData.comuna}
+          onChange={handleChange}
+        />
+
+        <label htmlFor="reg-ciudad">Ciudad</label>
+        <input 
+          id="reg-ciudad"
+          name="ciudad"
+          type="text"
+          placeholder="Santiago, Valparaíso, etc."
+          value={formData.ciudad}
+          onChange={handleChange}
+        />
+
+        <label htmlFor="reg-region">Región</label>
+        <input 
+          id="reg-region"
+          name="region"
+          type="text"
+          placeholder="Región Metropolitana, Región de Valparaíso, etc."
+          value={formData.region}
+          onChange={handleChange}
+        />
+
+        <label htmlFor="reg-codigo-postal">Código Postal (Opcional)</label>
+        <input 
+          id="reg-codigo-postal"
+          name="codigoPostal"
+          type="text"
+          placeholder="8320000"
+          value={formData.codigoPostal}
           onChange={handleChange}
         />
 

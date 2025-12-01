@@ -67,39 +67,51 @@ export default function Carrito() {
     setProcessingOrder(true);
 
     try {
-      // Preparar datos de la orden para Order Service
+      // Obtener datos del usuario
+      const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual') || '{}');
+      
+      // Obtener todos los productos para tener los IDs numéricos
+      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+      
+      // Preparar detalles con ID numérico del producto
+      const detalles = items.map(item => {
+        const producto = productos.find(p => p.codigo === item.codigo);
+        const productoId = producto ? producto.id : null;
+        
+        if (!productoId) {
+          console.warn(`No se encontró ID para producto ${item.codigo}`);
+        }
+        
+        return {
+          productoId: productoId,
+          productoCodigo: item.codigo,
+          productoNombre: item.nombre,
+          cantidad: item.qty,
+          precioUnitario: item.precio
+        };
+      });
+      
+      // Preparar datos de la orden para el backend
       const orderData = {
-        userId: userId,
-        items: items.map(item => ({
-          productId: item.codigo,
-          quantity: item.qty,
-          price: item.precio,
-          productName: item.nombre,
-        })),
-        totalAmount: total,
-        subtotalAmount: subtotal,
-        discountAmount: descuento,
-        shippingAddress: 'Dirección predeterminada', // TODO: Implementar gestión de direcciones
-        paymentMethod: 'Pendiente', // TODO: Implementar métodos de pago
-        status: 'PENDING',
+        usuarioId: parseInt(userId),
+        usuarioNombre: usuarioActual.nombre || 'Usuario',
+        usuarioCorreo: usuarioActual.correo || '',
+        direccionEnvio: usuarioActual.direccion || 'Dirección no especificada',
+        metodoPago: 'Transferencia',
+        detalles: detalles
       };
+
+      console.log('📦 Creando orden con datos:', orderData);
 
       // Crear orden en el backend
       const order = await createOrder(orderData);
 
-      // Actualizar stock local (simulado hasta integrar Product Service)
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      items.forEach(item => {
-        const producto = productos.find(p => p.codigo === item.codigo);
-        if (producto) {
-          producto.stock -= item.qty;
-        }
-      });
-      localStorage.setItem('productos', JSON.stringify(productos));
-      window.dispatchEvent(new Event('storage'));
+      console.log('✅ Orden creada:', order);
+
+      // El trigger de la BD actualiza el stock automáticamente, no es necesario actualizar localmente
 
       if (window.notificar) {
-        window.notificar(`¡Orden #${order.id} creada exitosamente!`, 'success', 4000);
+        window.notificar(`¡Orden #${order.numeroOrden || order.id} creada exitosamente!`, 'success', 4000);
       }
 
       vaciarCarrito();

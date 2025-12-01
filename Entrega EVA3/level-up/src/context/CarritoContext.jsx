@@ -12,26 +12,26 @@ export const useCarrito = () => {
 };
 
 export const CarritoProvider = ({ children }) => {
-  const [carrito, setCarrito] = useState([]);
+  const [carrito, setCarrito] = useState(() => {
+    // Inicializar el carrito desde localStorage al crear el estado
+    const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual') || 'null');
+    const keyCarrito = usuarioActual ? `carrito_${usuarioActual.correo || usuarioActual.email}` : 'carrito_invitado';
+    const carritoGuardado = localStorage.getItem(keyCarrito);
+    
+    if (carritoGuardado) {
+      try {
+        return JSON.parse(carritoGuardado);
+      } catch (error) {
+        return [];
+      }
+    }
+    return [];
+  });
 
   const obtenerKeyCarrito = () => {
     const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual') || 'null');
     return usuarioActual ? `carrito_${usuarioActual.correo || usuarioActual.email}` : 'carrito_invitado';
   };
-
-  useEffect(() => {
-    const keyCarrito = obtenerKeyCarrito();
-    const carritoGuardado = localStorage.getItem(keyCarrito);
-    if (carritoGuardado) {
-      try {
-        setCarrito(JSON.parse(carritoGuardado));
-      } catch (error) {
-        setCarrito([]);
-      }
-    } else {
-      setCarrito([]);
-    }
-  }, []);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -109,6 +109,7 @@ export const CarritoProvider = ({ children }) => {
         
         registrarLogUsuario(`Agregó al carrito: ${producto.nombre} (cantidad: ${qty})`);
         return [...prevCarrito, {
+          id: producto.id,
           codigo: producto.codigo,
           nombre: producto.nombre,
           precio: producto.precio,

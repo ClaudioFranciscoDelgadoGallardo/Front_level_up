@@ -32,6 +32,10 @@ public class DetalleOrden {
     @Column(name = "producto_id", nullable = false)
     private Long productoId;
 
+    @NotNull(message = "El código de producto es obligatorio")
+    @Column(name = "producto_codigo", nullable = false, length = 50)
+    private String productoCodigo;
+
     @Column(name = "producto_nombre", length = 100)
     private String productoNombre;
 
@@ -44,8 +48,20 @@ public class DetalleOrden {
     @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
     private BigDecimal precioUnitario;
 
+    @NotNull(message = "El precio final es obligatorio")
+    @Column(name = "precio_final", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioFinal;
+
     @NotNull(message = "El subtotal es obligatorio")
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
+
+    @NotNull(message = "El IVA es obligatorio")
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal iva;
+
+    @NotNull(message = "El total es obligatorio")
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal total;
 }
 

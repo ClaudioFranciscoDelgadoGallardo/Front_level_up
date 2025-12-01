@@ -46,29 +46,38 @@ export default function Home() {
   useEffect(() => {
     const cargarProductosDestacados = async () => {
       try {
-        // Cargar todos los productos del backend
+        console.log('🏠 Cargando productos destacados...');
         const productosBackend = await obtenerProductos();
         
-        // Tomar los primeros 3 productos con stock
-        const productosConStock = productosBackend
-          .filter(p => p.stock > 0)
-          .slice(0, 3)
-          .map(p => ({
+        // Filtrar productos destacados con stock, o los primeros 3 disponibles
+        const productosDestacados = productosBackend
+          .filter(p => p.stockActual > 0 && p.activo)
+          .filter(p => p.destacado)
+          .slice(0, 3);
+        
+        const productosMostrar = productosDestacados.length >= 3 
+          ? productosDestacados 
+          : productosBackend.filter(p => p.stockActual > 0 && p.activo).slice(0, 3);
+        
+        const productosMapeados = productosMostrar.map(p => ({
             codigo: p.codigo,
-            categoria: p.categoria?.nombre || p.categoria || 'General',
+            categoria: p.categoria || 'General',
             nombre: p.nombre,
-            precio: p.precio || p.precioVenta || 0,
-            stock: p.stock,
-            desc: p.descripcion || 'Producto destacado',
-            img: p.imagenUrl || p.imagen || '/assets/imgs/default.png',
-            imagen: p.imagenUrl || p.imagen || '/assets/imgs/default.png'
+            precio: p.precioVenta || p.precioBase || 0,
+            stock: p.stockActual || 0,
+            desc: p.descripcion || p.descripcionCorta || 'Producto destacado',
+            img: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+            imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png'
           }));
         
-        if (productosConStock.length > 0) {
-          setProductos(productosConStock);
+        if (productosMapeados.length > 0) {
+          console.log('✅ Productos destacados cargados:', productosMapeados.length);
+          setProductos(productosMapeados);
+        } else {
+          console.log('⚠️ No hay productos destacados, usando defaults');
         }
       } catch (error) {
-        console.error('Error al cargar productos destacados:', error);
+        console.error('❌ Error al cargar productos destacados:', error);
         // Mantener productos por defecto si falla
       }
     };
