@@ -35,8 +35,8 @@ public class ProductoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Producto> buscarPorCategoria(String categoria) {
-        return productoRepository.findByCategoriaAndActivoTrue(categoria);
+    public List<Producto> buscarPorCategoria(Long categoriaId) {
+        return productoRepository.findByCategoriaId(categoriaId);
     }
 
     @Transactional(readOnly = true)
@@ -60,7 +60,6 @@ public class ProductoService {
     public Producto actualizar(Long id, ActualizarProductoRequest request) {
         Producto producto = obtenerPorId(id);
 
-        // Actualizar solo los campos que vienen en el request (no nulos)
         if (request.getNombre() != null && !request.getNombre().isEmpty()) {
             producto.setNombre(request.getNombre());
         }
@@ -68,16 +67,18 @@ public class ProductoService {
             producto.setDescripcion(request.getDescripcion());
         }
         if (request.getPrecio() != null) {
-            producto.setPrecio(request.getPrecio());
+            producto.setPrecioVenta(request.getPrecio());
         }
-        if (request.getCategoria() != null && !request.getCategoria().isEmpty()) {
-            producto.setCategoria(request.getCategoria());
+        if (request.getCategoria() != null) {
+            if (request.getCategoria() != null) {
+            producto.setCategoriaId(Long.parseLong(request.getCategoria().toString()));
+        }
         }
         if (request.getStock() != null) {
-            producto.setStock(request.getStock());
+            producto.setStockActual(request.getStock());
         }
         if (request.getImagenUrl() != null) {
-            producto.setImagenUrl(request.getImagenUrl());
+            producto.setImagenPrincipal(request.getImagenUrl());
         }
         if (request.getDestacado() != null) {
             producto.setDestacado(request.getDestacado());
@@ -123,13 +124,12 @@ public class ProductoService {
     public void actualizarStock(Long id, Integer cantidad) {
         Producto producto = obtenerPorId(id);
 
-        if (producto.getStock() + cantidad < 0) {
+        if (producto.getStockActual() + cantidad < 0) {
             throw new RuntimeException("Stock insuficiente");
         }
 
-        producto.setStock(producto.getStock() + cantidad);
+        producto.setStockActual(producto.getStockActual() + cantidad);
         productoRepository.save(producto);
-        logger.info("Stock actualizado para {}: {}", producto.getNombre(), producto.getStock());
+        logger.info("Stock actualizado para {}: {}", producto.getNombre(), producto.getStockActual());
     }
 }
-

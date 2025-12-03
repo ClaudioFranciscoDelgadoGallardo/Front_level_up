@@ -34,9 +34,9 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.obtenerDestacados());
     }
 
-    @GetMapping("/categoria/{categoria}")
-    public ResponseEntity<List<Producto>> buscarPorCategoria(@PathVariable String categoria) {
-        return ResponseEntity.ok(productoService.buscarPorCategoria(categoria));
+    @GetMapping("/categoria/{categoriaId}")
+    public ResponseEntity<List<Producto>> buscarPorCategoria(@PathVariable Long categoriaId) {
+        return ResponseEntity.ok(productoService.buscarPorCategoria(categoriaId));
     }
 
     @GetMapping("/buscar")

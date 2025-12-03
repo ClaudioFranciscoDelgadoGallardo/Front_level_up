@@ -1,0 +1,153 @@
+services:
+  # Base de datos PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: levelup-postgres
+    environment:
+      POSTGRES_DB: levelup_db
+      POSTGRES_USER: levelup
+      POSTGRES_PASSWORD: levelup123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - levelup-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U levelup"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Servicio de Autenticación (8081)
+  auth-service:
+    build: ./LevelUp_Auth_service
+    container_name: levelup-auth-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
+      SPRING_DATASOURCE_USERNAME: levelup
+      SPRING_DATASOURCE_PASSWORD: levelup123
+      SERVER_PORT: 8081
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Usuarios (8082)
+  user-service:
+    build: ./LevelUp_User_service
+    container_name: levelup-user-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
+      SPRING_DATASOURCE_USERNAME: levelup
+      SPRING_DATASOURCE_PASSWORD: levelup123
+      SERVER_PORT: 8082
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Productos (8083)
+  product-service:
+    build: ./LevelUp_Product_service
+    container_name: levelup-product-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
+      SPRING_DATASOURCE_USERNAME: levelup
+      SPRING_DATASOURCE_PASSWORD: levelup123
+      SERVER_PORT: 8083
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Órdenes (8084)
+  order-service:
+    build: ./LevelUp_Order_service
+    container_name: levelup-order-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
+      SPRING_DATASOURCE_USERNAME: levelup
+      SPRING_DATASOURCE_PASSWORD: levelup123
+      SERVER_PORT: 8084
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Notificaciones (8085)
+  notification-service:
+    build: ./LevelUp_Notification_service
+    container_name: levelup-notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
+      SPRING_DATASOURCE_USERNAME: levelup
+      SPRING_DATASOURCE_PASSWORD: levelup123
+      SERVER_PORT: 8085
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # Servicio de Archivos (8086)
+  file-service:
+    build: ./LevelUp_File_service
+    container_name: levelup-file-service
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/levelup_db
+      SPRING_DATASOURCE_USERNAME: levelup
+      SPRING_DATASOURCE_PASSWORD: levelup123
+      SERVER_PORT: 8086
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - levelup-network
+
+  # API Gateway (8080) - Punto de entrada único
+  api-gateway:
+    build: ./LevelUp_Api_gateway
+    container_name: levelup-api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+      AUTH_SERVICE_URL: http://auth-service:8081
+      USER_SERVICE_URL: http://user-service:8082
+      PRODUCT_SERVICE_URL: http://product-service:8083
+      ORDER_SERVICE_URL: http://order-service:8084
+      NOTIFICATION_SERVICE_URL: http://notification-service:8085
+      FILE_SERVICE_URL: http://file-service:8086
+    depends_on:
+      - auth-service
+      - user-service
+      - product-service
+      - order-service
+      - notification-service
+      - file-service
+    networks:
+      - levelup-network
+
+volumes:
+  postgres_data:
+
+networks:
+  levelup-network:
+    driver: bridge
