@@ -17,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ordenes")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"}, allowCredentials = "true")
 public class OrdenController {
 
     private static final Logger logger = LoggerFactory.getLogger(OrdenController.class);

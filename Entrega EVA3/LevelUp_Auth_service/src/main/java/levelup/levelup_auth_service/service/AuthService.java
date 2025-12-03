@@ -34,17 +34,14 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         logger.info("Intentando registrar usuario: {}", request.getCorreo());
 
-        // Validar que no exista el correo
         if (usuarioRepository.existsByCorreo(request.getCorreo())) {
             throw new RuntimeException("Ya existe un usuario con ese correo");
         }
 
-        // Validar que no exista el RUN
         if (usuarioRepository.existsByRun(request.getRun())) {
             throw new RuntimeException("Ya existe un usuario con ese RUN");
         }
 
-        // Validar edad mínima 18 años
         if (request.getFechaNacimiento() != null) {
             LocalDate fechaNac = request.getFechaNacimiento();
             int edad = Period.between(fechaNac, LocalDate.now()).getYears();
@@ -53,7 +50,6 @@ public class AuthService {
             }
         }
 
-        // Crear nuevo usuario
         Usuario usuario = Usuario.builder()
                 .run(request.getRun())
                 .nombre(request.getNombre())
@@ -62,6 +58,10 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .telefono(request.getTelefono())
                 .direccion(request.getDireccion())
+                .comuna(request.getComuna())
+                .ciudad(request.getCiudad() != null ? request.getCiudad() : "Santiago")
+                .region(request.getRegion() != null ? request.getRegion() : "Región Metropolitana")
+                .codigoPostal(request.getCodigoPostal())
                 .fechaNacimiento(request.getFechaNacimiento())
                 .rol("CLIENTE")
                 .activo(true)
@@ -72,7 +72,6 @@ public class AuthService {
         usuario = usuarioRepository.save(usuario);
         logger.info("Usuario registrado exitosamente: {}", usuario.getCorreo());
 
-        // Generar token
         String token = jwtUtil.generateToken(usuario);
 
         return AuthResponse.builder()
@@ -104,16 +103,24 @@ public class AuthService {
 
         logger.info("Inicio de sesión exitoso: {}", usuario.getCorreo());
 
-        // Generar token
         String token = jwtUtil.generateToken(usuario);
 
         return AuthResponse.builder()
                 .token(token)
                 .tipo("Bearer")
                 .id(usuario.getId())
+                .run(usuario.getRun())
                 .nombre(usuario.getNombre())
                 .apellidos(usuario.getApellidos())
                 .correo(usuario.getCorreo())
+                .telefono(usuario.getTelefono())
+                .direccion(usuario.getDireccion())
+                .comuna(usuario.getComuna())
+                .ciudad(usuario.getCiudad())
+                .region(usuario.getRegion())
+                .codigoPostal(usuario.getCodigoPostal())
+                .fechaNacimiento(usuario.getFechaNacimiento())
+                .fotoPerfil(usuario.getFotoPerfil())
                 .rol(usuario.getRol())
                 .mensaje("Inicio de sesión exitoso")
                 .build();

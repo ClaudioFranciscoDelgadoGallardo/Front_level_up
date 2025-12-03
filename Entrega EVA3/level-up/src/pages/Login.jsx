@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registrarLogUsuario, registrarLogAdmin } from '../utils/logManager';
+import { login } from '../services/authService';
 import '../styles/Login.css';
 
 export default function Login() {
@@ -43,23 +44,49 @@ export default function Login() {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!validarFormulario()) {
       return;
     }
 
-    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    const usuario = usuarios.find(u => 
-      (u.correo === formData.email || u.email === formData.email) && 
-      u.password === formData.password
-    );
-    
-    if (usuario) {
-      localStorage.setItem('usuarioActual', JSON.stringify(usuario));
+    try {
+      // Llamar al backend para login
+      const resultado = await login(formData.email, formData.password);
       
-      if (usuario.rol === 'admin') {
+      console.log('Resultado del login:', resultado);
+      
+      if (!resultado || !resultado.token) {
+        throw new Error('Respuesta inválida del servidor');
+      }
+      
+      // Extraer datos del usuario de la respuesta (el backend los envía en el nivel raíz)
+      const usuario = {
+        id: resultado.id,
+        run: resultado.run,
+        nombre: resultado.nombre,
+        apellidos: resultado.apellidos,
+        correo: resultado.correo,
+        rol: resultado.rol,
+        telefono: resultado.telefono,
+        direccion: resultado.direccion,
+        comuna: resultado.comuna,
+        ciudad: resultado.ciudad,
+        region: resultado.region,
+        codigoPostal: resultado.codigoPostal,
+        fechaNacimiento: resultado.fechaNacimiento,
+        fotoPerfil: resultado.fotoPerfil
+      };
+      
+      // Guardar token y usuario en localStorage
+      localStorage.setItem('token', resultado.token);
+      localStorage.setItem('userId', usuario.id);
+      localStorage.setItem('usuarioActual', JSON.stringify(usuario));
+      window.dispatchEvent(new Event('usuarioActualizado'));
+      
+      
+      if (usuario.rol === 'ADMIN' || usuario.rol === 'admin') {
         registrarLogAdmin(`Inició sesión: ${usuario.nombre} ${usuario.apellidos || ''} (${usuario.correo})`);
       } else {
         registrarLogUsuario(`Inició sesión: ${usuario.nombre} ${usuario.apellidos || ''} (${usuario.correo})`);
@@ -69,16 +96,24 @@ export default function Login() {
         window.notificar(`¡Bienvenido ${usuario.nombre}!`, 'success', 3000);
       }
       
-      setTimeout(() => {
-        if (usuario.rol === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/');
-        }
-      }, 1000);
-    } else {
+      // Redirigir según el rol del usuario
+      const rol = usuario.rol ? usuario.rol.toLowerCase() : '';
+      console.log('Redirigiendo usuario con rol:', rol);
+      
+      if (rol === 'admin') {
+        console.log('Navegando a /admin');
+        navigate('/admin');
+      } else if (rol === 'vendedor') {
+        console.log('Navegando a /vendedor');
+        navigate('/vendedor');
+      } else {
+        console.log('Navegando a /perfil');
+        navigate('/perfil');
+      }
+    } catch (error) {
+      console.error('Error al iniciar sesión:', error);
       if (window.notificar) {
-        window.notificar('Credenciales incorrectas. Prueba: admin@levelup.cl / admin123', 'error', 4000);
+        window.notificar(error.message || 'Error al iniciar sesión. Verifica tus credenciales.', 'error', 4000);
       }
     }
   };
@@ -92,6 +127,7 @@ export default function Login() {
           id="login-email"
           name="email"
           type="email"
+          placeholder="juan.carlos@example.com"
           value={formData.email}
           onChange={handleChange}
         />

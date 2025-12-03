@@ -29,6 +29,11 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.obtenerActivos());
     }
 
+    @GetMapping("/todos")
+    public ResponseEntity<List<Producto>> obtenerTodosInclusoDesactivados() {
+        return ResponseEntity.ok(productoService.obtenerTodos());
+    }
+
     @GetMapping("/destacados")
     public ResponseEntity<List<Producto>> obtenerDestacados() {
         return ResponseEntity.ok(productoService.obtenerDestacados());
@@ -42,6 +47,17 @@ public class ProductoController {
     @GetMapping("/buscar")
     public ResponseEntity<List<Producto>> buscarPorNombre(@RequestParam String nombre) {
         return ResponseEntity.ok(productoService.buscarPorNombre(nombre));
+    }
+
+    @GetMapping("/codigo/{codigo}")
+    public ResponseEntity<?> obtenerPorCodigo(@PathVariable String codigo) {
+        try {
+            return ResponseEntity.ok(productoService.obtenerPorCodigo(codigo));
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
     }
 
     @GetMapping("/{id}")
@@ -114,6 +130,36 @@ public class ProductoController {
             productoService.activar(id);
             Map<String, String> response = new HashMap<>();
             response.put("mensaje", "Producto activado exitosamente");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @PatchMapping("/{codigo}/desactivar")
+    public ResponseEntity<?> desactivarPorCodigo(@PathVariable String codigo) {
+        try {
+            Producto producto = productoService.obtenerPorCodigo(codigo);
+            productoService.desactivar(producto.getId());
+            Map<String, String> response = new HashMap<>();
+            response.put("mensaje", "Producto desactivado exitosamente");
+            response.put("codigo", codigo);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    @PatchMapping("/codigo/{codigo}/stock")
+    public ResponseEntity<?> actualizarStockPorCodigo(@PathVariable String codigo, @RequestParam Integer delta) {
+        try {
+            productoService.actualizarStockDelta(codigo, delta);
+            Map<String, String> response = new HashMap<>();
+            response.put("mensaje", "Stock actualizado exitosamente");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();

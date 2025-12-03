@@ -48,32 +48,52 @@ public class OrdenService {
 
         Orden orden = Orden.builder()
                 .usuarioId(request.getUsuarioId())
-                .usuarioNombre(request.getUsuarioNombre())
-                .usuarioCorreo(request.getUsuarioCorreo())
+                .clienteNombre(request.getUsuarioNombre())
+                .clienteCorreo(request.getUsuarioCorreo())
                 .direccionEnvio(request.getDireccionEnvio())
                 .metodoPago(request.getMetodoPago())
                 .estado(Orden.EstadoOrden.PENDIENTE)
+                .subtotal(BigDecimal.ZERO)
+                .iva(BigDecimal.ZERO)
                 .total(BigDecimal.ZERO)
                 .build();
 
-        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal subtotal = BigDecimal.ZERO;
 
         for (CrearOrdenRequest.DetalleOrdenDto detalleDto : request.getDetalles()) {
-            BigDecimal subtotal = detalleDto.getPrecioUnitario()
+            BigDecimal subtotalDetalle = detalleDto.getPrecioUnitario()
                     .multiply(BigDecimal.valueOf(detalleDto.getCantidad()));
+            
+            // Extraer IVA incluido en el precio (solo para mostrar, no se suma)
+            // IVA incluido = precio × (0.19 / 1.19)
+            BigDecimal ivaDetalle = subtotalDetalle.multiply(BigDecimal.valueOf(0.19))
+                    .divide(BigDecimal.valueOf(1.19), 0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal totalDetalle = subtotalDetalle; // Total = Subtotal (IVA ya incluido)
 
             DetalleOrden detalle = DetalleOrden.builder()
                     .productoId(detalleDto.getProductoId())
+                    .productoCodigo(detalleDto.getProductoCodigo())
                     .productoNombre(detalleDto.getProductoNombre())
                     .cantidad(detalleDto.getCantidad())
                     .precioUnitario(detalleDto.getPrecioUnitario())
-                    .subtotal(subtotal)
+                    .precioFinal(detalleDto.getPrecioUnitario())
+                    .subtotal(subtotalDetalle)
+                    .iva(ivaDetalle)
+                    .total(totalDetalle)
                     .build();
 
             orden.agregarDetalle(detalle);
-            total = total.add(subtotal);
+            subtotal = subtotal.add(subtotalDetalle);
         }
 
+        // Extraer IVA incluido (solo para mostrar, no se suma al total)
+        // IVA incluido = subtotal × (0.19 / 1.19)
+        BigDecimal iva = subtotal.multiply(BigDecimal.valueOf(0.19))
+                .divide(BigDecimal.valueOf(1.19), 0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal total = subtotal; // Total = Subtotal (IVA ya incluido)
+
+        orden.setSubtotal(subtotal);
+        orden.setIva(iva);
         orden.setTotal(total);
 
         Orden ordenGuardada = ordenRepository.save(orden);

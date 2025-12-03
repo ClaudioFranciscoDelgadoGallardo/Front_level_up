@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_Analytics_service" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_Api_gateway" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_Auth_service" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_File_service" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_Notification_service" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_Order_service" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_Product_service" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/LevelUp_User_service" vcs="Git" />
+  </component>
+</project>

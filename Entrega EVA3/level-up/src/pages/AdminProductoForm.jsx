@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { registrarLogAdmin } from '../utils/logManager';
+import { uploadFile, validateFile, getFileUrl } from '../services/fileService';
+import { obtenerProductoPorCodigo, actualizarProducto, crearProducto } from '../services/productService';
 import '../styles/Admin.css';
 
 export default function AdminProductoForm() {
@@ -9,55 +11,128 @@ export default function AdminProductoForm() {
   const esEdicion = !!codigo;
 
   const [formData, setFormData] = useState({
+    id: null,
     codigo: '',
     nombre: '',
     categoria: 'Juegos de Mesa',
+    categoriaId: 1,
     precio: '',
     stock: '',
     descripcion: '',
-    imagen: ''
+    imagen: '',
+    activo: true
   });
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (esEdicion) {
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      const producto = productos.find(p => p.codigo === codigo);
-      if (producto) {
-        setFormData(producto);
-      } else {
-        if (window.notificar) {
-          window.notificar('Producto no encontrado', 'error', 3000);
+    const cargarProducto = async () => {
+      if (esEdicion) {
+        try {
+          setLoading(true);
+          console.log('🔍 Cargando producto:', codigo);
+          const producto = await obtenerProductoPorCodigo(codigo);
+          
+          // Mapeo de IDs de categoría a nombres
+          const categoriasMap = {
+            1: 'Juegos de Mesa',
+            2: 'Accesorios',
+            3: 'Consolas',
+            4: 'Videojuegos',
+            5: 'Figuras',
+            6: 'Otros'
+          };
+          
+          setFormData({
+            id: producto.id,
+            codigo: producto.codigo,
+            nombre: producto.nombre,
+            categoria: categoriasMap[producto.categoriaId] || 'Juegos de Mesa',
+            categoriaId: producto.categoriaId || 1,
+            precio: producto.precioVenta || producto.precioBase || '',
+            stock: producto.stockActual || '',
+            descripcion: producto.descripcion || producto.descripcionCorta || '',
+            imagen: producto.imagenPrincipal || '',
+            activo: producto.activo !== false
+          });
+          console.log('✅ Producto cargado:', producto);
+        } catch (error) {
+          console.error('❌ Error al cargar producto:', error);
+          if (window.notificar) {
+            window.notificar('Producto no encontrado', 'error', 3000);
+          }
+          navigate('/admin/productos');
+        } finally {
+          setLoading(false);
         }
-        navigate('/admin/productos');
       }
-    }
+    };
+    
+    cargarProducto();
   }, [codigo, esEdicion, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Si cambia la categoría, actualizar también el categoriaId
+    if (name === 'categoria') {
+      const categoriasIdMap = {
+        'Juegos de Mesa': 1,
+        'Accesorios': 2,
+        'Consolas': 3,
+        'Videojuegos': 4,
+        'Figuras': 5,
+        'Otros': 6
+      };
+      
+      setFormData(prev => ({
+        ...prev,
+        categoria: value,
+        categoriaId: categoriasIdMap[value] || 1
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5000000) {
-        if (window.notificar) {
-          window.notificar('La imagen no puede pesar más de 5MB', 'error', 3000);
-        }
-        return;
-      }
+    if (!file) return;
 
-      if (!file.type.startsWith('image/')) {
-        if (window.notificar) {
-          window.notificar('Solo se permiten archivos de imagen', 'error', 3000);
-        }
-        return;
+    // Validar archivo
+    const validation = validateFile(file);
+    if (!validation.valid) {
+      if (window.notificar) {
+        window.notificar(validation.error, 'error', 3000);
       }
+      return;
+    }
 
+    setUploadingImage(true);
+
+    try {
+      // Subir archivo al File Service
+      const result = await uploadFile(file, 'productos');
+      
+      // Actualizar formData con la URL del archivo subido
+      setFormData(prev => ({
+        ...prev,
+        imagen: result.fileUrl || result.filename
+      }));
+
+      if (window.notificar) {
+        window.notificar('Imagen subida exitosamente', 'success', 2000);
+      }
+    } catch (error) {
+      console.error('Error al subir imagen:', error);
+      if (window.notificar) {
+        window.notificar('Error al subir la imagen. Intenta nuevamente.', 'error', 3000);
+      }
+      
+      // Fallback: usar base64 local si falla el upload
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData(prev => ({
@@ -66,10 +141,12 @@ export default function AdminProductoForm() {
         }));
       };
       reader.readAsDataURL(file);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.codigo.trim() || !formData.nombre.trim() || !formData.precio || !formData.stock || !formData.descripcion.trim() || !formData.imagen.trim()) {
@@ -109,50 +186,62 @@ export default function AdminProductoForm() {
       return;
     }
 
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-
-    if (esEdicion) {
-      const index = productos.findIndex(p => p.codigo === codigo);
-      if (index !== -1) {
-        productos[index] = {
-          ...formData,
-          precio: parseFloat(formData.precio),
-          stock: parseInt(formData.stock),
-          fechaModificacion: new Date().toISOString(),
-          fechaCreacion: productos[index].fechaCreacion || new Date().toISOString()
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (esEdicion) {
+        // Para edición, usar ActualizarProductoRequest DTO
+        const updateData = {
+          nombre: formData.nombre,
+          descripcion: formData.descripcion,
+          precio: precio,
+          categoria: formData.categoria,
+          categoriaId: formData.categoriaId,
+          stock: stock,
+          imagenUrl: formData.imagen,
+          activo: formData.activo
         };
-        localStorage.setItem('productos', JSON.stringify(productos));
-        window.dispatchEvent(new Event('storage'));
-        registrarLogAdmin(`Editó producto: ${formData.nombre} (${formData.codigo})`);
+
+        console.log('🔄 Actualizando producto ID:', formData.id, 'Activo:', formData.activo, 'Datos:', updateData);
+        await actualizarProducto(formData.id, updateData, token);
+        registrarLogAdmin(`Admin editó producto: ${formData.nombre} (${formData.codigo})`);
         if (window.notificar) {
           window.notificar('Producto actualizado exitosamente', 'success', 3000);
         }
-        navigate('/admin/productos');
-      }
-    } else {
-      if (productos.some(p => p.codigo === formData.codigo)) {
+        console.log('✅ Producto actualizado');
+      } else {
+        // Para creación, usar Producto completo
+        const productData = {
+          codigo: formData.codigo,
+          nombre: formData.nombre,
+          categoriaId: formData.categoriaId,
+          precioBase: precio,
+          precioVenta: precio,
+          costo: precio * 0.7, // Costo estimado al 70% del precio de venta
+          stockActual: stock,
+          descripcion: formData.descripcion,
+          imagenPrincipal: formData.imagen,
+          activo: true
+        };
+        
+        console.log('🔄 Creando producto:', formData.codigo);
+        await crearProducto(productData, token);
+        registrarLogAdmin(`Admin creó producto: ${formData.nombre} (${formData.codigo})`);
         if (window.notificar) {
-          window.notificar('Ya existe un producto con ese código', 'error', 3000);
+          window.notificar('Producto creado exitosamente', 'success', 3000);
         }
-        return;
+        console.log('✅ Producto creado');
       }
-
-      const fechaActual = new Date().toISOString();
-      productos.push({
-        ...formData,
-        id: formData.codigo,
-        precio: parseFloat(formData.precio),
-        stock: parseInt(formData.stock),
-        fechaCreacion: fechaActual,
-        fechaModificacion: fechaActual
-      });
-      localStorage.setItem('productos', JSON.stringify(productos));
-      window.dispatchEvent(new Event('storage'));
-      registrarLogAdmin(`Creó producto: ${formData.nombre} (${formData.codigo})`);
-      if (window.notificar) {
-        window.notificar('Producto creado exitosamente', 'success', 3000);
-      }
+      
       navigate('/admin/productos');
+    } catch (error) {
+      console.error('❌ Error al guardar producto:', error);
+      if (window.notificar) {
+        window.notificar(error.message || 'Error al guardar el producto', 'error', 3000);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -258,9 +347,9 @@ export default function AdminProductoForm() {
             <div className="mb-2">
               <label 
                 htmlFor="imagenFile" 
-                className="btn btn-success w-100 admin-form-imagen-label"
+                className={`btn btn-success w-100 admin-form-imagen-label ${uploadingImage ? 'disabled' : ''}`}
               >
-                📁 Seleccionar Imagen desde el Computador
+                {uploadingImage ? '⏳ Subiendo imagen...' : '📁 Seleccionar Imagen desde el Computador'}
               </label>
               <input
                 type="file"
@@ -268,8 +357,9 @@ export default function AdminProductoForm() {
                 id="imagenFile"
                 accept="image/*"
                 onChange={handleImageChange}
+                disabled={uploadingImage}
               />
-              <small className="admin-form-imagen-info">Formatos: JPG, PNG, GIF. Máximo 5MB</small>
+              <small className="admin-form-imagen-info">Formatos: JPG, PNG, GIF, WEBP. Máximo 5MB</small>
             </div>
             <div className="mb-2 admin-form-url-label">O ingresa una URL:</div>
             <input
@@ -280,12 +370,13 @@ export default function AdminProductoForm() {
               value={formData.imagen}
               onChange={handleChange}
               placeholder="/assets/imgs/producto.png o https://ejemplo.com/imagen.jpg"
+              disabled={uploadingImage}
             />
             {formData.imagen && (
               <div className="mt-3 text-center">
                 <p className="text-white mb-2">Vista previa:</p>
                 <img 
-                  src={formData.imagen} 
+                  src={getFileUrl(formData.imagen)} 
                   alt="Preview"
                   className="admin-form-preview-img"
                   onError={(e) => {
@@ -301,8 +392,9 @@ export default function AdminProductoForm() {
           <button 
             type="submit" 
             className="btn btn-success px-5"
+            disabled={uploadingImage}
           >
-            {esEdicion ? 'Actualizar Producto' : 'Crear Producto'}
+            {uploadingImage ? 'Esperando imagen...' : (esEdicion ? 'Actualizar Producto' : 'Crear Producto')}
           </button>
           <Link 
             to="/admin/productos" 

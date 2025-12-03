@@ -27,6 +27,7 @@ public class CrearOrdenRequest {
     @Builder
     public static class DetalleOrdenDto {
         private Long productoId;
+        private String productoCodigo;
         private String productoNombre;
         private Integer cantidad;
         private BigDecimal precioUnitario;

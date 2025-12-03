@@ -130,6 +130,8 @@
 
 .carrito-resumen-titulo {
   color: var(--accent-green);
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
 .carrito-finalizar-btn {

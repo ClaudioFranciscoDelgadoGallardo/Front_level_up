@@ -26,6 +26,8 @@ public class ActualizarProductoRequest {
 
     private String categoria;
 
+    private Long categoriaId;
+
     @Min(value = 0, message = "El stock no puede ser negativo")
     private Integer stock;
 
