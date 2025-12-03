@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import axios from 'axios';
 import '../styles/Productos.css';
 
 const PRODUCTOS_BASE = [
@@ -36,34 +37,68 @@ const PRODUCTOS_BASE = [
   }
 ];
 
+const API_URL = 'http://localhost:8080/api/productos';
+
 export default function Productos() {
   const [productos, setProductos] = useState([]);
   const [filtroCategoria, setFiltroCategoria] = useState('todas');
   const [busqueda, setBusqueda] = useState('');
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState(null);
   const { agregarAlCarrito } = useCarrito();
 
   useEffect(() => {
-    const cargarProductos = () => {
-      const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
-      
-      const productosValidos = productosLS.length > 0 
-        ? productosLS.filter(p => p.stock > 0).map(p => ({ ...p, id: p.codigo }))
-        : PRODUCTOS_BASE;
-
-      setProductos(productosValidos);
+    const cargarProductos = async () => {
+      try {
+        setCargando(true);
+        setError(null);
+        
+        // Intentar cargar desde el backend
+        const response = await axios.get(API_URL);
+        
+        if (response.data && response.data.length > 0) {
+          const productosBackend = response.data
+            .filter(p => p.stock > 0)
+            .map(p => ({
+              id: p.codigo,
+              codigo: p.codigo,
+              categoria: p.categoria || 'Otros',
+              nombre: p.nombre,
+              precio: p.precio,
+              stock: p.stock,
+              descripcion: p.descripcion || '',
+              imagen: p.imagenUrl || '/assets/imgs/icono.png'
+            }));
+          
+          setProductos(productosBackend);
+          console.log(' Productos cargados desde backend:', productosBackend.length);
+        } else {
+          // Si el backend no devuelve productos, usar localStorage
+          const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
+          const productosValidos = productosLS.length > 0
+            ? productosLS.filter(p => p.stock > 0).map(p => ({ ...p, id: p.codigo }))
+            : PRODUCTOS_BASE;
+          
+          setProductos(productosValidos);
+          console.log(' Usando productos de localStorage/fallback');
+        }
+      } catch (err) {
+        console.error(' Error al cargar productos del backend:', err.message);
+        setError('No se pudo conectar al backend');
+        
+        // Fallback a localStorage
+        const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
+        const productosValidos = productosLS.length > 0
+          ? productosLS.filter(p => p.stock > 0).map(p => ({ ...p, id: p.codigo }))
+          : PRODUCTOS_BASE;
+        
+        setProductos(productosValidos);
+      } finally {
+        setCargando(false);
+      }
     };
 
     cargarProductos();
-
-    const handleStorageChange = () => {
-      cargarProductos();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
   }, []);
 
   const categoriasDisponibles = [
@@ -94,10 +129,32 @@ export default function Productos() {
     }
   };
 
+  if (cargando) {
+    return (
+      <main className="container">
+        <h2 className="section-title">Productos</h2>
+        <div className="text-center py-5">
+          <div className="spinner-border text-success" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <p className="mt-3 text-secondary">Cargando productos desde backend...</p>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="container">
       <h2 className="section-title">Productos</h2>
-      
+
+      {error && (
+        <div className="alert alert-warning alert-dismissible fade show" role="alert">
+          <i className="fas fa-exclamation-triangle me-2"></i>
+          {error}. Mostrando productos guardados localmente.
+          <button type="button" className="btn-close" onClick={() => setError(null)}></button>
+        </div>
+      )}
+
       {/* Barra de búsqueda mejorada */}
       <div className="search-container mb-4">
         <div className="search-wrapper">
@@ -112,7 +169,7 @@ export default function Productos() {
             onChange={(e) => setBusqueda(e.target.value)}
           />
           {busqueda && (
-            <button 
+            <button
               className="search-clear"
               onClick={() => setBusqueda('')}
               title="Limpiar búsqueda"
@@ -136,10 +193,10 @@ export default function Productos() {
         </div>
         <div className="d-flex gap-2 flex-wrap justify-content-center">
           {categoriasDisponibles.map(categoria => {
-            const cantidadProductos = categoria === 'todas' 
-              ? productos.length 
+            const cantidadProductos = categoria === 'todas'
+              ? productos.length
               : productos.filter(p => p.categoria === categoria).length;
-            
+
             return (
               <button
                 key={categoria}
@@ -171,19 +228,19 @@ export default function Productos() {
               <i className="fas fa-box-open"></i>
             </div>
             <h4 className="no-productos-title">
-              {productos.length === 0 
-                ? 'No hay productos disponibles por el momento' 
+              {productos.length === 0
+                ? 'No hay productos disponibles por el momento'
                 : 'No se encontraron productos'}
             </h4>
             <p className="no-productos-text">
-              {productos.length === 0 
-                ? 'Estamos trabajando para traerte los mejores productos gaming. ¡Vuelve pronto!' 
+              {productos.length === 0
+                ? 'Estamos trabajando para traerte los mejores productos gaming. ¡Vuelve pronto!'
                 : filtroCategoria !== 'todas'
                   ? `No hay productos en la categoría "${filtroCategoria}"`
                   : 'Intenta con otros términos de búsqueda'}
             </p>
             {(busqueda || filtroCategoria !== 'todas') && (
-              <button 
+              <button
                 className="btn btn-success mt-3"
                 onClick={() => {
                   setBusqueda('');
@@ -197,17 +254,20 @@ export default function Productos() {
           </div>
         ) : (
           productosFiltrados.map((prod) => (
-            <div 
-              key={prod.codigo} 
+            <div
+              key={prod.codigo}
               className="card bg-dark text-white border-success m-2 d-inline-block producto-card"
             >
               <div className="card-body d-flex flex-column align-items-center producto-card-body">
                 {prod.imagen && (
                   <div className="producto-img-container">
-                    <img 
-                      src={prod.imagen} 
-                      alt={prod.nombre} 
-                      className="img-fluid rounded producto-img" 
+                    <img
+                      src={prod.imagen}
+                      alt={prod.nombre}
+                      className="img-fluid rounded producto-img"
+                      onError={(e) => {
+                        e.target.src = '/assets/imgs/icono.png';
+                      }}
                     />
                   </div>
                 )}
@@ -218,14 +278,14 @@ export default function Productos() {
                 <p className="card-text mb-1 producto-descripcion">{prod.descripcion || ''}</p>
                 <p className="card-text fw-bold mb-1 producto-precio">${prod.precio.toLocaleString('es-CL')}</p>
                 <div className="d-flex flex-column align-items-center w-100 mt-auto">
-                  <button 
-                    className="btn btn-success mb-2 w-75" 
+                  <button
+                    className="btn btn-success mb-2 w-75"
                     onClick={() => handleAgregarAlCarrito(prod.codigo)}
                   >
                     Agregar al carrito
                   </button>
-                  <Link 
-                    className="btn btn-outline-success px-4 text-center" 
+                  <Link
+                    className="btn btn-outline-success px-4 text-center"
                     to={`/detalle/${prod.codigo}`}
                   >
                     Ver Detalles
