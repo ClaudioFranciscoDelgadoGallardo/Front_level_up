@@ -2,7 +2,7 @@
 const API_BASE_URL = process.env.REACT_APP_API_GATEWAY_URL || 'http://localhost:80';
 
 /**
- * Obtiene todos los productos
+ * Obtiene todos los productos activos
  * @returns {Promise<Array>}
  */
 export const obtenerProductos = async () => {
@@ -21,6 +21,30 @@ export const obtenerProductos = async () => {
     return await response.json();
   } catch (error) {
     console.error('Error al obtener productos:', error);
+    throw error;
+  }
+};
+
+/**
+ * Obtiene TODOS los productos (incluyendo desactivados) - Solo para Admin
+ * @returns {Promise<Array>}
+ */
+export const obtenerTodosLosProductos = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/productos/todos`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Error al obtener productos');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error al obtener todos los productos:', error);
     throw error;
   }
 };
@@ -58,6 +82,7 @@ export const obtenerProductoPorCodigo = async (codigo) => {
  */
 export const crearProducto = async (productData, token) => {
   try {
+    console.log('📤 Enviando creación de producto:', JSON.stringify(productData, null, 2));
     const response = await fetch(`${API_BASE_URL}/api/productos`, {
       method: 'POST',
       headers: {
@@ -68,8 +93,15 @@ export const crearProducto = async (productData, token) => {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error al crear producto');
+      const errorText = await response.text();
+      console.error('❌ Error del servidor al crear:', errorText);
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch (e) {
+        throw new Error(errorText || 'Error al crear producto');
+      }
+      throw new Error(errorData.error || errorData.message || 'Error al crear producto');
     }
 
     return await response.json();
@@ -88,6 +120,7 @@ export const crearProducto = async (productData, token) => {
  */
 export const actualizarProducto = async (codigo, productData, token) => {
   try {
+    console.log('📤 Enviando actualización:', JSON.stringify(productData, null, 2));
     const response = await fetch(`${API_BASE_URL}/api/productos/${codigo}`, {
       method: 'PUT',
       headers: {
@@ -98,8 +131,15 @@ export const actualizarProducto = async (codigo, productData, token) => {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Error al actualizar producto');
+      const errorText = await response.text();
+      console.error('❌ Error del servidor:', errorText);
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch (e) {
+        throw new Error(errorText || 'Error al actualizar producto');
+      }
+      throw new Error(errorData.error || errorData.message || 'Error al actualizar producto');
     }
 
     return await response.json();
@@ -130,6 +170,34 @@ export const eliminarProducto = async (codigo, token) => {
     }
   } catch (error) {
     console.error('Error al eliminar producto:', error);
+    throw error;
+  }
+};
+
+/**
+ * Desactiva un producto (cambia activo a false)
+ * @param {string} codigo - Código del producto
+ * @param {string} token - Token de autenticación
+ * @returns {Promise<object>}
+ */
+export const desactivarProducto = async (codigo, token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/productos/${codigo}/desactivar`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Error al desactivar producto');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error al desactivar producto:', error);
     throw error;
   }
 };

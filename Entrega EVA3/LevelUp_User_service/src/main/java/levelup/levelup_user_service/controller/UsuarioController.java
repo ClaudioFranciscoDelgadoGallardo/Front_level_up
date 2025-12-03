@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:5173"}, allowCredentials = "true")
 public class UsuarioController {
 
     @Autowired
@@ -24,7 +25,6 @@ public class UsuarioController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ENDPOINT TEMPORAL PARA DEBUG - ELIMINAR EN PRODUCCIÓN
     @PostMapping("/verificar-hash")
     public ResponseEntity<Map<String, Object>> verificarHash(@RequestBody Map<String, String> request) {
         String password = request.get("password");
@@ -45,7 +45,6 @@ public class UsuarioController {
             AuthResponse response = usuarioService.login(loginRequest);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            // Crear respuesta con detalles del error
             ErrorResponse errorResponse = ErrorResponse.builder()
                 .message("Error en autenticación: " + e.getMessage())
                 .error(e.getClass().getSimpleName())
@@ -98,9 +97,16 @@ public class UsuarioController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UsuarioResponse>> listarTodos() {
-        List<UsuarioResponse> usuarios = usuarioService.listarTodos();
-        return ResponseEntity.ok(usuarios);
+    public ResponseEntity<?> listarTodos() {
+        try {
+            List<UsuarioResponse> usuarios = usuarioService.listarTodos();
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            error.put("detalle", e.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     @GetMapping("/activos")
@@ -125,7 +131,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENTE', 'VENDEDOR')")
     public ResponseEntity<UsuarioResponse> actualizar(@PathVariable Long id,
                                                        @Valid @RequestBody ActualizarUsuarioRequest request) {
         try {

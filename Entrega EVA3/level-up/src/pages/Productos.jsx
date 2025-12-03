@@ -50,6 +50,16 @@ export default function Productos() {
         const productosBackend = await obtenerProductos();
         console.log('✅ Productos recibidos:', productosBackend.length);
         
+        // Mapeo de IDs de categoría a nombres
+        const categoriasMap = {
+          1: 'Juegos de Mesa',
+          2: 'Accesorios',
+          3: 'Consolas',
+          4: 'Videojuegos',
+          5: 'Figuras',
+          6: 'Otros'
+        };
+        
         const productosValidos = productosBackend
           .filter(p => p.stockActual > 0 && p.activo)
           .map(p => ({ 
@@ -58,7 +68,7 @@ export default function Productos() {
             codigo: p.codigo,
             nombre: p.nombre,
             descripcion: p.descripcion || p.descripcionCorta || '',
-            categoria: p.categoria || 'Sin categoría',
+            categoria: categoriasMap[p.categoriaId] || 'Sin categoría',
             precio: p.precioVenta || p.precioBase || 0,
             stock: p.stockActual || 0,
             imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',

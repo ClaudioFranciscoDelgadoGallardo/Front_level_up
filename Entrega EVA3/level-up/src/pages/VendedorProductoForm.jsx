@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { registrarLogAdmin } from '../utils/logManager';
 import { uploadFile, validateFile, getFileUrl } from '../services/fileService';
+import { obtenerProductoPorCodigo, actualizarProducto, crearProducto } from '../services/productService';
 import '../styles/Admin.css';
 
 export default function VendedorProductoForm() {
@@ -10,37 +11,89 @@ export default function VendedorProductoForm() {
   const esEdicion = !!codigo;
 
   const [formData, setFormData] = useState({
+    id: null,
     codigo: '',
     nombre: '',
     categoria: 'Juegos de Mesa',
+    categoriaId: 1,
     precio: '',
     stock: '',
     descripcion: '',
     imagen: ''
   });
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (esEdicion) {
-      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-      const producto = productos.find(p => p.codigo === codigo);
-      if (producto) {
-        setFormData(producto);
-      } else {
-        if (window.notificar) {
-          window.notificar('Producto no encontrado', 'error', 3000);
+    const cargarProducto = async () => {
+      if (esEdicion) {
+        try {
+          setLoading(true);
+          console.log('🔍 Cargando producto:', codigo);
+          const producto = await obtenerProductoPorCodigo(codigo);
+          
+          // Mapeo de IDs de categoría a nombres
+          const categoriasMap = {
+            1: 'Juegos de Mesa',
+            2: 'Accesorios',
+            3: 'Consolas',
+            4: 'Videojuegos',
+            5: 'Figuras',
+            6: 'Otros'
+          };
+          
+          setFormData({
+            id: producto.id,
+            codigo: producto.codigo,
+            nombre: producto.nombre,
+            categoria: categoriasMap[producto.categoriaId] || 'Juegos de Mesa',
+            categoriaId: producto.categoriaId || 1,
+            precio: producto.precioVenta || producto.precioBase || '',
+            stock: producto.stockActual || '',
+            descripcion: producto.descripcion || producto.descripcionCorta || '',
+            imagen: producto.imagenPrincipal || ''
+          });
+          console.log('✅ Producto cargado:', producto);
+        } catch (error) {
+          console.error('❌ Error al cargar producto:', error);
+          if (window.notificar) {
+            window.notificar('Producto no encontrado', 'error', 3000);
+          }
+          navigate('/vendedor/productos');
+        } finally {
+          setLoading(false);
         }
-        navigate('/vendedor/productos');
       }
-    }
+    };
+    
+    cargarProducto();
   }, [codigo, esEdicion, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // Si cambia la categoría, actualizar también el categoriaId
+    if (name === 'categoria') {
+      const categoriasIdMap = {
+        'Juegos de Mesa': 1,
+        'Accesorios': 2,
+        'Consolas': 3,
+        'Videojuegos': 4,
+        'Figuras': 5,
+        'Otros': 6
+      };
+      
+      setFormData(prev => ({
+        ...prev,
+        categoria: value,
+        categoriaId: categoriasIdMap[value] || 1
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleImageChange = async (e) => {
@@ -58,7 +111,9 @@ export default function VendedorProductoForm() {
     setUploadingImage(true);
 
     try {
-      const result = await uploadFile(file, 'productos');
+      // Usar el nombre del producto si está disponible, sino el código
+      const productName = formData.nombre || formData.codigo || 'producto';
+      const result = await uploadFile(file, 'productos', productName);
       setFormData(prev => ({
         ...prev,
         imagen: result.fileUrl || result.filename
@@ -86,7 +141,7 @@ export default function VendedorProductoForm() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!formData.codigo.trim() || !formData.nombre.trim() || !formData.precio || !formData.stock || !formData.descripcion.trim() || !formData.imagen.trim()) {
@@ -126,50 +181,62 @@ export default function VendedorProductoForm() {
       return;
     }
 
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-
-    if (esEdicion) {
-      const index = productos.findIndex(p => p.codigo === codigo);
-      if (index !== -1) {
-        productos[index] = {
-          ...formData,
-          precio: parseFloat(formData.precio),
-          stock: parseInt(formData.stock),
-          fechaModificacion: new Date().toISOString(),
-          fechaCreacion: productos[index].fechaCreacion || new Date().toISOString()
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+      
+      if (esEdicion) {
+        // Para edición, usar ActualizarProductoRequest DTO
+        const updateData = {
+          nombre: formData.nombre,
+          descripcion: formData.descripcion,
+          precio: precio,
+          categoria: formData.categoria,
+          categoriaId: formData.categoriaId,
+          stock: stock,
+          imagenUrl: formData.imagen,
+          activo: true
         };
-        localStorage.setItem('productos', JSON.stringify(productos));
-        window.dispatchEvent(new Event('storage'));
+
+        console.log('🔄 Actualizando producto ID:', formData.id, 'CategoriaId:', formData.categoriaId);
+        await actualizarProducto(formData.id, updateData, token);
         registrarLogAdmin(`Vendedor editó producto: ${formData.nombre} (${formData.codigo})`);
         if (window.notificar) {
           window.notificar('Producto actualizado exitosamente', 'success', 3000);
         }
-        navigate('/vendedor/productos');
-      }
-    } else {
-      if (productos.some(p => p.codigo === formData.codigo)) {
+        console.log('✅ Producto actualizado');
+      } else {
+        // Para creación, usar Producto completo
+        const productData = {
+          codigo: formData.codigo,
+          nombre: formData.nombre,
+          categoriaId: formData.categoriaId,
+          precioBase: precio,
+          precioVenta: precio,
+          costo: precio * 0.7,
+          stockActual: stock,
+          descripcion: formData.descripcion,
+          imagenPrincipal: formData.imagen,
+          activo: true
+        };
+        
+        console.log('🔄 Creando producto:', formData.codigo);
+        await crearProducto(productData, token);
+        registrarLogAdmin(`Vendedor creó producto: ${formData.nombre} (${formData.codigo})`);
         if (window.notificar) {
-          window.notificar('Ya existe un producto con ese código', 'error', 3000);
+          window.notificar('Producto creado exitosamente', 'success', 3000);
         }
-        return;
+        console.log('✅ Producto creado');
       }
-
-      const fechaActual = new Date().toISOString();
-      productos.push({
-        ...formData,
-        id: formData.codigo,
-        precio: parseFloat(formData.precio),
-        stock: parseInt(formData.stock),
-        fechaCreacion: fechaActual,
-        fechaModificacion: fechaActual
-      });
-      localStorage.setItem('productos', JSON.stringify(productos));
-      window.dispatchEvent(new Event('storage'));
-      registrarLogAdmin(`Vendedor creó producto: ${formData.nombre} (${formData.codigo})`);
-      if (window.notificar) {
-        window.notificar('Producto creado exitosamente', 'success', 3000);
-      }
+      
       navigate('/vendedor/productos');
+    } catch (error) {
+      console.error('❌ Error al guardar producto:', error);
+      if (window.notificar) {
+        window.notificar(error.message || 'Error al guardar el producto', 'error', 3000);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -320,9 +387,9 @@ export default function VendedorProductoForm() {
           <button 
             type="submit" 
             className="btn btn-success px-5"
-            disabled={uploadingImage}
+            disabled={uploadingImage || loading}
           >
-            {uploadingImage ? 'Esperando imagen...' : (esEdicion ? 'Actualizar Producto' : 'Crear Producto')}
+            {loading ? '⏳ Guardando...' : uploadingImage ? 'Esperando imagen...' : (esEdicion ? 'Actualizar Producto' : 'Crear Producto')}
           </button>
           <Link 
             to="/vendedor/productos" 

@@ -298,6 +298,18 @@ export default function Perfil() {
 
   const obtenerEstadoBadge = (status) => {
     const badges = {
+      // Estados del backend (en español)
+      PENDIENTE: { class: 'badge-warning', text: 'Pendiente' },
+      CONFIRMADA: { class: 'badge-info', text: 'Confirmada' },
+      PROCESANDO: { class: 'badge-info', text: 'Procesando' },
+      EMPACADA: { class: 'badge-info', text: 'Empacada' },
+      ENVIADO: { class: 'badge-primary', text: 'Enviado' },
+      EN_TRANSITO: { class: 'badge-primary', text: 'En Tránsito' },
+      ENTREGADO: { class: 'badge-success', text: 'Entregado' },
+      ENTREGADA: { class: 'badge-success', text: 'Entregada' },
+      CANCELADA: { class: 'badge-danger', text: 'Cancelada' },
+      DEVUELTA: { class: 'badge-danger', text: 'Devuelta' },
+      // Estados en inglés (compatibilidad)
       PENDING: { class: 'badge-warning', text: 'Pendiente' },
       CONFIRMED: { class: 'badge-info', text: 'Confirmada' },
       SHIPPED: { class: 'badge-primary', text: 'Enviada' },
@@ -612,19 +624,19 @@ export default function Perfil() {
             ) : (
               <div className="ordenes-recientes">
                 {ordenes.map(orden => {
-                  const badge = obtenerEstadoBadge(orden.status);
+                  const badge = obtenerEstadoBadge(orden.estado);
                   return (
                     <div key={orden.id} className="orden-item-small">
                       <div className="orden-item-header">
-                        <span className="orden-id-small">#{orden.id}</span>
+                        <span className="orden-id-small">#{orden.numeroOrden || orden.id}</span>
                         <span className={`badge ${badge.class}`}>{badge.text}</span>
                       </div>
                       <div className="orden-item-body">
                         <small className="text-muted">
-                          {formatearFecha(orden.createdAt)}
+                          {formatearFecha(orden.fechaCreacion)}
                         </small>
                         <strong className="orden-total-small">
-                          ${orden.totalAmount.toLocaleString('es-CL')}
+                          ${(orden.total || 0).toLocaleString('es-CL')}
                         </strong>
                       </div>
                     </div>

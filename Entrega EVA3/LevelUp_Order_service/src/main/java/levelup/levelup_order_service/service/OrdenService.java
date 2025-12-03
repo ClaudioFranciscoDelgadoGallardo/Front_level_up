@@ -64,9 +64,11 @@ public class OrdenService {
             BigDecimal subtotalDetalle = detalleDto.getPrecioUnitario()
                     .multiply(BigDecimal.valueOf(detalleDto.getCantidad()));
             
-            // Calcular IVA del detalle (19%)
-            BigDecimal ivaDetalle = subtotalDetalle.multiply(BigDecimal.valueOf(0.19));
-            BigDecimal totalDetalle = subtotalDetalle.add(ivaDetalle);
+            // Extraer IVA incluido en el precio (solo para mostrar, no se suma)
+            // IVA incluido = precio × (0.19 / 1.19)
+            BigDecimal ivaDetalle = subtotalDetalle.multiply(BigDecimal.valueOf(0.19))
+                    .divide(BigDecimal.valueOf(1.19), 0, BigDecimal.ROUND_HALF_UP);
+            BigDecimal totalDetalle = subtotalDetalle; // Total = Subtotal (IVA ya incluido)
 
             DetalleOrden detalle = DetalleOrden.builder()
                     .productoId(detalleDto.getProductoId())
@@ -84,9 +86,11 @@ public class OrdenService {
             subtotal = subtotal.add(subtotalDetalle);
         }
 
-        // Calcular IVA (19%)
-        BigDecimal iva = subtotal.multiply(BigDecimal.valueOf(0.19));
-        BigDecimal total = subtotal.add(iva);
+        // Extraer IVA incluido (solo para mostrar, no se suma al total)
+        // IVA incluido = subtotal × (0.19 / 1.19)
+        BigDecimal iva = subtotal.multiply(BigDecimal.valueOf(0.19))
+                .divide(BigDecimal.valueOf(1.19), 0, BigDecimal.ROUND_HALF_UP);
+        BigDecimal total = subtotal; // Total = Subtotal (IVA ya incluido)
 
         orden.setSubtotal(subtotal);
         orden.setIva(iva);

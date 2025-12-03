@@ -263,17 +263,19 @@ export default function Carrito() {
                     <span>Subtotal:</span>
                     <span>{formatearPrecio(subtotal)}</span>
                   </div>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Descuento:</span>
-                    <span className="text-success">-{formatearPrecio(descuento)}</span>
-                  </div>
+                  {descuento > 0 && (
+                    <div className="d-flex justify-content-between mb-2">
+                      <span>Descuento:</span>
+                      <span className="text-success">-{formatearPrecio(descuento)}</span>
+                    </div>
+                  )}
                   <div className="d-flex justify-content-between mb-2">
                     <span>Envío:</span>
                     <span className="text-success">Gratis</span>
                   </div>
                   <hr />
                   <div className="d-flex justify-content-between mb-4">
-                    <h5>Total:</h5>
+                    <h5 className="text-white">Total:</h5>
                     <h5 className="carrito-resumen-titulo">
                       {formatearPrecio(total)}
                     </h5>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { obtenerProductos } from '../services/productService';
 import '../styles/Admin.css';
 
 export default function AdminHome() {
@@ -12,28 +13,55 @@ export default function AdminHome() {
   });
   const navigate = useNavigate();
 
-  const cargarEstadisticas = () => {
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    const destacadosCodigos = JSON.parse(localStorage.getItem('destacados') || '[]');
+  const categoriasMap = {
+    1: 'Juegos de Mesa',
+    2: 'Accesorios',
+    3: 'Consolas',
+    4: 'Videojuegos',
+    5: 'Figuras',
+    6: 'Otros'
+  };
 
-    const productosConFecha = productos
-      .filter(p => p.fechaModificacion || p.fechaCreacion)
-      .map(p => ({
+  const cargarEstadisticas = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const productosBackend = await obtenerProductos(token);
+      const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+
+      // Formatear productos
+      const productosFormateados = productosBackend.map(p => ({
         ...p,
+        codigo: p.codigo,
+        nombre: p.nombre,
+        categoria: categoriasMap[p.categoriaId] || 'Sin categoría',
+        precio: p.precioVenta || p.precioBase || 0,
+        stock: p.stockActual || 0,
+        imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+        destacado: p.destacado || false,
+        activo: p.activo !== false,
         fechaModificacion: p.fechaModificacion || p.fechaCreacion
       }));
 
-    const productosOrdenados = productosConFecha.sort((a, b) => 
-      new Date(b.fechaModificacion) - new Date(a.fechaModificacion)
-    );
+      const productosDestacados = productosFormateados.filter(p => p.destacado);
 
-    setStats({
-      totalProductos: productos.length,
-      totalUsuarios: usuarios.length,
-      totalDestacados: destacadosCodigos.length,
-      productosDestacados: productosOrdenados.slice(0, 3)
-    });
+      const productosOrdenados = productosFormateados
+        .filter(p => p.fechaModificacion)
+        .sort((a, b) => new Date(b.fechaModificacion) - new Date(a.fechaModificacion));
+
+      setStats({
+        totalProductos: productosFormateados.length,
+        totalUsuarios: usuarios.length,
+        totalDestacados: productosDestacados.length,
+        productosDestacados: productosOrdenados.slice(0, 3)
+      });
+
+      console.log('📊 Estadísticas Admin cargadas:', {
+        productos: productosFormateados.length,
+        destacados: productosDestacados.length
+      });
+    } catch (error) {
+      console.error('Error al cargar estadísticas:', error);
+    }
   };
 
   useEffect(() => {

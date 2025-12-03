@@ -158,9 +158,9 @@ export default function MisOrdenes() {
                         <span>{formatearPrecio(orden.subtotal)}</span>
                       </div>
                     )}
-                    {orden.iva && (
+                    {orden.iva && orden.iva > 0 && (
                       <div className="d-flex justify-content-between mb-1">
-                        <span>IVA (19%):</span>
+                        <span>IVA incluido (19%):</span>
                         <span>{formatearPrecio(orden.iva)}</span>
                       </div>
                     )}

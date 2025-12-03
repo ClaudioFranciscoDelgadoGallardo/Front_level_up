@@ -40,49 +40,71 @@ const PRODUCTOS_DEFAULT = [
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [productos, setProductos] = useState(PRODUCTOS_DEFAULT);
+  const [todosLosProductos, setTodosLosProductos] = useState([]);
   const { agregarAlCarrito } = useCarrito();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const cargarProductosDestacados = async () => {
+    const cargarProductos = async () => {
       try {
-        console.log('🏠 Cargando productos destacados...');
+        console.log('🔄 Cargando productos desde backend...');
         const productosBackend = await obtenerProductos();
+        console.log('✅ Productos recibidos:', productosBackend.length);
         
-        // Filtrar productos destacados con stock, o los primeros 3 disponibles
-        const productosDestacados = productosBackend
-          .filter(p => p.stockActual > 0 && p.activo)
-          .filter(p => p.destacado)
-          .slice(0, 3);
+        // Mapeo de IDs de categoría a nombres
+        const categoriasMap = {
+          1: 'Juegos de Mesa',
+          2: 'Accesorios',
+          3: 'Consolas',
+          4: 'Videojuegos',
+          5: 'Figuras',
+          6: 'Otros'
+        };
         
-        const productosMostrar = productosDestacados.length >= 3 
-          ? productosDestacados 
-          : productosBackend.filter(p => p.stockActual > 0 && p.activo).slice(0, 3);
-        
-        const productosMapeados = productosMostrar.map(p => ({
+        // Mapear todos los productos activos con stock
+        const productosValidos = productosBackend
+          .filter(p => p.activo === true && p.stockActual > 0)
+          .map(p => ({
+            id: p.id || p.codigo,
             codigo: p.codigo,
-            categoria: p.categoria || 'General',
             nombre: p.nombre,
+            descripcion: p.descripcion || p.descripcionCorta || '',
+            categoria: categoriasMap[p.categoriaId] || 'Sin categoría',
             precio: p.precioVenta || p.precioBase || 0,
             stock: p.stockActual || 0,
             desc: p.descripcion || p.descripcionCorta || 'Producto destacado',
             img: p.imagenPrincipal || '/assets/imgs/producto-default.png',
-            imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png'
+            imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+            destacado: p.destacado || false
           }));
         
-        if (productosMapeados.length > 0) {
-          console.log('✅ Productos destacados cargados:', productosMapeados.length);
-          setProductos(productosMapeados);
+        console.log('📦 Productos válidos procesados:', productosValidos.length);
+        
+        // Guardar todos los productos
+        setTodosLosProductos(productosValidos);
+        
+        // Filtrar productos destacados para el carrusel
+        const productosDestacados = productosValidos.filter(p => p.destacado === true);
+        
+        console.log('🌟 Productos destacados encontrados:', productosDestacados.length, productosDestacados.map(p => p.nombre));
+        
+        const productosMostrar = productosDestacados.length > 0
+          ? productosDestacados 
+          : productosValidos.slice(0, 3);
+        
+        if (productosMostrar.length > 0) {
+          console.log('✅ Productos destacados para carrusel:', productosMostrar.length);
+          setProductos(productosMostrar);
         } else {
           console.log('⚠️ No hay productos destacados, usando defaults');
         }
       } catch (error) {
-        console.error('❌ Error al cargar productos destacados:', error);
+        console.error('❌ Error al cargar productos:', error);
         // Mantener productos por defecto si falla
       }
     };
 
-    cargarProductosDestacados();
+    cargarProductos();
   }, []);
 
   useEffect(() => {
@@ -111,11 +133,17 @@ export default function Home() {
   };
 
   const handleAgregarAlCarrito = (codigo) => {
-    const producto = productos.find(p => p.codigo === codigo);
+    // Buscar primero en todos los productos, luego en destacados
+    const producto = todosLosProductos.find(p => p.codigo === codigo) || productos.find(p => p.codigo === codigo);
     if (producto) {
       agregarAlCarrito(producto);
       if (window.notificar) {
         window.notificar(`¡${producto.nombre} agregado al carrito!`, 'success', 3000);
+      }
+    } else {
+      console.error('❌ Producto no encontrado:', codigo);
+      if (window.notificar) {
+        window.notificar('Error: Producto no encontrado', 'error', 3000);
       }
     }
   };

@@ -69,7 +69,7 @@ function App() {
             <Route path="/admin/destacados" element={<ProtectedRoute allowedRoles={['admin']}><AdminDestacados /></ProtectedRoute>} />
             <Route path="/admin/usuarios" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsuarios /></ProtectedRoute>} />
             <Route path="/admin/usuarios/nuevo" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsuarioForm /></ProtectedRoute>} />
-            <Route path="/admin/usuarios/editar/:correo" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsuarioForm /></ProtectedRoute>} />
+            <Route path="/admin/usuarios/editar/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsuarioForm /></ProtectedRoute>} />
           </Routes>
           <Footer />
         </div>

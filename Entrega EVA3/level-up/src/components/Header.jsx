@@ -271,10 +271,12 @@ export default function Header() {
                   <span>Subtotal:</span>
                   <span>{formatearPrecio(subtotal)}</span>
                 </div>
-                <div className="d-flex justify-content-between align-items-center mb-1 text-white">
-                  <span>Descuento:</span>
-                  <span>-{formatearPrecio(descuento)}</span>
-                </div>
+                {descuento > 0 && (
+                  <div className="d-flex justify-content-between align-items-center mb-1 text-white">
+                    <span>Descuento:</span>
+                    <span>-{formatearPrecio(descuento)}</span>
+                  </div>
+                )}
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <span className="fw-bold text-white">Total:</span>
                   <span className="fw-bold carrito-dropdown-total">

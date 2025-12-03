@@ -26,7 +26,6 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         logger.info("Inicializando datos de usuarios...");
 
-        // Crear usuario ADMIN si no existe
         if (!usuarioRepository.existsByCorreo("admin@levelup.cl")) {
             Usuario admin = Usuario.builder()
                     .run("11111111-1")
@@ -53,7 +52,6 @@ public class DataInitializer implements CommandLineRunner {
             logger.info("Usuario ADMIN ya existe");
         }
 
-        // Crear usuario CLIENTE de prueba si no existe
         if (!usuarioRepository.existsByCorreo("usuario@test.cl")) {
             Usuario usuario = Usuario.builder()
                     .run("22222222-2")
@@ -80,7 +78,6 @@ public class DataInitializer implements CommandLineRunner {
             logger.info("Usuario CLIENTE ya existe");
         }
 
-        // Crear usuario VENDEDOR de prueba si no existe
         if (!usuarioRepository.existsByCorreo("vendedor@levelup.cl")) {
             Usuario vendedor = Usuario.builder()
                     .run("33333333-3")

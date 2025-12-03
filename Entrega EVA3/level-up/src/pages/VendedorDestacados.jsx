@@ -2,129 +2,150 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { registrarLogAdmin } from '../utils/logManager';
 import ModalConfirmacion from '../components/ModalConfirmacion';
+import { obtenerProductos, actualizarProducto } from '../services/productService';
 import '../styles/Admin.css';
 
 export default function VendedorDestacados() {
-  const [destacadosCodigos, setDestacadosCodigos] = useState([]);
   const [productos, setProductos] = useState([]);
-  const [codigoSeleccionado, setCodigoSeleccionado] = useState('');
+  const [productoSeleccionado, setProductoSeleccionado] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
+  const [cargando, setCargando] = useState(true);
+
+  const categoriasMap = {
+    1: 'Juegos de Mesa',
+    2: 'Accesorios',
+    3: 'Consolas',
+    4: 'Videojuegos',
+    5: 'Figuras',
+    6: 'Otros'
+  };
 
   useEffect(() => {
-    cargarDatos();
-    limpiarDestacados();
+    cargarProductos();
   }, []);
 
-  const limpiarDestacados = () => {
-    const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
-    const destacadosLS = JSON.parse(localStorage.getItem('destacados') || '[]');
-    
-    const destacadosValidos = destacadosLS.filter(codigo => 
-      productosLS.some(p => p.codigo === codigo)
-    );
-    
-    localStorage.setItem('destacados', JSON.stringify(destacadosValidos));
-    window.dispatchEvent(new Event('destacadosActualizados'));
-    window.dispatchEvent(new Event('storage'));
+  const cargarProductos = async () => {
+    try {
+      setCargando(true);
+      const token = localStorage.getItem('token');
+      const productosBackend = await obtenerProductos(token);
+      
+      // Mapear productos del backend al formato esperado
+      const productosFormateados = productosBackend.map(p => ({
+        ...p,
+        id: p.id,
+        codigo: p.codigo,
+        nombre: p.nombre,
+        descripcion: p.descripcion || p.descripcionCorta || '',
+        categoria: categoriasMap[p.categoriaId] || 'Sin categoría',
+        categoriaId: p.categoriaId,
+        precio: p.precioVenta || p.precioBase || 0,
+        stock: p.stockActual || 0,
+        imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+        imagenPrincipal: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+        destacado: p.destacado || false,
+        activo: p.activo !== false
+      }));
+      
+      // Filtrar solo productos activos
+      const productosActivos = productosFormateados.filter(p => p.activo === true);
+      
+      setProductos(productosActivos);
+      console.log('📦 Productos destacados cargados:', productosActivos.length);
+    } catch (error) {
+      console.error('Error al cargar productos:', error);
+      if (window.notificar) {
+        window.notificar('Error al cargar productos', 'error', 3000);
+      }
+    } finally {
+      setCargando(false);
+    }
   };
 
-  const cargarDatos = () => {
-    const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
-    const destacadosLS = JSON.parse(localStorage.getItem('destacados') || '[]');
-    
-    const destacadosLimpios = destacadosLS.filter(codigo => 
-      productosLS.find(p => p.codigo === codigo)
-    );
-    
-    if (destacadosLimpios.length !== destacadosLS.length) {
-      localStorage.setItem('destacados', JSON.stringify(destacadosLimpios));
-      window.dispatchEvent(new Event('destacadosActualizados'));
-    }
-    
-    setProductos(productosLS);
-    setDestacadosCodigos(destacadosLimpios);
-  };
+  const destacados = productos.filter(p => p.destacado === true);
 
-  const destacados = destacadosCodigos.map(codigo => {
-    const producto = productos.find(p => p.codigo === codigo);
-    if (producto) {
-      return {
-        codigo: producto.codigo,
-        nombre: producto.nombre,
-        categoria: producto.categoria,
-        precio: producto.precio,
-        desc: producto.descripcion || producto.desc || 'Producto destacado',
-        img: producto.imagen,
-        imagen: producto.imagen
-      };
-    }
-    return null;
-  }).filter(p => p !== null);
-
-  const agregarDestacado = () => {
-    if (!codigoSeleccionado) {
+  const agregarDestacado = async () => {
+    if (!productoSeleccionado) {
       if (window.notificar) {
         window.notificar('Debes seleccionar un producto', 'error', 3000);
       }
       return;
     }
 
-    const productoExiste = productos.find(p => p.codigo === codigoSeleccionado);
-    if (!productoExiste) {
-      if (window.notificar) {
-        window.notificar('El producto seleccionado no existe', 'error', 3000);
+    try {
+      const token = localStorage.getItem('token');
+      const producto = productos.find(p => p.id === parseInt(productoSeleccionado));
+      
+      if (!producto) {
+        if (window.notificar) {
+          window.notificar('El producto seleccionado no existe', 'error', 3000);
+        }
+        return;
       }
-      return;
-    }
 
-    const yaDestacado = destacadosCodigos.find(codigo => codigo === codigoSeleccionado);
-    if (yaDestacado) {
+      console.log('🌟 Agregando producto a destacados:', producto.id, producto.codigo);
+      
+      // Actualizar el producto para marcarlo como destacado (usar ID)
+      await actualizarProducto(producto.id, { destacado: true }, token);
+      
+      // Recargar productos
+      await cargarProductos();
+      setProductoSeleccionado('');
+      
+      registrarLogAdmin(`Agregó producto a destacados: ${producto.nombre} (${producto.codigo})`);
+      
       if (window.notificar) {
-        window.notificar('Este producto ya está destacado', 'error', 3000);
+        window.notificar('Producto agregado a destacados exitosamente', 'success', 3000);
       }
-      return;
-    }
-
-    const nuevosDestacados = [...destacadosCodigos, codigoSeleccionado];
-    localStorage.setItem('destacados', JSON.stringify(nuevosDestacados));
-    setDestacadosCodigos(nuevosDestacados);
-    setCodigoSeleccionado('');
-    
-    window.dispatchEvent(new Event('destacadosActualizados'));
-    window.dispatchEvent(new Event('storage'));
-    
-    registrarLogAdmin(`Agregó producto a destacados: ${productoExiste.nombre} (${codigoSeleccionado})`);
-    
-    if (window.notificar) {
-      window.notificar('Producto agregado a destacados exitosamente', 'success', 3000);
+    } catch (error) {
+      console.error('Error al agregar destacado:', error);
+      if (window.notificar) {
+        window.notificar('Error al agregar producto a destacados', 'error', 3000);
+      }
     }
   };
 
-  const confirmarEliminar = (codigo) => {
-    setProductoAEliminar(codigo);
+  const confirmarEliminar = (id) => {
+    setProductoAEliminar(id);
     setMostrarModal(true);
   };
 
-  const eliminarDestacado = () => {
+  const eliminarDestacado = async () => {
     if (productoAEliminar) {
-      const producto = productos.find(p => p.codigo === productoAEliminar);
-      const destacadosActualizados = destacadosCodigos.filter(c => c !== productoAEliminar);
-      localStorage.setItem('destacados', JSON.stringify(destacadosActualizados));
-      setDestacadosCodigos(destacadosActualizados);
-      
-      window.dispatchEvent(new Event('destacadosActualizados'));
-      window.dispatchEvent(new Event('storage'));
-      
-      cargarDatos();
-      
-      registrarLogAdmin(`Eliminó producto de destacados: ${producto?.nombre || 'Desconocido'} (${productoAEliminar})`);
-      
-      if (window.notificar) {
-        window.notificar('Producto eliminado de destacados exitosamente', 'success', 3000);
+      try {
+        const token = localStorage.getItem('token');
+        const producto = productos.find(p => p.id === productoAEliminar);
+        
+        if (!producto) {
+          if (window.notificar) {
+            window.notificar('Producto no encontrado', 'error', 3000);
+          }
+          return;
+        }
+
+        console.log('❌ Eliminando producto de destacados:', producto.id, producto.codigo);
+        
+        // Actualizar el producto para desmarcarlo como destacado (usar ID)
+        await actualizarProducto(producto.id, { destacado: false }, token);
+        
+        // Recargar productos para actualizar ambas listas
+        await cargarProductos();
+        
+        registrarLogAdmin(`Eliminó producto de destacados: ${producto.nombre} (${producto.codigo})`);
+        
+        if (window.notificar) {
+          window.notificar('Producto eliminado de destacados exitosamente', 'success', 3000);
+        }
+      } catch (error) {
+        console.error('Error al eliminar destacado:', error);
+        if (window.notificar) {
+          window.notificar('Error al eliminar producto de destacados', 'error', 3000);
+        }
+      } finally {
+        setMostrarModal(false);
+        setProductoAEliminar(null);
       }
-      setMostrarModal(false);
-      setProductoAEliminar(null);
     }
   };
 
@@ -133,9 +154,7 @@ export default function VendedorDestacados() {
     setProductoAEliminar(null);
   };
 
-  const productosDisponibles = productos.filter(p => 
-    !destacadosCodigos.find(codigo => codigo === p.codigo)
-  );
+  const productosDisponibles = productos.filter(p => p.destacado !== true);
 
   return (
     <main className="container admin-page">
@@ -161,13 +180,14 @@ export default function VendedorDestacados() {
               <label className="form-label text-white">Seleccionar Producto Existente</label>
               <select
                 className="form-control admin-destacados-select"
-                value={codigoSeleccionado}
-                onChange={(e) => setCodigoSeleccionado(e.target.value)}
+                value={productoSeleccionado}
+                onChange={(e) => setProductoSeleccionado(e.target.value)}
+                disabled={cargando}
               >
                 <option value="">-- Seleccione un producto --</option>
                 {productosDisponibles.map(producto => (
-                  <option key={producto.codigo} value={producto.codigo}>
-                    {producto.codigo} - {producto.nombre} (${producto.precio.toLocaleString('es-CL')})
+                  <option key={producto.id} value={producto.id}>
+                    {producto.codigo} - {producto.nombre} (${(producto.precio || 0).toLocaleString('es-CL')})
                   </option>
                 ))}
               </select>
@@ -176,6 +196,7 @@ export default function VendedorDestacados() {
               <button 
                 className="btn btn-success w-100"
                 onClick={agregarDestacado}
+                disabled={cargando}
               >
                 + Agregar Destacado
               </button>
@@ -183,12 +204,17 @@ export default function VendedorDestacados() {
           </div>
           {productosDisponibles.length === 0 && productos.length > 0 && (
             <div className="alert alert-info mt-3 mb-0">
-              Todos los productos ya están destacados o no hay productos disponibles.
+              Todos los productos activos ya están destacados.
             </div>
           )}
-          {productos.length === 0 && (
+          {productos.length === 0 && !cargando && (
             <div className="alert alert-warning mt-3 mb-0">
-              No hay productos registrados. <Link to="/vendedor/productos/nuevo" className="alert-link">Crear producto</Link>
+              No hay productos activos registrados. <Link to="/vendedor/productos/nuevo" className="alert-link">Crear producto</Link>
+            </div>
+          )}
+          {cargando && (
+            <div className="alert alert-info mt-3 mb-0">
+              Cargando productos...
             </div>
           )}
         </div>
@@ -199,7 +225,11 @@ export default function VendedorDestacados() {
           <h4>Productos Destacados en el Carrusel</h4>
         </div>
         <div className="admin-card-body">
-          {destacados.length === 0 ? (
+          {cargando ? (
+            <div className="text-center py-4">
+              <p className="text-white">Cargando productos destacados...</p>
+            </div>
+          ) : destacados.length === 0 ? (
             <div className="text-center py-4">
               <p className="text-secondary">No hay productos destacados</p>
               <p className="text-white">Los productos que agregues aquí aparecerán en el carrusel de la página de inicio</p>
@@ -219,30 +249,30 @@ export default function VendedorDestacados() {
                 </thead>
                 <tbody>
                   {destacados.map((producto) => (
-                    <tr key={producto.codigo}>
+                    <tr key={producto.id}>
                       <td>
                         <img 
-                          src={producto.imagen || '/assets/icons/icono.png'} 
+                          src={producto.imagenPrincipal || '/assets/icons/icono.png'} 
                           alt={producto.nombre}
                           width="50"
                           height="50"
                           className="admin-producto-img"
                         />
                       </td>
-                      <td>{producto.codigo}</td>
-                      <td>{producto.nombre}</td>
+                      <td>{producto.codigo || 'N/A'}</td>
+                      <td>{producto.nombre || 'Sin nombre'}</td>
                       <td>
                         <span className="badge bg-secondary">
-                          {producto.categoria}
+                          {categoriasMap[producto.categoriaId] || producto.categoria || 'Sin categoría'}
                         </span>
                       </td>
                       <td className="admin-producto-precio">
-                        ${producto.precio.toLocaleString('es-CL')}
+                        ${(producto.precio || 0).toLocaleString('es-CL')}
                       </td>
                       <td>
                         <button 
                           className="btn btn-sm btn-danger btn-action"
-                          onClick={() => confirmarEliminar(producto.codigo)}
+                          onClick={() => confirmarEliminar(producto.id)}
                         >
                           Eliminar
                         </button>

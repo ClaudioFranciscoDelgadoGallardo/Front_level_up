@@ -43,7 +43,6 @@ public class UsuarioService {
         logger.info("Intento de login para correo: {}", loginRequest.getCorreo());
 
         try {
-            // Verificar si el usuario existe
             Usuario usuarioExistente = usuarioRepository.findByCorreo(loginRequest.getCorreo())
                     .orElse(null);
 
@@ -63,7 +62,6 @@ public class UsuarioService {
                 throw new RuntimeException("Usuario inactivo");
             }
 
-            // Intentar autenticar
             logger.info("Intentando autenticación con AuthenticationManager...");
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -106,7 +104,6 @@ public class UsuarioService {
             throw new RuntimeException("El RUN ya esta registrado");
         }
 
-        // Validar edad mínima 18 años
         if (registroRequest.getFechaNacimiento() != null) {
             LocalDate fechaNac = registroRequest.getFechaNacimiento();
             int edad = Period.between(fechaNac, LocalDate.now()).getYears();
@@ -186,21 +183,18 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Validar correo solo si se está cambiando
         if (request.getCorreo() != null && !request.getCorreo().isEmpty() &&
             !usuario.getCorreo().equals(request.getCorreo()) &&
             usuarioRepository.existsByCorreo(request.getCorreo())) {
             throw new RuntimeException("El correo ya esta registrado");
         }
 
-        // Validar RUN solo si se está cambiando
         if (request.getRun() != null && !request.getRun().isEmpty() &&
             !usuario.getRun().equals(request.getRun()) &&
             usuarioRepository.existsByRun(request.getRun())) {
             throw new RuntimeException("El RUN ya esta registrado");
         }
 
-        // Actualizar solo los campos que vienen en el request (no nulos)
         if (request.getRun() != null && !request.getRun().isEmpty()) {
             usuario.setRun(request.getRun());
         }
@@ -240,12 +234,14 @@ public class UsuarioService {
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         }
+        if (request.getRol() != null && !request.getRol().isEmpty()) {
+            usuario.setRol(request.getRol());
+        }
 
         usuario = usuarioRepository.save(usuario);
         return UsuarioResponse.fromEntity(usuario);
     }
 
-    // Mantener compatibilidad con RegistroRequest
     @Transactional
     public UsuarioResponse actualizar(Long id, RegistroRequest request) {
         ActualizarUsuarioRequest actualizarRequest = ActualizarUsuarioRequest.builder()

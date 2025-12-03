@@ -1,51 +1,19 @@
 -- =====================================================================
 -- TRIGGER AUTOMÁTICO PARA ACTUALIZACIÓN DE ESTADOS DE ÓRDENES
 -- =====================================================================
--- Este trigger actualiza automáticamente el estado de las órdenes
--- basándose en el tiempo transcurrido desde su creación.
+-- Este script crea una función que se ejecuta automáticamente
+-- para actualizar los estados de las órdenes según el tiempo transcurrido.
 --
 -- Flujo de estados:
 -- PENDIENTE (0 min) → PROCESANDO (1 min) → ENVIADO (3 min) → ENTREGADO (5 min)
 -- =====================================================================
 
--- 1. Crear función que actualiza el estado de una orden según el tiempo transcurrido
-CREATE OR REPLACE FUNCTION actualizar_estado_orden()
-RETURNS TRIGGER AS $$
-DECLARE
-    minutos_transcurridos INTEGER;
-BEGIN
-    -- Calcular minutos desde la creación
-    minutos_transcurridos := EXTRACT(EPOCH FROM (NOW() - NEW.fecha_creacion)) / 60;
-    
-    -- Actualizar estado según el tiempo transcurrido
-    IF NEW.estado = 'PENDIENTE' AND minutos_transcurridos >= 1 THEN
-        NEW.estado := 'PROCESANDO';
-        RAISE NOTICE 'Orden % actualizada: PENDIENTE → PROCESANDO (% minutos)', NEW.numero_orden, minutos_transcurridos;
-    ELSIF NEW.estado = 'PROCESANDO' AND minutos_transcurridos >= 3 THEN
-        NEW.estado := 'ENVIADO';
-        RAISE NOTICE 'Orden % actualizada: PROCESANDO → ENVIADO (% minutos)', NEW.numero_orden, minutos_transcurridos;
-    ELSIF NEW.estado = 'ENVIADO' AND minutos_transcurridos >= 5 THEN
-        NEW.estado := 'ENTREGADO';
-        RAISE NOTICE 'Orden % actualizada: ENVIADO → ENTREGADO (% minutos)', NEW.numero_orden, minutos_transcurridos;
-    END IF;
-    
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- 2. Crear trigger que se ejecuta ANTES de cada SELECT para actualizar estados
--- Nota: En PostgreSQL no existe BEFORE SELECT, así que usamos una función programada
--- que se ejecutará periódicamente mediante pg_cron
-
--- Primero, habilitar la extensión pg_cron si no está habilitada
-CREATE EXTENSION IF NOT EXISTS pg_cron;
-
--- 3. Crear función que actualiza todos los estados de órdenes activas
+-- 1. Crear función que actualiza todos los estados de órdenes activas
 CREATE OR REPLACE FUNCTION actualizar_estados_ordenes_activas()
 RETURNS void AS $$
 DECLARE
     orden_record RECORD;
-    minutos_transcurridos INTEGER;
+    minutos_transcurridos NUMERIC;
     ordenes_actualizadas INTEGER := 0;
 BEGIN
     -- Recorrer todas las órdenes que no están ENTREGADAS ni CANCELADAS
@@ -65,7 +33,7 @@ BEGIN
             WHERE id = orden_record.id;
             ordenes_actualizadas := ordenes_actualizadas + 1;
             RAISE NOTICE '✅ Orden #% actualizada: PENDIENTE → PROCESANDO (% minutos)', 
-                orden_record.numero_orden, ROUND(minutos_transcurridos::numeric, 2);
+                orden_record.numero_orden, ROUND(minutos_transcurridos, 2);
         
         -- PROCESANDO → ENVIADO (3 minutos)
         ELSIF orden_record.estado = 'PROCESANDO' AND minutos_transcurridos >= 3 THEN
@@ -74,7 +42,7 @@ BEGIN
             WHERE id = orden_record.id;
             ordenes_actualizadas := ordenes_actualizadas + 1;
             RAISE NOTICE '✅ Orden #% actualizada: PROCESANDO → ENVIADO (% minutos)', 
-                orden_record.numero_orden, ROUND(minutos_transcurridos::numeric, 2);
+                orden_record.numero_orden, ROUND(minutos_transcurridos, 2);
         
         -- ENVIADO → ENTREGADO (5 minutos)
         ELSIF orden_record.estado = 'ENVIADO' AND minutos_transcurridos >= 5 THEN
@@ -83,7 +51,7 @@ BEGIN
             WHERE id = orden_record.id;
             ordenes_actualizadas := ordenes_actualizadas + 1;
             RAISE NOTICE '✅ Orden #% actualizada: ENVIADO → ENTREGADO (% minutos)', 
-                orden_record.numero_orden, ROUND(minutos_transcurridos::numeric, 2);
+                orden_record.numero_orden, ROUND(minutos_transcurridos, 2);
         END IF;
     END LOOP;
     
@@ -91,18 +59,39 @@ BEGIN
         RAISE NOTICE '🎯 Total de órdenes actualizadas: %', ordenes_actualizadas;
     END IF;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- 4. Programar la ejecución automática cada 30 segundos
--- Nota: pg_cron solo soporta minutos como mínimo, así que ejecutaremos cada minuto
-SELECT cron.schedule(
-    'actualizar-estados-ordenes',  -- nombre del job
-    '* * * * *',                    -- cada minuto
-    'SELECT actualizar_estados_ordenes_activas();'
-);
+-- 2. Programar ejecución automática con pg_cron (cada minuto)
+-- NOTA: pg_cron debe estar habilitado en Supabase (requiere plan Pro o superior)
+-- Si pg_cron no está disponible, usa la opción B más abajo
 
--- 5. Verificar que el job se creó correctamente
-SELECT * FROM cron.job WHERE jobname = 'actualizar-estados-ordenes';
+-- OPCIÓN A: Con pg_cron (plan Pro+)
+-- SELECT cron.schedule(
+--     'actualizar-estados-ordenes',
+--     '* * * * *',
+--     'SELECT actualizar_estados_ordenes_activas();'
+-- );
+
+-- OPCIÓN B: Ejecutar manualmente o desde el backend
+-- Puedes llamar esta función desde tu aplicación:
+-- SELECT actualizar_estados_ordenes_activas();
+
+-- =====================================================================
+-- PRUEBA INMEDIATA
+-- =====================================================================
+-- Ejecuta esto para probar que funciona:
+SELECT actualizar_estados_ordenes_activas();
+
+-- Ver órdenes y su tiempo transcurrido:
+SELECT 
+    numero_orden, 
+    estado, 
+    fecha_creacion,
+    ROUND(EXTRACT(EPOCH FROM (NOW() - fecha_creacion)) / 60, 2) as minutos_transcurridos
+FROM ordenes
+WHERE estado IN ('PENDIENTE', 'PROCESANDO', 'ENVIADO')
+ORDER BY fecha_creacion DESC
+LIMIT 10;
 
 -- =====================================================================
 -- COMANDOS ÚTILES PARA ADMINISTRACIÓN

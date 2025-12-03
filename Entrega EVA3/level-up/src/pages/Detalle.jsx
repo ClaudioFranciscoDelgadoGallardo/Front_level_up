@@ -21,6 +21,17 @@ export default function Detalle() {
         
         if (prod) {
           console.log('✅ Producto encontrado:', prod);
+          
+          // Mapeo de IDs de categoría a nombres
+          const categoriasMap = {
+            1: 'Juegos de Mesa',
+            2: 'Accesorios',
+            3: 'Consolas',
+            4: 'Videojuegos',
+            5: 'Figuras',
+            6: 'Otros'
+          };
+          
           // Mapear los campos del backend al formato esperado por el componente
           const productoMapeado = {
             ...prod,
@@ -28,7 +39,7 @@ export default function Detalle() {
             codigo: prod.codigo,
             nombre: prod.nombre,
             descripcion: prod.descripcion || prod.descripcionCorta || '',
-            categoria: prod.categoria || 'Sin categoría',
+            categoria: categoriasMap[prod.categoriaId] || 'Sin categoría',
             precio: prod.precioVenta || prod.precioBase || 0,
             stock: prod.stockActual || 0,
             imagen: prod.imagenPrincipal || '/assets/imgs/producto-default.png'

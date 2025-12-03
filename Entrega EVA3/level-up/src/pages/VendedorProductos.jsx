@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { obtenerProductos, desactivarProducto } from '../services/productService';
 import { registrarLogAdmin } from '../utils/logManager';
 import ModalConfirmacion from '../components/ModalConfirmacion';
 import '../styles/Admin.css';
@@ -15,9 +16,44 @@ export default function VendedorProductos() {
     cargarProductos();
   }, []);
 
-  const cargarProductos = () => {
-    const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
-    setProductos(productosLS);
+  const cargarProductos = async () => {
+    try {
+      console.log('🔄 Cargando productos desde backend...');
+      const productosBackend = await obtenerProductos();
+      console.log('✅ Productos recibidos:', productosBackend.length);
+      
+      // Mapeo de IDs de categoría a nombres
+      const categoriasMap = {
+        1: 'Juegos de Mesa',
+        2: 'Accesorios',
+        3: 'Consolas',
+        4: 'Videojuegos',
+        5: 'Figuras',
+        6: 'Otros'
+      };
+      
+      // Mapear productos del backend al formato esperado
+      const productosFormateados = productosBackend.map(p => ({
+        ...p,
+        codigo: p.codigo,
+        nombre: p.nombre,
+        descripcion: p.descripcion || p.descripcionCorta || '',
+        categoria: categoriasMap[p.categoriaId] || 'Sin categoría',
+        precio: p.precioVenta || p.precioBase || 0,
+        stock: p.stockActual || 0,
+        imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+        destacado: p.destacado || false,
+        activo: p.activo !== false
+      }));
+      
+      setProductos(productosFormateados);
+      console.log('📦 Productos cargados:', productosFormateados.length);
+    } catch (error) {
+      console.error('❌ Error al cargar productos:', error);
+      if (window.notificar) {
+        window.notificar('Error al cargar productos del servidor', 'error', 3000);
+      }
+    }
   };
 
   const confirmarEliminar = (codigo) => {
@@ -25,21 +61,33 @@ export default function VendedorProductos() {
     setMostrarModal(true);
   };
 
-  const eliminarProducto = () => {
+  const eliminarProducto = async () => {
     if (productoAEliminar) {
-      const producto = productos.find(p => p.codigo === productoAEliminar);
-      const productosActualizados = productos.filter(p => p.codigo !== productoAEliminar);
-      localStorage.setItem('productos', JSON.stringify(productosActualizados));
-      setProductos(productosActualizados);
-      
-      window.dispatchEvent(new Event('storage'));
-      registrarLogAdmin(`Eliminó producto: ${producto?.nombre || 'Desconocido'} (${productoAEliminar})`);
-      
-      if (window.notificar) {
-        window.notificar('Producto eliminado exitosamente', 'success', 3000);
+      try {
+        const token = localStorage.getItem('token');
+        const producto = productos.find(p => p.codigo === productoAEliminar);
+        
+        console.log('🔄 Desactivando producto:', productoAEliminar);
+        await desactivarProducto(productoAEliminar, token);
+        
+        // Recargar productos desde el backend
+        await cargarProductos();
+        
+        registrarLogAdmin(`Desactivó producto: ${producto?.nombre || 'Desconocido'} (${productoAEliminar})`);
+        
+        if (window.notificar) {
+          window.notificar('Producto desactivado exitosamente', 'success', 3000);
+        }
+        setMostrarModal(false);
+        setProductoAEliminar(null);
+      } catch (error) {
+        console.error('❌ Error al desactivar producto:', error);
+        if (window.notificar) {
+          window.notificar('Error al desactivar el producto', 'error', 3000);
+        }
+        setMostrarModal(false);
+        setProductoAEliminar(null);
       }
-      setMostrarModal(false);
-      setProductoAEliminar(null);
     }
   };
 
@@ -53,12 +101,12 @@ export default function VendedorProductos() {
   };
 
   const productosFiltrados = productos.filter(p => 
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    p.codigo.toLowerCase().includes(busqueda.toLowerCase()) ||
-    p.categoria.toLowerCase().includes(busqueda.toLowerCase())
+    p.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+    p.codigo?.toLowerCase().includes(busqueda.toLowerCase()) ||
+    p.categoria?.toLowerCase().includes(busqueda.toLowerCase())
   );
 
-  const productosSinStock = productos.filter(p => p.stock === 0);
+  const productosSinStock = productos.filter(p => p.stock === 0 || p.stockActual === 0);
 
   return (
     <main className="container admin-page">
@@ -156,7 +204,7 @@ export default function VendedorProductos() {
                       className="btn btn-sm btn-danger btn-action"
                       onClick={() => confirmarEliminar(producto.codigo)}
                     >
-                      Eliminar
+                      Desactivar
                     </button>
                   </td>
                 </tr>
@@ -174,8 +222,8 @@ export default function VendedorProductos() {
 
       <ModalConfirmacion
         mostrar={mostrarModal}
-        titulo="Eliminar Producto"
-        mensaje={`¿Estás seguro de que deseas eliminar el producto ${productoAEliminar}? Esta acción no se puede deshacer.`}
+        titulo="Desactivar Producto"
+        mensaje={`¿Estás seguro de que deseas desactivar el producto ${productoAEliminar}? El producto dejará de estar visible para los clientes pero podrás reactivarlo más tarde.`}
         onConfirmar={eliminarProducto}
         onCancelar={cancelarEliminar}
       />

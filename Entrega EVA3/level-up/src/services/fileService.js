@@ -1,34 +1,45 @@
-// Servicio para interactuar con File Service (Puerto 8087)
-const API_BASE_URL = process.env.REACT_APP_API_GATEWAY_URL || 'http://localhost:8080';
-const FILE_SERVICE_URL = `${API_BASE_URL}/files`;
+import { supabase } from '../config/supabase';
 
 /**
- * Sube un archivo al servidor
+ * Sube un archivo a Supabase Storage
  * @param {File} file - Archivo a subir
  * @param {string} category - Categoría del archivo (productos, usuarios, documentos)
+ * @param {string} customName - Nombre personalizado para el archivo (opcional)
  * @returns {Promise<Object>} Información del archivo subido
  */
-export const uploadFile = async (file, category = 'productos') => {
+export const uploadFile = async (file, category = 'productos', customName = null) => {
   try {
-    const token = localStorage.getItem('token');
-    const formData = new FormData();
-    formData.append('file', file);
+    // Sanitizar el nombre del archivo
+    const fileExt = file.name.split('.').pop();
+    const fileName = customName 
+      ? `${customName.replace(/[^a-z0-9_-]/gi, '_').toLowerCase()}.${fileExt}`
+      : `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `${category}/${fileName}`;
 
-    const response = await fetch(`${FILE_SERVICE_URL}/upload?category=${category}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-      },
-      body: formData,
-    });
+    // Subir archivo a Supabase Storage en el bucket 'assets'
+    const { data, error } = await supabase.storage
+      .from('assets')
+      .upload(`media/${filePath}`, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error al subir archivo: ${response.status}`);
+    if (error) {
+      console.error('Error al subir a Supabase:', error);
+      throw new Error(error.message || 'Error al subir archivo');
     }
 
-    const result = await response.json();
-    return result;
+    // Obtener URL pública del archivo
+    const { data: publicUrlData } = supabase.storage
+      .from('assets')
+      .getPublicUrl(`media/${filePath}`);
+
+    return {
+      fileName: fileName,
+      fileUrl: publicUrlData.publicUrl,
+      filePath: `media/${filePath}`,
+      success: true
+    };
   } catch (error) {
     console.error('Error en uploadFile:', error);
     throw error;
@@ -36,25 +47,21 @@ export const uploadFile = async (file, category = 'productos') => {
 };
 
 /**
- * Descarga un archivo del servidor
- * @param {string} filename - Nombre del archivo a descargar
+ * Descarga un archivo de Supabase Storage
+ * @param {string} filePath - Ruta del archivo en el bucket (ej: 'media/productos/producto1.jpg')
  * @returns {Promise<Blob>} Archivo descargado
  */
-export const downloadFile = async (filename) => {
+export const downloadFile = async (filePath) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${FILE_SERVICE_URL}/download/${filename}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-      },
-    });
+    const { data, error } = await supabase.storage
+      .from('assets')
+      .download(filePath);
 
-    if (!response.ok) {
-      throw new Error(`Error al descargar archivo: ${response.status}`);
+    if (error) {
+      throw new Error(`Error al descargar archivo: ${error.message}`);
     }
 
-    return await response.blob();
+    return data;
   } catch (error) {
     console.error('Error en downloadFile:', error);
     throw error;
@@ -63,7 +70,7 @@ export const downloadFile = async (filename) => {
 
 /**
  * Obtiene la URL pública de un archivo
- * @param {string} filename - Nombre del archivo
+ * @param {string} filename - Nombre del archivo o ruta
  * @returns {string} URL del archivo
  */
 export const getFileUrl = (filename) => {
@@ -79,30 +86,30 @@ export const getFileUrl = (filename) => {
     return filename;
   }
   
-  // Si es un nombre de archivo del File Service
-  return `${FILE_SERVICE_URL}/view/${filename}`;
+  // Obtener URL pública de Supabase Storage
+  const { data } = supabase.storage
+    .from('assets')
+    .getPublicUrl(filename.startsWith('media/') ? filename : `media/${filename}`);
+  
+  return data.publicUrl;
 };
 
 /**
- * Elimina un archivo del servidor
- * @param {string} filename - Nombre del archivo a eliminar
+ * Elimina un archivo de Supabase Storage
+ * @param {string} filePath - Ruta del archivo a eliminar (ej: 'media/productos/producto1.jpg')
  * @returns {Promise<Object>} Resultado de la eliminación
  */
-export const deleteFile = async (filename) => {
+export const deleteFile = async (filePath) => {
   try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(`${FILE_SERVICE_URL}/delete/${filename}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-      },
-    });
+    const { data, error } = await supabase.storage
+      .from('assets')
+      .remove([filePath]);
 
-    if (!response.ok) {
-      throw new Error(`Error al eliminar archivo: ${response.status}`);
+    if (error) {
+      throw new Error(`Error al eliminar archivo: ${error.message}`);
     }
 
-    return await response.json();
+    return { success: true, data };
   } catch (error) {
     console.error('Error en deleteFile:', error);
     throw error;
@@ -110,29 +117,25 @@ export const deleteFile = async (filename) => {
 };
 
 /**
- * Lista todos los archivos (Admin)
- * @param {string} category - Categoría opcional para filtrar
+ * Lista todos los archivos en una carpeta de Supabase Storage
+ * @param {string} folder - Carpeta para listar (ej: 'media/productos')
  * @returns {Promise<Array>} Lista de archivos
  */
-export const listFiles = async (category = null) => {
+export const listFiles = async (folder = 'media') => {
   try {
-    const token = localStorage.getItem('token');
-    const url = category 
-      ? `${FILE_SERVICE_URL}/list?category=${category}` 
-      : `${FILE_SERVICE_URL}/list`;
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Authorization': token ? `Bearer ${token}` : '',
-      },
-    });
+    const { data, error } = await supabase.storage
+      .from('assets')
+      .list(folder, {
+        limit: 100,
+        offset: 0,
+        sortBy: { column: 'name', order: 'asc' }
+      });
 
-    if (!response.ok) {
-      throw new Error(`Error al listar archivos: ${response.status}`);
+    if (error) {
+      throw new Error(`Error al listar archivos: ${error.message}`);
     }
 
-    return await response.json();
+    return data;
   } catch (error) {
     console.error('Error en listFiles:', error);
     throw error;

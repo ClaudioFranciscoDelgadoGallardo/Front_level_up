@@ -3,7 +3,8 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = 'https://xsgpfadjkjgbnnxgnqhp.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzZ3BmYWRqa2pnYm5ueGducWhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwNjkyMzYsImV4cCI6MjA3ODY0NTIzNn0.LP2OXUVq0KlO2-zLSnDSsYV1Khqm7FHotoEVCILvmc8';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ÚNICA INSTANCIA de Supabase - exportada para ser reutilizada
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Función para subir imagen de perfil a Supabase Storage
 export const subirImagenPerfil = async (userId, file) => {

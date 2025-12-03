@@ -14,7 +14,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     List<Producto> findByDestacadoTrueAndActivoTrue();
 
-    // Cambiado de categoria (String) a categoriaId (Long) para coincidir con el modelo
     List<Producto> findByCategoriaIdAndActivoTrue(Long categoriaId);
 
     List<Producto> findByNombreContainingIgnoreCaseAndActivoTrue(String nombre);

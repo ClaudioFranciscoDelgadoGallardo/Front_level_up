@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { obtenerProductos } from '../services/productService';
 import '../styles/Admin.css';
 
 export default function VendedorHome() {
@@ -13,28 +14,57 @@ export default function VendedorHome() {
   });
   const navigate = useNavigate();
 
-  const cargarEstadisticas = () => {
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-    const destacadosCodigos = JSON.parse(localStorage.getItem('destacados') || '[]');
+  const cargarEstadisticas = async () => {
+    try {
+      console.log('🔄 Cargando estadísticas desde backend...');
+      const productosBackend = await obtenerProductos();
+      
+      // Mapeo de IDs de categoría a nombres
+      const categoriasMap = {
+        1: 'Juegos de Mesa',
+        2: 'Accesorios',
+        3: 'Consolas',
+        4: 'Videojuegos',
+        5: 'Figuras',
+        6: 'Otros'
+      };
 
-    const productosConFecha = productos
-      .filter(p => p.fechaModificacion || p.fechaCreacion)
-      .map(p => ({
+      const productosFormateados = productosBackend.map(p => ({
         ...p,
+        codigo: p.codigo,
+        nombre: p.nombre,
+        categoria: categoriasMap[p.categoriaId] || 'Sin categoría',
+        precio: p.precioVenta || p.precioBase || 0,
+        stock: p.stockActual || 0,
+        imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+        destacado: p.destacado || false,
         fechaModificacion: p.fechaModificacion || p.fechaCreacion
       }));
 
-    const productosOrdenados = productosConFecha.sort((a, b) => 
-      new Date(b.fechaModificacion) - new Date(a.fechaModificacion)
-    );
+      const productosConFecha = productosFormateados
+        .filter(p => p.fechaModificacion)
+        .sort((a, b) => new Date(b.fechaModificacion) - new Date(a.fechaModificacion));
 
-    setStats({
-      totalProductos: productos.length,
-      totalDestacados: destacadosCodigos.length,
-      productosConStock: productos.filter(p => p.stock > 0).length,
-      productosSinStock: productos.filter(p => p.stock === 0).length,
-      productosRecientes: productosOrdenados.slice(0, 3)
-    });
+      const productosDestacados = productosFormateados.filter(p => p.destacado);
+
+      setStats({
+        totalProductos: productosFormateados.length,
+        totalDestacados: productosDestacados.length,
+        productosConStock: productosFormateados.filter(p => p.stock > 0).length,
+        productosSinStock: productosFormateados.filter(p => p.stock === 0).length,
+        productosRecientes: productosConFecha.slice(0, 3)
+      });
+
+      console.log('✅ Estadísticas cargadas:', {
+        total: productosFormateados.length,
+        destacados: productosDestacados.length
+      });
+    } catch (error) {
+      console.error('❌ Error al cargar estadísticas:', error);
+      if (window.notificar) {
+        window.notificar('Error al cargar estadísticas', 'error', 3000);
+      }
+    }
   };
 
   useEffect(() => {

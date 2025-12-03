@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { actualizarUsuario } from '../services/userService';
 import { registrarLogAdmin } from '../utils/logManager';
+import { subirImagenPerfil, eliminarImagenPerfil } from '../config/supabase';
 import '../styles/Perfil.css';
 
 export default function VendedorPerfil() {
@@ -14,7 +16,10 @@ export default function VendedorPerfil() {
     apellidos: '',
     telefono: '',
     direccion: '',
+    comuna: '',
     ciudad: '',
+    region: '',
+    codigoPostal: '',
     password: '',
     newPassword: '',
     confirmPassword: ''
@@ -30,7 +35,10 @@ export default function VendedorPerfil() {
         apellidos: usuarioActual.apellidos || '',
         telefono: usuarioActual.telefono || '',
         direccion: usuarioActual.direccion || '',
+        comuna: usuarioActual.comuna || '',
         ciudad: usuarioActual.ciudad || '',
+        region: usuarioActual.region || '',
+        codigoPostal: usuarioActual.codigoPostal || '',
         password: '',
         newPassword: '',
         confirmPassword: ''
@@ -65,9 +73,12 @@ export default function VendedorPerfil() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('🔄 Iniciando actualización de perfil...');
+    console.log('📝 Datos del formulario:', formData);
 
+    // Validar campos obligatorios
     if (!formData.nombre.trim()) {
       if (window.notificar) {
         window.notificar('El nombre es obligatorio', 'error', 3000);
@@ -75,21 +86,63 @@ export default function VendedorPerfil() {
       return;
     }
 
+    // Validar teléfono (9 dígitos para Chile)
+    if (formData.telefono?.trim()) {
+      const telefonoLimpio = formData.telefono.trim().replace(/\s+/g, '');
+      if (!/^\d{9}$/.test(telefonoLimpio)) {
+        if (window.notificar) {
+          window.notificar('El teléfono debe tener exactamente 9 dígitos', 'error', 3000);
+        }
+        return;
+      }
+    }
+
+    // Validar código postal (máximo 10 caracteres)
+    if (formData.codigoPostal?.trim() && formData.codigoPostal.trim().length > 10) {
+      if (window.notificar) {
+        window.notificar('El código postal no puede tener más de 10 caracteres', 'error', 3000);
+      }
+      return;
+    }
+
+    // Validar longitud de campos
+    if (formData.nombre?.trim().length > 50) {
+      if (window.notificar) {
+        window.notificar('El nombre no puede tener más de 50 caracteres', 'error', 3000);
+      }
+      return;
+    }
+
+    if (formData.apellidos?.trim().length > 100) {
+      if (window.notificar) {
+        window.notificar('Los apellidos no pueden tener más de 100 caracteres', 'error', 3000);
+      }
+      return;
+    }
+
+    if (formData.comuna?.trim().length > 100) {
+      if (window.notificar) {
+        window.notificar('La comuna no puede tener más de 100 caracteres', 'error', 3000);
+      }
+      return;
+    }
+
+    if (formData.ciudad?.trim().length > 100) {
+      if (window.notificar) {
+        window.notificar('La ciudad no puede tener más de 100 caracteres', 'error', 3000);
+      }
+      return;
+    }
+
+    if (formData.region?.trim().length > 100) {
+      if (window.notificar) {
+        window.notificar('La región no puede tener más de 100 caracteres', 'error', 3000);
+      }
+      return;
+    }
+
+    // Si quiere cambiar contraseña
     if (formData.newPassword) {
-      if (!formData.password) {
-        if (window.notificar) {
-          window.notificar('Debes ingresar tu contraseña actual', 'error', 3000);
-        }
-        return;
-      }
-
-      if (formData.password !== usuario.password) {
-        if (window.notificar) {
-          window.notificar('La contraseña actual es incorrecta', 'error', 3000);
-        }
-        return;
-      }
-
       if (formData.newPassword.length < 6) {
         if (window.notificar) {
           window.notificar('La nueva contraseña debe tener al menos 6 caracteres', 'error', 3000);
@@ -105,26 +158,82 @@ export default function VendedorPerfil() {
       }
     }
 
-    const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    const index = usuarios.findIndex(u => u.correo === usuario.correo);
-    
-    if (index !== -1) {
-      const usuarioActualizado = {
-        ...usuarios[index],
-        nombre: formData.nombre,
-        apellidos: formData.apellidos,
-        telefono: formData.telefono,
-        direccion: formData.direccion,
-        ciudad: formData.ciudad,
-        ...(fotoPerfil && { fotoPerfil: fotoPerfil }),
-        ...(formData.newPassword && { password: formData.newPassword })
-      };
+    try {
+      // Obtener token primero
+      const token = localStorage.getItem('token');
+      if (!token) {
+        if (window.notificar) {
+          window.notificar('Sesión expirada. Por favor inicia sesión nuevamente.', 'error', 3000);
+        }
+        navigate('/login');
+        return;
+      }
 
-      usuarios[index] = usuarioActualizado;
-      localStorage.setItem('usuarios', JSON.stringify(usuarios));
+      // Si hay una nueva foto, subirla primero
+      let fotoPerfilUrl = usuario.fotoPerfil;
+      
+      if (fotoPerfil && fotoPerfil !== usuario.fotoPerfil) {
+        try {
+          if (window.notificar) {
+            window.notificar('Subiendo imagen de perfil...', 'info', 2000);
+          }
+          
+          let archivoFoto;
+          if (fotoPerfil.startsWith('data:')) {
+            const response = await fetch(fotoPerfil);
+            const blob = await response.blob();
+            archivoFoto = new File([blob], `perfil_${usuario.id}.jpg`, { type: 'image/jpeg' });
+          } else {
+            archivoFoto = fotoPerfil;
+          }
+          
+          fotoPerfilUrl = await subirImagenPerfil(usuario.id, archivoFoto);
+          console.log('✅ Imagen subida exitosamente:', fotoPerfilUrl);
+          
+          if (usuario.fotoPerfil) {
+            await eliminarImagenPerfil(usuario.fotoPerfil);
+          }
+        } catch (uploadError) {
+          console.error('Error al subir imagen:', uploadError);
+          if (window.notificar) {
+            window.notificar('Error al subir la imagen. Se guardará el perfil sin cambiar la foto.', 'warning', 3000);
+          }
+          fotoPerfilUrl = usuario.fotoPerfil;
+        }
+      }
+
+      // Preparar datos para enviar al backend
+      const datosActualizacion = {};
+      
+      if (formData.nombre?.trim()) datosActualizacion.nombre = formData.nombre.trim();
+      if (formData.apellidos?.trim()) datosActualizacion.apellidos = formData.apellidos.trim();
+      if (formData.telefono?.trim()) datosActualizacion.telefono = formData.telefono.trim().replace(/\s+/g, '');
+      if (formData.direccion?.trim()) datosActualizacion.direccion = formData.direccion.trim();
+      if (formData.comuna?.trim()) datosActualizacion.comuna = formData.comuna.trim();
+      if (formData.ciudad?.trim()) datosActualizacion.ciudad = formData.ciudad.trim();
+      if (formData.region?.trim()) datosActualizacion.region = formData.region.trim();
+      if (formData.codigoPostal?.trim()) datosActualizacion.codigoPostal = formData.codigoPostal.trim();
+      
+      if (fotoPerfilUrl) {
+        datosActualizacion.fotoPerfil = fotoPerfilUrl;
+      }
+
+      if (formData.newPassword?.trim()) {
+        datosActualizacion.password = formData.newPassword;
+      }
+
+      console.log('🔑 Token encontrado:', token ? 'Sí' : 'No');
+      console.log('👤 ID de usuario:', usuario.id);
+      console.log('📤 Datos a enviar:', datosActualizacion);
+
+      // Llamar al backend
+      console.log('🌐 Llamando al backend...');
+      const usuarioActualizado = await actualizarUsuario(usuario.id, datosActualizacion, token);
+      console.log('✅ Respuesta del backend:', usuarioActualizado);
+      
+      // Actualizar localStorage con los nuevos datos
       localStorage.setItem('usuarioActual', JSON.stringify(usuarioActualizado));
       setUsuario(usuarioActualizado);
-      setFotoPerfil(null);
       
       registrarLogAdmin(`Vendedor actualizó su perfil: ${usuarioActualizado.nombre} ${usuarioActualizado.apellidos}`);
 
@@ -139,6 +248,11 @@ export default function VendedorPerfil() {
         newPassword: '',
         confirmPassword: ''
       }));
+    } catch (error) {
+      console.error('Error al actualizar perfil:', error);
+      if (window.notificar) {
+        window.notificar(error.message || 'Error al actualizar perfil. Intenta nuevamente.', 'error', 4000);
+      }
     }
   };
 
@@ -269,6 +383,17 @@ export default function VendedorPerfil() {
                 </div>
 
                 <div className="mb-3">
+                  <label className="form-label vendedor-label">Comuna</label>
+                  <input
+                    type="text"
+                    className="form-control vendedor-input"
+                    name="comuna"
+                    value={formData.comuna}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="mb-3">
                   <label className="form-label vendedor-label">Ciudad</label>
                   <input
                     type="text"
@@ -276,6 +401,29 @@ export default function VendedorPerfil() {
                     name="ciudad"
                     value={formData.ciudad}
                     onChange={handleChange}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label vendedor-label">Región</label>
+                  <input
+                    type="text"
+                    className="form-control vendedor-input"
+                    name="region"
+                    value={formData.region}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label vendedor-label">Código Postal</label>
+                  <input
+                    type="text"
+                    className="form-control vendedor-input"
+                    name="codigoPostal"
+                    value={formData.codigoPostal}
+                    onChange={handleChange}
+                    maxLength="10"
                   />
                 </div>
 
@@ -330,29 +478,57 @@ export default function VendedorPerfil() {
               </form>
             ) : (
               <div className="perfil-info">
-                <div className="info-item">
-                  <strong>Nombre:</strong>
-                  <span>{usuario.nombre} {usuario.apellidos}</span>
-                </div>
-                <div className="info-item">
-                  <strong>Email:</strong>
-                  <span>{usuario.correo || usuario.email}</span>
-                </div>
-                <div className="info-item">
-                  <strong>Teléfono:</strong>
-                  <span>{usuario.telefono || 'No registrado'}</span>
-                </div>
-                <div className="info-item">
-                  <strong>Dirección:</strong>
-                  <span>{usuario.direccion || 'No registrada'}</span>
-                </div>
-                <div className="info-item">
-                  <strong>Ciudad:</strong>
-                  <span>{usuario.ciudad || 'No registrada'}</span>
-                </div>
-                <div className="info-item">
-                  <strong>Rol:</strong>
-                  <span className="badge bg-warning text-dark">{usuario.rol}</span>
+                <div className="row">
+                  <div className="col-md-6">
+                    <h5 className="text-primary mb-3">Información Personal</h5>
+                    <div className="info-item">
+                      <strong>RUN:</strong>
+                      <span>{usuario.run || 'No registrado'}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Nombre Completo:</strong>
+                      <span>{usuario.nombre} {usuario.apellidos}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Email:</strong>
+                      <span>{usuario.correo || usuario.email}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Teléfono:</strong>
+                      <span>{usuario.telefono || 'No registrado'}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Fecha de Nacimiento:</strong>
+                      <span>{usuario.fechaNacimiento ? new Date(usuario.fechaNacimiento).toLocaleDateString('es-CL') : 'No registrada'}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Rol:</strong>
+                      <span className="badge bg-warning text-dark">{usuario.rol}</span>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <h5 className="text-primary mb-3">Dirección</h5>
+                    <div className="info-item">
+                      <strong>Dirección:</strong>
+                      <span>{usuario.direccion || 'No registrada'}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Comuna:</strong>
+                      <span>{usuario.comuna || 'No registrada'}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Ciudad:</strong>
+                      <span>{usuario.ciudad || 'No registrada'}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Región:</strong>
+                      <span>{usuario.region || 'No registrada'}</span>
+                    </div>
+                    <div className="info-item">
+                      <strong>Código Postal:</strong>
+                      <span>{usuario.codigoPostal || 'No registrado'}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

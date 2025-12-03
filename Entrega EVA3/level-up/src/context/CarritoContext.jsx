@@ -63,12 +63,14 @@ export const CarritoProvider = ({ children }) => {
 
   const agregarAlCarrito = (producto, qty = 1) => {
     if (!producto || !producto.codigo) {
+      console.error('❌ Producto inválido:', producto);
       return;
     }
     
-    const productos = JSON.parse(localStorage.getItem('productos') || '[]');
-    const productoActual = productos.find(p => p.codigo === producto.codigo);
-    const stockDisponible = productoActual ? productoActual.stock : producto.stock;
+    // Usar el stock del producto directamente (viene del backend)
+    const stockDisponible = producto.stock || 0;
+    
+    console.log('📦 Agregando al carrito:', producto.nombre, 'Stock disponible:', stockDisponible);
     
     if (stockDisponible <= 0) {
       if (window.notificar) {

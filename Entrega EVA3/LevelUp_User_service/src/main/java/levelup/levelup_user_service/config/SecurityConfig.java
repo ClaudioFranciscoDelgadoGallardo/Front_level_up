@@ -51,32 +51,18 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    // CORS deshabilitado - manejado por API Gateway
-    /*@Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }*/
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                // CORS deshabilitado - manejado por API Gateway
                 .cors(cors -> cors.disable())
-                //.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Endpoints públicos de autenticación
                         .requestMatchers("/api/usuarios/login", "/api/usuarios/registro", "/api/usuarios/validar", "/api/usuarios/verificar-hash", "/api/usuarios/health").permitAll()
+                        // Endpoints de Swagger/OpenAPI (públicos)
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**").permitAll()
+                        // Resto de endpoints requieren autenticación
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
