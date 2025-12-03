@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+<<<<<<< HEAD
+=======
+import '../styles/Notificacion.css';
+>>>>>>> main
 
 export default function NotificacionContainer() {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -24,6 +28,7 @@ export default function NotificacionContainer() {
     setNotificaciones(prev => prev.filter(n => n.id !== id));
   };
 
+<<<<<<< HEAD
   const getBackgroundColor = (tipo) => {
     switch (tipo) {
       case 'success': return '#4caf50';
@@ -73,6 +78,19 @@ export default function NotificacionContainer() {
               cursor: 'pointer',
               fontWeight: 'bold'
             }}
+=======
+  return (
+    <div className="notificacion-container">
+      {notificaciones.map(noti => (
+        <div
+          key={noti.id}
+          className={`notificacion-item ${noti.tipo}`}
+        >
+          <span className="notificacion-mensaje">{noti.mensaje}</span>
+          <button
+            onClick={() => cerrarNotificacion(noti.id)}
+            className="notificacion-btn-cerrar"
+>>>>>>> main
           >
             OK
           </button>

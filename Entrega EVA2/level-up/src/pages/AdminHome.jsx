@@ -65,8 +65,8 @@ export default function AdminHome() {
       <div className="admin-header d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="section-title mb-2">Panel de Administración</h2>
-          <p style={{ color: '#fff' }}>
-            Bienvenido, <span style={{ color: 'var(--accent-green)' }}>{usuarioActual?.nombre || 'Admin'}</span>
+          <p className="admin-home-bienvenida">
+            Bienvenido, <span className="admin-home-nombre-usuario">{usuarioActual?.nombre || 'Admin'}</span>
           </p>
         </div>
         <button 
@@ -116,7 +116,7 @@ export default function AdminHome() {
               <h4>Gestión de Productos</h4>
             </div>
             <div className="admin-card-body">
-              <p style={{ color: '#fff' }} className="mb-4">Administra el catálogo de productos de la tienda</p>
+              <p className="admin-home-descripcion mb-4">Administra el catálogo de productos de la tienda</p>
               <div className="d-flex gap-3">
                 <Link to="/admin/productos" className="btn btn-success flex-grow-1">
                   Ver Productos
@@ -135,7 +135,7 @@ export default function AdminHome() {
               <h4>Gestión de Destacados</h4>
             </div>
             <div className="admin-card-body">
-              <p style={{ color: '#fff' }} className="mb-4">Administra los productos del carrusel de inicio</p>
+              <p className="admin-home-descripcion mb-4">Administra los productos del carrusel de inicio</p>
               <div className="d-flex gap-3">
                 <Link to="/admin/destacados" className="btn btn-success flex-grow-1">
                   Ver Destacados
@@ -151,7 +151,7 @@ export default function AdminHome() {
               <h4>Gestión de Usuarios</h4>
             </div>
             <div className="admin-card-body">
-              <p style={{ color: '#fff' }} className="mb-4">Administra los usuarios registrados en el sistema</p>
+              <p className="admin-home-descripcion mb-4">Administra los usuarios registrados en el sistema</p>
               <div className="d-flex gap-3">
                 <Link to="/admin/usuarios" className="btn btn-success flex-grow-1">
                   Ver Usuarios
@@ -170,7 +170,7 @@ export default function AdminHome() {
               <h4>Registro de Actividades</h4>
             </div>
             <div className="admin-card-body">
-              <p style={{ color: '#fff' }} className="mb-4">Visualiza el historial de acciones de admin y usuarios</p>
+              <p className="admin-home-descripcion mb-4">Visualiza el historial de acciones de admin y usuarios</p>
               <div className="d-flex gap-3">
                 <Link to="/admin/logs" className="btn btn-success flex-grow-1">
                   Ver Logs
@@ -197,7 +197,7 @@ export default function AdminHome() {
                   <p className="mb-0">
                     <span className="badge bg-secondary">{producto.categoria}</span>
                   </p>
-                  <p className="fw-bold" style={{ color: 'var(--accent-green)' }}>
+                  <p className="fw-bold admin-producto-precio">
                     ${producto.precio.toLocaleString('es-CL')}
                   </p>
                 </div>

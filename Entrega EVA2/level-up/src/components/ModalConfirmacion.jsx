@@ -1,4 +1,8 @@
 import React from 'react';
+<<<<<<< HEAD
+=======
+import '../styles/ModalConfirmacion.css';
+>>>>>>> main
 
 export default function ModalConfirmacion({ mostrar, onConfirmar, onCancelar, mensaje, titulo = "Confirmación" }) {
   if (!mostrar) return null;
@@ -6,6 +10,7 @@ export default function ModalConfirmacion({ mostrar, onConfirmar, onCancelar, me
   return (
     <div 
       className="modal-overlay" 
+<<<<<<< HEAD
       style={{
         position: 'fixed',
         top: 0,
@@ -18,10 +23,13 @@ export default function ModalConfirmacion({ mostrar, onConfirmar, onCancelar, me
         justifyContent: 'center',
         zIndex: 9999
       }}
+=======
+>>>>>>> main
       onClick={onCancelar}
     >
       <div 
         className="modal-content"
+<<<<<<< HEAD
         style={{
           background: '#111',
           border: '2px solid var(--accent-green)',
@@ -35,11 +43,17 @@ export default function ModalConfirmacion({ mostrar, onConfirmar, onCancelar, me
         onClick={(e) => e.stopPropagation()}
       >
         <div style={{ marginBottom: '1.5rem' }}>
+=======
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-icono-container">
+>>>>>>> main
           <img 
             src="/assets/icons/icono.png" 
             alt="Level Up" 
             width="80" 
             height="80"
+<<<<<<< HEAD
             style={{ filter: 'drop-shadow(0 0 10px rgba(57, 255, 20, 0.6))' }}
           />
         </div>
@@ -57,6 +71,24 @@ export default function ModalConfirmacion({ mostrar, onConfirmar, onCancelar, me
             className="btn btn-danger px-4"
             onClick={onConfirmar}
             style={{ fontWeight: 'bold' }}
+=======
+            className="modal-icono"
+          />
+        </div>
+        
+        <h3 className="modal-titulo">
+          {titulo}
+        </h3>
+        
+        <p className="modal-mensaje">
+          {mensaje}
+        </p>
+        
+        <div className="modal-botones">
+          <button 
+            className="btn btn-danger px-4 modal-btn-confirmar"
+            onClick={onConfirmar}
+>>>>>>> main
           >
             Confirmar
           </button>

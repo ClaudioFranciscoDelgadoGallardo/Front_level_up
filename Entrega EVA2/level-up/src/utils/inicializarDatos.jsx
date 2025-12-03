@@ -1,12 +1,7 @@
-// Script para inicializar datos de prueba en localStorage
-// Este archivo puede ejecutarse una vez para tener datos iniciales
-
 export const inicializarDatos = () => {
-  // Verificar si ya hay datos
   const usuarios = localStorage.getItem('usuarios');
   const productos = localStorage.getItem('productos');
 
-  // Inicializar usuarios si no existen
   if (!usuarios || JSON.parse(usuarios).length === 0) {
     const usuariosIniciales = [
       {
@@ -29,10 +24,8 @@ export const inicializarDatos = () => {
       }
     ];
     localStorage.setItem('usuarios', JSON.stringify(usuariosIniciales));
-    console.log('✅ Usuarios iniciales creados');
   }
 
-  // Inicializar productos si no existen
   if (!productos || JSON.parse(productos).length === 0) {
     const productosIniciales = [
       {
@@ -67,10 +60,5 @@ export const inicializarDatos = () => {
       }
     ];
     localStorage.setItem('productos', JSON.stringify(productosIniciales));
-    console.log('✅ Productos iniciales creados');
   }
-
-  console.log('✅ Datos inicializados correctamente');
-  console.log('📧 Admin: admin@levelup.cl / admin123');
-  console.log('📧 Usuario: usuario@levelup.cl / user123');
 };

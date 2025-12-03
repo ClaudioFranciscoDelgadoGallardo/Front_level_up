@@ -50,6 +50,7 @@ footer img {
   transition: transform 0.2s;
 }
 
+<<<<<<< HEAD
 footer img:hover {
   transform: scale(1.1);
 }
@@ -93,3 +94,8 @@ footer img:hover {
   }
 }
 
+=======
+.footer-copyright {
+  font-size: 0.95rem;
+}
+>>>>>>> main

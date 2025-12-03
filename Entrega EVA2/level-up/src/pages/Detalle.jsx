@@ -39,7 +39,7 @@ export default function Detalle() {
 
   if (!producto) {
     return (
-      <main className="container" style={{ paddingTop: '6rem', minHeight: 'calc(100vh - 200px)' }}>
+      <main className="container detalle-loading">
         <div className="text-center py-5">
           <p className="text-secondary">Cargando producto...</p>
         </div>
@@ -48,6 +48,7 @@ export default function Detalle() {
   }
 
   return (
+<<<<<<< HEAD
     <main className="container detalle-page py-4">
       <div className="row">
         <div className="col-12">
@@ -66,6 +67,22 @@ export default function Detalle() {
           </nav>
         </div>
       </div>
+=======
+    <main className="container detalle-page">
+      <nav aria-label="breadcrumb" className="mb-4">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to="/" className="detalle-breadcrumb-link">Inicio</Link>
+          </li>
+          <li className="breadcrumb-item">
+            <Link to="/productos" className="detalle-breadcrumb-link">Productos</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            {producto.nombre}
+          </li>
+        </ol>
+      </nav>
+>>>>>>> main
 
       <div className="row">
         <div className="col-12 col-md-6 col-lg-5 mb-4">
@@ -81,43 +98,36 @@ export default function Detalle() {
 
         <div className="col-12 col-md-6 col-lg-7">
           <div className="detalle-info">
-            <span 
-              className="badge bg-secondary mb-3"
-              style={{ 
-                fontSize: '0.9rem',
-                padding: '0.5rem 1rem'
-              }}
-            >
+            <span className="badge bg-secondary mb-3 detalle-badge">
               {producto.categoria}
             </span>
             
-            <h1 className="mb-3" style={{ color: 'var(--text-primary)' }}>
+            <h1 className="mb-3 detalle-titulo-producto">
               {producto.nombre}
             </h1>
 
-            <p className="mb-2" style={{ color: 'var(--accent-blue)', fontSize: '1.1rem', fontWeight: '500' }}>
+            <p className="mb-2 detalle-categoria">
               Código: {producto.codigo}
             </p>
 
             <div className="mb-4">
-              <h2 style={{ color: 'var(--accent-green)', fontSize: '2.5rem' }}>
+              <h2 className="detalle-precio">
                 {formatearPrecio(producto.precio)}
               </h2>
             </div>
 
             <div className="mb-4">
-              <h5 style={{ color: 'var(--text-primary)' }}>Descripción</h5>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}>
+              <h5 className="detalle-seccion-titulo">Descripción</h5>
+              <p className="detalle-descripcion">
                 {producto.descripcion || producto.desc || 'Sin descripción disponible.'}
               </p>
             </div>
 
             <div className="mb-4">
-              <h5 style={{ color: 'var(--text-primary)' }}>Disponibilidad</h5>
+              <h5 className="detalle-seccion-titulo">Disponibilidad</h5>
               <p>
                 <span 
-                  className={producto.stock > 0 ? 'text-success' : 'text-danger'}
-                  style={{ fontSize: '1.1rem', fontWeight: 'bold' }}
+                  className={`detalle-stock-disponible ${producto.stock > 0 ? 'text-success' : 'text-danger'}`}
                 >
                   {producto.stock > 0 ? `${producto.stock} unidades disponibles` : 'Agotado'}
                 </span>
@@ -127,7 +137,7 @@ export default function Detalle() {
             {producto.stock > 0 && (
               <>
                 <div className="mb-4">
-                  <h5 style={{ color: 'var(--text-primary)' }}>Cantidad</h5>
+                  <h5 className="detalle-seccion-titulo">Cantidad</h5>
                   <div className="cantidad-selector d-flex align-items-center">
                     <button 
                       className="btn btn-outline-secondary"
@@ -138,13 +148,7 @@ export default function Detalle() {
                     </button>
                     <input 
                       type="number" 
-                      className="form-control mx-3 text-center"
-                      style={{ 
-                        width: '80px',
-                        background: '#111',
-                        border: '1px solid #333',
-                        color: 'var(--text-primary)'
-                      }}
+                      className="form-control mx-3 text-center detalle-cantidad-input"
                       value={cantidad}
                       onChange={(e) => setCantidad(Math.max(1, Math.min(producto.stock, parseInt(e.target.value) || 1)))}
                       min="1"
@@ -162,16 +166,14 @@ export default function Detalle() {
 
                 <div className="d-flex flex-column flex-sm-row gap-3">
                   <button 
-                    className="btn btn-success flex-grow-1"
-                    style={{ padding: '0.75rem' }}
+                    className="btn btn-success flex-grow-1 detalle-btn-agregar"
                     onClick={handleAgregarAlCarrito}
                   >
                     Agregar al Carrito
                   </button>
                   <Link 
                     to="/carrito"
-                    className="btn btn-outline-success"
-                    style={{ padding: '0.75rem 2rem' }}
+                    className="btn btn-outline-success detalle-btn-volver"
                   >
                     Ir al Carrito
                   </Link>

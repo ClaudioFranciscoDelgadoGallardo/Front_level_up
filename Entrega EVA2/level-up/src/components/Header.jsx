@@ -6,7 +6,11 @@ import '../styles/Header.css';
 
 export default function Header() {
   const [showCarrito, setShowCarrito] = useState(false);
+<<<<<<< HEAD
   const [menuAbierto, setMenuAbierto] = useState(false);
+=======
+  const [menuOpen, setMenuOpen] = useState(false);
+>>>>>>> main
   const { eliminarDelCarrito, calcularTotales, obtenerCantidadTotal, vaciarCarrito } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
   const location = useLocation();
@@ -76,6 +80,7 @@ export default function Header() {
     <>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark">
+<<<<<<< HEAD
           <div className="container header-content">
             <Link to={isAdminRoute ? "/admin" : "/"} className="navbar-brand logo d-flex align-items-center">
               <img src="/assets/icons/icono.png" alt="Level Up" width="56" height="56" className="me-2" />
@@ -133,12 +138,43 @@ export default function Header() {
                       onClick={() => { handleCerrarSesion(); setMenuAbierto(false); }}
                       className="btn btn-danger btn-sm w-100"
                       style={{ padding: '0.25rem 0.75rem', fontWeight: 'bold' }}
+=======
+          <div className="container">
+            <Link to={isAdminRoute ? "/admin" : "/"} className="navbar-brand d-flex align-items-center">
+              <img src="/assets/icons/icono.png" alt="Level Up" width="50" height="50" className="me-2" />
+              <span className="fw-bold">LEVEL-UP GAMER</span>
+            </Link>
+            
+            <button 
+              className="navbar-toggler" 
+              type="button" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#navbarNav"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+            
+            <div className="collapse navbar-collapse" id="navbarNav">
+              {isAdminRoute ? (
+                <ul className="navbar-nav ms-auto">
+                  <li className="nav-item"><Link to="/admin" className="nav-link">Dashboard</Link></li>
+                  <li className="nav-item"><Link to="/admin/productos" className="nav-link">Productos</Link></li>
+                  <li className="nav-item"><Link to="/admin/destacados" className="nav-link">Destacados</Link></li>
+                  <li className="nav-item"><Link to="/admin/usuarios" className="nav-link">Usuarios</Link></li>
+                  <li className="nav-item"><Link to="/admin/logs" className="nav-link">Logs</Link></li>
+                  <li className="nav-item">
+                    <button 
+                      onClick={handleCerrarSesion}
+                      className="btn btn-danger btn-sm ms-2"
+>>>>>>> main
                     >
                       Cerrar Sesión
                     </button>
                   </li>
                 </ul>
               ) : (
+<<<<<<< HEAD
                 <ul className="navbar-nav ms-auto">
                   <li className="nav-item"><Link to="/" className="nav-link" onClick={() => setMenuAbierto(false)}>Inicio</Link></li>
                   <li className="nav-item"><Link to="/productos" className="nav-link" onClick={() => setMenuAbierto(false)}>Productos</Link></li>
@@ -148,6 +184,32 @@ export default function Header() {
                   <li className="nav-item"><Link to="/registro" className="nav-link" onClick={() => setMenuAbierto(false)}>Registro</Link></li>
                   <li className="nav-item"><Link to="/login" className="nav-link" onClick={() => setMenuAbierto(false)}>Login</Link></li>
                 </ul>
+=======
+                <>
+                  <ul className="navbar-nav ms-auto">
+                    <li className="nav-item"><Link to="/" className="nav-link">Inicio</Link></li>
+                    <li className="nav-item"><Link to="/productos" className="nav-link">Productos</Link></li>
+                    <li className="nav-item"><Link to="/noticias" className="nav-link">Noticias</Link></li>
+                    <li className="nav-item"><Link to="/nosotros" className="nav-link">Nosotros</Link></li>
+                    <li className="nav-item"><Link to="/contacto" className="nav-link">Contacto</Link></li>
+                    <li className="nav-item"><Link to="/registro" className="nav-link">Registro</Link></li>
+                    <li className="nav-item"><Link to="/login" className="nav-link">Login</Link></li>
+                  </ul>
+                  <button 
+                    className="btn btn-link position-relative ms-3" 
+                    onClick={() => setShowCarrito(!showCarrito)}
+                  >
+                    <img src="/assets/icons/carrito.png" alt="Carrito" width="32" height="32" />
+                    {obtenerCantidadTotal() > 0 && (
+                      <span 
+                        className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"
+                      >
+                        {obtenerCantidadTotal()}
+                      </span>
+                    )}
+                  </button>
+                </>
+>>>>>>> main
               )}
             </div>
           </div>
@@ -155,23 +217,7 @@ export default function Header() {
       </header>
 
       {showCarrito && (
-        <div 
-          id="carrito-dropdown" 
-          className="carrito-dropdown shadow-lg" 
-          style={{
-            display: 'block', 
-            position: 'fixed', 
-            right: '2rem', 
-            top: '4.5rem', 
-            minWidth: '320px', 
-            maxWidth: '400px',
-            background: '#222', 
-            borderRadius: '10px', 
-            zIndex: 1000,
-            maxHeight: '500px',
-            overflowY: 'auto'
-          }}
-        >
+        <div id="carrito-dropdown" className="carrito-dropdown shadow-lg">
           <div className="carrito-header d-flex justify-content-between align-items-center p-3 border-bottom">
             <span className="fw-bold text-white">Carrito de compras</span>
             <button 
@@ -188,10 +234,10 @@ export default function Header() {
               <>
                 <ul className="list-group mb-2">
                   {items.map(item => (
-                    <li key={item.codigo} className="list-group-item bg-dark text-white d-flex justify-content-between align-items-center" style={{ fontSize: '0.9rem' }}>
+                    <li key={item.codigo} className="list-group-item bg-dark text-white d-flex justify-content-between align-items-center carrito-dropdown-item">
                       <Link 
                         to={`/detalle/${item.codigo}`}
-                        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                        className="carrito-dropdown-link"
                         onClick={() => setShowCarrito(false)}
                       >
                         <span>
@@ -220,17 +266,12 @@ export default function Header() {
                 </div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
                   <span className="fw-bold text-white">Total:</span>
-                  <span className="fw-bold" style={{ color: 'var(--accent-green)', fontSize: '1.1rem' }}>
-                    {formatearPrecio(total)}
+                  <span className="fw-bold carrito-dropdown-total">
+                    ${total.toLocaleString('es-CL')}
                   </span>
                 </div>
                 <button 
-                  className="btn w-100 mb-2"
-                  style={{ 
-                    backgroundColor: 'var(--accent-green)', 
-                    color: '#000',
-                    fontWeight: 'bold'
-                  }}
+                  className="btn w-100 mb-2 carrito-dropdown-btn"
                   onClick={handlePagar}
                 >
                   Pagar
