@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { createOrder } from '../services/orderService';
 import '../styles/Carrito.css';
 
 export default function Carrito() {
+  const navigate = useNavigate();
   const { eliminarDelCarrito, actualizarCantidad, vaciarCarrito, calcularTotales } = useCarrito();
   const { items, subtotal, descuento, total } = calcularTotales();
   const [productosStock, setProductosStock] = useState([]);
+  const [processingOrder, setProcessingOrder] = useState(false);
 
   useEffect(() => {
     const productos = JSON.parse(localStorage.getItem('productos') || '[]');
@@ -29,18 +32,107 @@ export default function Carrito() {
     }
   };
 
-  const handleFinalizarCompra = () => {
+  const handleFinalizarCompra = async () => {
     if (items.length === 0) {
       if (window.notificar) {
         window.notificar('El carrito está vacío', 'error', 3000);
       }
       return;
     }
+
+    // Verificar autenticación
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
     
-    if (window.notificar) {
-      window.notificar('¡Gracias por tu compra!', 'success', 3000);
+    if (!token || !userId) {
+      if (window.notificar) {
+        window.notificar('Debes iniciar sesión para finalizar la compra', 'error', 3000);
+      }
+      navigate('/login', { state: { from: '/carrito' } });
+      return;
     }
-    vaciarCarrito();
+
+    // Verificar stock antes de crear la orden
+    const stockInsuficiente = items.some(item => 
+      item.qty > getStockDisponible(item.codigo)
+    );
+
+    if (stockInsuficiente) {
+      if (window.notificar) {
+        window.notificar('Algunos productos no tienen stock suficiente', 'error', 3000);
+      }
+      return;
+    }
+
+    setProcessingOrder(true);
+
+    try {
+      // Obtener datos del usuario
+      const usuarioActual = JSON.parse(localStorage.getItem('usuarioActual') || '{}');
+      
+      // Obtener todos los productos para tener los IDs numéricos
+      const productos = JSON.parse(localStorage.getItem('productos') || '[]');
+      
+      // Preparar detalles con ID numérico del producto
+      const detalles = items.map(item => {
+        const producto = productos.find(p => p.codigo === item.codigo);
+        const productoId = producto ? producto.id : null;
+        
+        if (!productoId) {
+          console.warn(`No se encontró ID para producto ${item.codigo}`);
+        }
+        
+        return {
+          productoId: productoId,
+          productoCodigo: item.codigo,
+          productoNombre: item.nombre,
+          cantidad: item.qty,
+          precioUnitario: item.precio
+        };
+      });
+      
+      // Preparar datos de la orden para el backend
+      const orderData = {
+        usuarioId: parseInt(userId),
+        usuarioNombre: usuarioActual.nombre || 'Usuario',
+        usuarioCorreo: usuarioActual.correo || '',
+        direccionEnvio: usuarioActual.direccion || 'Dirección no especificada',
+        metodoPago: 'Transferencia',
+        detalles: detalles
+      };
+
+      console.log('📦 Creando orden con datos:', orderData);
+
+      // Crear orden en el backend
+      const order = await createOrder(orderData);
+
+      console.log('✅ Orden creada:', order);
+
+      // El trigger de la BD actualiza el stock automáticamente, no es necesario actualizar localmente
+
+      if (window.notificar) {
+        window.notificar(`¡Orden #${order.numeroOrden || order.id} creada exitosamente!`, 'success', 4000);
+      }
+
+      vaciarCarrito();
+      
+      // Redirigir a mis órdenes después de 2 segundos
+      setTimeout(() => {
+        navigate('/mis-ordenes');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error al crear la orden:', error);
+      if (window.notificar) {
+        window.notificar(
+          error.message || 'Error al procesar la orden. Intenta nuevamente.',
+          'error',
+          4000
+        );
+      }
+    } finally {
+      setProcessingOrder(false);
+    }
   };
 
   const handleIrAProductos = () => {
@@ -171,17 +263,19 @@ export default function Carrito() {
                     <span>Subtotal:</span>
                     <span>{formatearPrecio(subtotal)}</span>
                   </div>
-                  <div className="d-flex justify-content-between mb-2">
-                    <span>Descuento:</span>
-                    <span className="text-success">-{formatearPrecio(descuento)}</span>
-                  </div>
+                  {descuento > 0 && (
+                    <div className="d-flex justify-content-between mb-2">
+                      <span>Descuento:</span>
+                      <span className="text-success">-{formatearPrecio(descuento)}</span>
+                    </div>
+                  )}
                   <div className="d-flex justify-content-between mb-2">
                     <span>Envío:</span>
                     <span className="text-success">Gratis</span>
                   </div>
                   <hr />
                   <div className="d-flex justify-content-between mb-4">
-                    <h5>Total:</h5>
+                    <h5 className="text-white">Total:</h5>
                     <h5 className="carrito-resumen-titulo">
                       {formatearPrecio(total)}
                     </h5>
@@ -189,8 +283,9 @@ export default function Carrito() {
                   <button 
                     className="btn carrito-finalizar-btn"
                     onClick={handleFinalizarCompra}
+                    disabled={processingOrder}
                   >
-                    Finalizar Compra
+                    {processingOrder ? 'Procesando...' : 'Finalizar Compra'}
                   </button>
                 </div>
               </div>

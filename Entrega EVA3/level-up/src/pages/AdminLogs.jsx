@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../config/supabase';
 import '../styles/Admin.css';
 
 export default function AdminLogs() {
@@ -8,79 +9,115 @@ export default function AdminLogs() {
   const [accionFiltro, setAccionFiltro] = useState('todas');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [cargando, setCargando] = useState(true);
+  const [pagina, setPagina] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const REGISTROS_POR_PAGINA = 50;
+
+  // Estadísticas
+  const [estadisticas, setEstadisticas] = useState({
+    total: 0,
+    admin: 0,
+    usuario: 0,
+    sistema: 0
+  });
 
   useEffect(() => {
     cargarLogs();
+    cargarEstadisticas();
+  }, [tipoFiltro, accionFiltro, fechaInicio, fechaFin, pagina]);
 
-    const handleLogsChange = () => {
-      cargarLogs();
-    };
-
-    window.addEventListener('logsActualizados', handleLogsChange);
-    window.addEventListener('storage', handleLogsChange);
-
-    return () => {
-      window.removeEventListener('logsActualizados', handleLogsChange);
-      window.removeEventListener('storage', handleLogsChange);
-    };
-  }, []);
-
-  const cargarLogs = () => {
-    const logsLS = JSON.parse(localStorage.getItem('logs') || '[]');
-    const logsOrdenados = logsLS.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    setLogs(logsOrdenados);
+  const cargarLogs = async () => {
+    try {
+      setCargando(true);
+      
+      // Construcción de query
+      let query = supabase
+        .from('logs_sistema')
+        .select('*', { count: 'exact' });
+      
+      // Filtro por tipo
+      if (tipoFiltro !== 'todos') {
+        query = query.eq('tipo', tipoFiltro.toUpperCase());
+      }
+      
+      // Filtro por acción
+      if (accionFiltro !== 'todas') {
+        query = query.ilike('accion', `%${accionFiltro}%`);
+      }
+      
+      // Filtro por fecha inicio
+      if (fechaInicio) {
+        query = query.gte('fecha', new Date(fechaInicio).toISOString());
+      }
+      
+      // Filtro por fecha fin
+      if (fechaFin) {
+        const fechaFinDate = new Date(fechaFin);
+        fechaFinDate.setHours(23, 59, 59, 999);
+        query = query.lte('fecha', fechaFinDate.toISOString());
+      }
+      
+      // Paginación
+      const desde = (pagina - 1) * REGISTROS_POR_PAGINA;
+      const hasta = desde + REGISTROS_POR_PAGINA - 1;
+      
+      // Ejecutar query
+      const { data, error, count } = await query
+        .order('fecha', { ascending: false })
+        .range(desde, hasta);
+      
+      if (error) {
+        console.error('❌ Error al cargar logs:', error);
+        setLogs([]);
+      } else {
+        console.log('✅ Logs cargados:', data?.length || 0);
+        setLogs(data || []);
+        setTotalPaginas(Math.ceil((count || 0) / REGISTROS_POR_PAGINA));
+      }
+    } catch (error) {
+      console.error('❌ Error inesperado:', error);
+      setLogs([]);
+    } finally {
+      setCargando(false);
+    }
   };
 
-  const logsFiltrados = logs.filter(log => {
-    if (tipoFiltro !== 'todos' && log.tipo !== tipoFiltro) {
-      return false;
+  const cargarEstadisticas = async () => {
+    try {
+      // Total de logs
+      const { count: total } = await supabase
+        .from('logs_sistema')
+        .select('*', { count: 'exact', head: true });
+      
+      // Logs de admin
+      const { count: admin } = await supabase
+        .from('logs_sistema')
+        .select('*', { count: 'exact', head: true })
+        .eq('tipo', 'ADMIN');
+      
+      // Logs de usuario
+      const { count: usuario } = await supabase
+        .from('logs_sistema')
+        .select('*', { count: 'exact', head: true })
+        .eq('tipo', 'USUARIO');
+      
+      // Logs de sistema
+      const { count: sistema } = await supabase
+        .from('logs_sistema')
+        .select('*', { count: 'exact', head: true })
+        .eq('tipo', 'SISTEMA');
+      
+      setEstadisticas({
+        total: total || 0,
+        admin: admin || 0,
+        usuario: usuario || 0,
+        sistema: sistema || 0
+      });
+    } catch (error) {
+      console.error('❌ Error al cargar estadísticas:', error);
     }
-
-    if (accionFiltro !== 'todas') {
-      const accionLower = log.accion.toLowerCase();
-      if (accionFiltro === 'crear' && !accionLower.includes('creó') && !accionLower.includes('registró')) {
-        return false;
-      }
-      if (accionFiltro === 'editar' && !accionLower.includes('editó') && !accionLower.includes('actualizó')) {
-        return false;
-      }
-      if (accionFiltro === 'eliminar' && !accionLower.includes('eliminó')) {
-        return false;
-      }
-      if (accionFiltro === 'compra' && !accionLower.includes('compra')) {
-        return false;
-      }
-      if (accionFiltro === 'carrito' && !accionLower.includes('carrito') && !accionLower.includes('agregó')) {
-        return false;
-      }
-      if (accionFiltro === 'contacto' && !accionLower.includes('contacto')) {
-        return false;
-      }
-      if (accionFiltro === 'sesion' && !accionLower.includes('sesión')) {
-        return false;
-      }
-    }
-
-    if (fechaInicio) {
-      const fechaLog = new Date(log.fecha);
-      const fechaInicioDate = new Date(fechaInicio);
-      fechaInicioDate.setHours(0, 0, 0, 0);
-      if (fechaLog < fechaInicioDate) {
-        return false;
-      }
-    }
-
-    if (fechaFin) {
-      const fechaLog = new Date(log.fecha);
-      const fechaFinDate = new Date(fechaFin);
-      fechaFinDate.setHours(23, 59, 59, 999);
-      if (fechaLog > fechaFinDate) {
-        return false;
-      }
-    }
-
-    return true;
-  });
+  };
 
   const formatearFecha = (fechaISO) => {
     const fecha = new Date(fechaISO);
@@ -95,48 +132,89 @@ export default function AdminLogs() {
   };
 
   const getIconoTipo = (tipo) => {
-    return tipo === 'admin' ? '⚙️' : '🛒';
+    switch (tipo) {
+      case 'ADMIN': return '⚙️';
+      case 'USUARIO': return '🛒';
+      case 'SISTEMA': return '🖥️';
+      case 'ERROR': return '❌';
+      case 'SEGURIDAD': return '🔒';
+      default: return '📝';
+    }
   };
 
   const getColorAccion = (accion) => {
-    if (accion.includes('Creó') || accion.includes('Agregó') || accion.includes('agregó')) {
+    if (accion.includes('CREAR') || accion.includes('Creó') || accion.includes('Agregó')) {
       return 'var(--accent-green)';
     }
-    if (accion.includes('Eliminó') || accion.includes('eliminó')) {
+    if (accion.includes('ELIMINAR') || accion.includes('Eliminó')) {
       return '#ff4444';
     }
-    if (accion.includes('Editó') || accion.includes('Actualizó')) {
+    if (accion.includes('EDITAR') || accion.includes('Editó') || accion.includes('Actualizó')) {
       return 'var(--accent-blue)';
     }
     return '#fff';
   };
 
-  const limpiarLogs = () => {
-    if (window.confirm('¿Estás seguro de que deseas limpiar todos los logs?')) {
-      localStorage.setItem('logs', JSON.stringify([]));
-      setLogs([]);
-      if (window.notificar) {
-        window.notificar('Logs limpiados exitosamente', 'success', 3000);
-      }
-    }
+  const limpiarFiltros = () => {
+    setTipoFiltro('todos');
+    setAccionFiltro('todas');
+    setFechaInicio('');
+    setFechaFin('');
+    setPagina(1);
   };
 
   return (
     <main className="container admin-page">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h2 className="section-title mb-2">Registro de Actividades (Logs)</h2>
+          <h2 className="section-title mb-2">📊 Registro de Actividad del Sistema</h2>
+          <p className="text-secondary small">
+            Logs automáticos generados por triggers de base de datos
+          </p>
           <Link to="/admin" className="text-secondary">
             ← Volver al Panel
           </Link>
         </div>
-        <button 
-          className="btn btn-danger"
-          onClick={limpiarLogs}
-          disabled={logs.length === 0}
-        >
-          Limpiar Logs
-        </button>
+      </div>
+
+      {/* Estadísticas */}
+      <div className="row mb-4">
+        <div className="col-md-3 mb-3">
+          <div className="admin-card text-center">
+            <div className="admin-card-body">
+              <div style={{ fontSize: '2rem' }}>📊</div>
+              <h3 className="text-white mb-0">{estadisticas.total}</h3>
+              <p className="text-secondary mb-0">Total de Logs</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3 mb-3">
+          <div className="admin-card text-center">
+            <div className="admin-card-body">
+              <div style={{ fontSize: '2rem' }}>⚙️</div>
+              <h3 className="text-white mb-0">{estadisticas.admin}</h3>
+              <p className="text-secondary mb-0">Logs Admin</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3 mb-3">
+          <div className="admin-card text-center">
+            <div className="admin-card-body">
+              <div style={{ fontSize: '2rem' }}>🛒</div>
+              <h3 className="text-white mb-0">{estadisticas.usuario}</h3>
+              <p className="text-secondary mb-0">Logs Usuario</p>
+            </div>
+          </div>
+        </div>
+        <div className="col-md-3 mb-3">
+          <div className="admin-card text-center">
+            <div className="admin-card-body">
+              <div style={{ fontSize: '2rem' }}>🖥️</div>
+              <h3 className="text-white mb-0">{estadisticas.sistema}</h3>
+              <p className="text-secondary mb-0">Logs Sistema</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="admin-card mb-4">
@@ -147,21 +225,27 @@ export default function AdminLogs() {
               <div className="d-flex gap-3 flex-wrap">
                 <button
                   className={`btn ${tipoFiltro === 'todos' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setTipoFiltro('todos')}
+                  onClick={() => { setTipoFiltro('todos'); setPagina(1); }}
                 >
-                  Todos ({logs.length})
+                  Todos
                 </button>
                 <button
                   className={`btn ${tipoFiltro === 'admin' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setTipoFiltro('admin')}
+                  onClick={() => { setTipoFiltro('admin'); setPagina(1); }}
                 >
-                  ⚙️ Admin ({logs.filter(l => l.tipo === 'admin').length})
+                  ⚙️ Admin
                 </button>
                 <button
                   className={`btn ${tipoFiltro === 'usuario' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setTipoFiltro('usuario')}
+                  onClick={() => { setTipoFiltro('usuario'); setPagina(1); }}
                 >
-                  🛒 Usuarios ({logs.filter(l => l.tipo === 'usuario').length})
+                  🛒 Usuarios
+                </button>
+                <button
+                  className={`btn ${tipoFiltro === 'sistema' ? 'btn-success' : 'btn-outline-success'}`}
+                  onClick={() => { setTipoFiltro('sistema'); setPagina(1); }}
+                >
+                  🖥️ Sistema
                 </button>
               </div>
             </div>
@@ -171,51 +255,27 @@ export default function AdminLogs() {
               <div className="d-flex gap-2 flex-wrap">
                 <button
                   className={`btn btn-sm ${accionFiltro === 'todas' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('todas')}
+                  onClick={() => { setAccionFiltro('todas'); setPagina(1); }}
                 >
                   Todas
                 </button>
                 <button
-                  className={`btn btn-sm ${accionFiltro === 'crear' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('crear')}
+                  className={`btn btn-sm ${accionFiltro === 'CREAR' ? 'btn-success' : 'btn-outline-success'}`}
+                  onClick={() => { setAccionFiltro('CREAR'); setPagina(1); }}
                 >
-                  Crear/Registrar
+                  Crear
                 </button>
                 <button
-                  className={`btn btn-sm ${accionFiltro === 'editar' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('editar')}
+                  className={`btn btn-sm ${accionFiltro === 'EDITAR' ? 'btn-success' : 'btn-outline-success'}`}
+                  onClick={() => { setAccionFiltro('EDITAR'); setPagina(1); }}
                 >
                   Editar
                 </button>
                 <button
-                  className={`btn btn-sm ${accionFiltro === 'eliminar' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('eliminar')}
+                  className={`btn btn-sm ${accionFiltro === 'ELIMINAR' ? 'btn-success' : 'btn-outline-success'}`}
+                  onClick={() => { setAccionFiltro('ELIMINAR'); setPagina(1); }}
                 >
                   Eliminar
-                </button>
-                <button
-                  className={`btn btn-sm ${accionFiltro === 'compra' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('compra')}
-                >
-                  Compras
-                </button>
-                <button
-                  className={`btn btn-sm ${accionFiltro === 'carrito' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('carrito')}
-                >
-                  Carrito
-                </button>
-                <button
-                  className={`btn btn-sm ${accionFiltro === 'contacto' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('contacto')}
-                >
-                  Contacto
-                </button>
-                <button
-                  className={`btn btn-sm ${accionFiltro === 'sesion' ? 'btn-success' : 'btn-outline-success'}`}
-                  onClick={() => setAccionFiltro('sesion')}
-                >
-                  Sesiones
                 </button>
               </div>
             </div>
@@ -244,18 +304,10 @@ export default function AdminLogs() {
               <div className="col-md-12">
                 <button
                   className="btn btn-secondary btn-sm"
-                  onClick={() => {
-                    setFechaInicio('');
-                    setFechaFin('');
-                    setAccionFiltro('todas');
-                    setTipoFiltro('todos');
-                  }}
+                  onClick={limpiarFiltros}
                 >
-                  Limpiar Filtros
+                  🔄 Limpiar Filtros
                 </button>
-                <span className="ms-3 text-white">
-                  Mostrando {logsFiltrados.length} de {logs.length} registros
-                </span>
               </div>
             )}
           </div>
@@ -264,41 +316,97 @@ export default function AdminLogs() {
 
       <div className="admin-card">
         <div className="admin-card-body">
-          {logsFiltrados.length === 0 ? (
+          {cargando ? (
             <div className="text-center py-5">
-              <p className="text-secondary">No hay registros de actividad</p>
+              <div className="spinner-border text-success" role="status">
+                <span className="visually-hidden">Cargando...</span>
+              </div>
+              <p className="text-secondary mt-3">Cargando logs...</p>
+            </div>
+          ) : logs.length === 0 ? (
+            <div className="text-center py-5">
+              <p className="text-secondary">📭 No hay registros de actividad con los filtros seleccionados</p>
             </div>
           ) : (
-            <div className="table-responsive">
-              <table className="table table-dark table-hover">
-                <thead>
-                  <tr>
-                    <th className="admin-logs-th-tipo">Tipo</th>
-                    <th className="admin-logs-th-fecha">Fecha y Hora</th>
-                    <th className="admin-logs-th-usuario">Usuario/ID</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {logsFiltrados.map((log, index) => (
-                    <tr key={index}>
-                      <td className="text-center admin-logs-td-icono">
-                        {getIconoTipo(log.tipo)}
-                      </td>
-                      <td className="admin-logs-td-fecha">
-                        {formatearFecha(log.fecha)}
-                      </td>
-                      <td className="admin-logs-td-usuario">
-                        {log.usuario}
-                      </td>
-                      <td style={{ color: getColorAccion(log.accion) }}>
-                        {log.accion}
-                      </td>
+            <>
+              <div className="table-responsive">
+                <table className="table table-dark table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th className="admin-logs-th-tipo">Tipo</th>
+                      <th className="admin-logs-th-fecha">Fecha y Hora</th>
+                      <th>Módulo</th>
+                      <th className="admin-logs-th-usuario">Usuario ID</th>
+                      <th>Acción</th>
+                      <th>Descripción</th>
+                      <th>Nivel</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {logs.map((log) => (
+                      <tr key={log.id}>
+                        <td className="text-secondary">{log.id}</td>
+                        <td className="text-center admin-logs-td-icono">
+                          {getIconoTipo(log.tipo)} <small>{log.tipo}</small>
+                        </td>
+                        <td className="admin-logs-td-fecha">
+                          {formatearFecha(log.fecha)}
+                        </td>
+                        <td className="text-info">{log.modulo || '-'}</td>
+                        <td className="admin-logs-td-usuario">
+                          {log.usuario_id || 'Sistema'}
+                        </td>
+                        <td style={{ color: getColorAccion(log.accion) }}>
+                          <strong>{log.accion}</strong>
+                        </td>
+                        <td className="text-secondary small">{log.descripcion}</td>
+                        <td>
+                          <span className={`badge bg-${log.nivel === 'ERROR' ? 'danger' : log.nivel === 'WARNING' ? 'warning' : 'info'}`}>
+                            {log.nivel}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Paginación */}
+              <div className="d-flex justify-content-center align-items-center gap-2 mt-4">
+                <button 
+                  className="btn btn-sm btn-outline-success"
+                  onClick={() => setPagina(1)} 
+                  disabled={pagina === 1}
+                >
+                  ⏮️ Primera
+                </button>
+                <button 
+                  className="btn btn-sm btn-outline-success"
+                  onClick={() => setPagina(p => Math.max(1, p - 1))} 
+                  disabled={pagina === 1}
+                >
+                  ◀️ Anterior
+                </button>
+                <span className="text-white mx-3">
+                  Página <strong>{pagina}</strong> de <strong>{totalPaginas}</strong>
+                </span>
+                <button 
+                  className="btn btn-sm btn-outline-success"
+                  onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))} 
+                  disabled={pagina === totalPaginas}
+                >
+                  Siguiente ▶️
+                </button>
+                <button 
+                  className="btn btn-sm btn-outline-success"
+                  onClick={() => setPagina(totalPaginas)} 
+                  disabled={pagina === totalPaginas}
+                >
+                  Última ⏭️
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>

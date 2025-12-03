@@ -12,5 +12,7 @@ public interface OrdenRepository extends JpaRepository<Orden, Long> {
     List<Orden> findByUsuarioIdOrderByFechaCreacionDesc(Long usuarioId);
 
     List<Orden> findByEstadoOrderByFechaCreacionDesc(Orden.EstadoOrden estado);
+
+    long countByEstado(Orden.EstadoOrden estado);
 }
 

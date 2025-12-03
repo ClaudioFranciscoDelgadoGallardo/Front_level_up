@@ -96,7 +96,7 @@ credentials/
 # ================================
 # Build / Distribution
 # ================================
-build/
+# build/
 dist/
 *.war
 *.ear

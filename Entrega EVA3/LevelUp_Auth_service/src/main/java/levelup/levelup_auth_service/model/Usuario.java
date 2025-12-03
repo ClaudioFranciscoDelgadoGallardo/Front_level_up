@@ -27,8 +27,8 @@ public class Usuario {
     private Long id;
 
     @NotBlank(message = "El RUN es obligatorio")
-    @Size(min = 7, max = 9, message = "El RUN debe tener entre 7 y 9 caracteres")
-    @Column(unique = true, nullable = false, length = 9)
+    @Size(min = 7, max = 12, message = "El RUN debe tener entre 7 y 12 caracteres")
+    @Column(unique = true, nullable = false, length = 12)
     private String run;
 
     @NotBlank(message = "El nombre es obligatorio")
@@ -56,8 +56,23 @@ public class Usuario {
     @Column(length = 255)
     private String direccion;
 
+    @Column(length = 100)
+    private String comuna;
+
+    @Column(length = 100)
+    private String ciudad;
+
+    @Column(length = 100)
+    private String region;
+
+    @Column(name = "codigo_postal", length = 10)
+    private String codigoPostal;
+
     @Column(name = "fecha_nacimiento")
     private LocalDate fechaNacimiento;
+
+    @Column(name = "foto_perfil", columnDefinition = "TEXT")
+    private String fotoPerfil;
 
     @Column(nullable = false, length = 20)
     @Builder.Default

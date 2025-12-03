@@ -15,8 +15,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ActualizarUsuarioRequest {
 
-    // Todos los campos son OPCIONALES - solo se actualiza lo que se envía
-    
     @Size(max = 12, message = "El RUN debe tener máximo 12 caracteres")
     private String run;
 
@@ -50,4 +48,8 @@ public class ActualizarUsuarioRequest {
     private String codigoPostal;
 
     private LocalDate fechaNacimiento;
+
+    private String fotoPerfil;
+
+    private String rol;
 }

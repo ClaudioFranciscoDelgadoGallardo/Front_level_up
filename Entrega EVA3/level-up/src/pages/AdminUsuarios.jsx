@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { obtenerUsuarios, eliminarUsuario, eliminarUsuarioPermanente } from '../services/userService';
 import { registrarLogAdmin } from '../utils/logManager';
 import ModalConfirmacion from '../components/ModalConfirmacion';
 import '../styles/Admin.css';
@@ -9,36 +10,136 @@ export default function AdminUsuarios() {
   const [busqueda, setBusqueda] = useState('');
   const [mostrarModal, setMostrarModal] = useState(false);
   const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [usuarioAEliminarPermanente, setUsuarioAEliminarPermanente] = useState(null);
+  const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
+  
+  // Obtener usuario actual desde localStorage
+  const usuarioActual = JSON.parse(localStorage.getItem('usuario') || '{}');
 
-  useEffect(() => {
-    cargarUsuarios();
-  }, []);
-
-  const cargarUsuarios = () => {
-    const usuariosLS = JSON.parse(localStorage.getItem('usuarios') || '[]');
-    setUsuarios(usuariosLS);
+  const cargarUsuarios = async () => {
+    try {
+      setCargando(true);
+      console.log('🔄 Cargando usuarios desde backend...');
+      const token = localStorage.getItem('token');
+      
+      // Intentar obtener todos los usuarios
+      const usuariosBackend = await obtenerUsuarios(token);
+      console.log('✅ Usuarios cargados:', usuariosBackend.length);
+      setUsuarios(usuariosBackend);
+    } catch (error) {
+      console.error('❌ Error al cargar usuarios:', error);
+      if (window.notificar) {
+        window.notificar('Error al cargar usuarios desde el backend.', 'error', 3000);
+      }
+      setUsuarios([]);
+    } finally {
+      setCargando(false);
+    }
   };
 
-  const confirmarEliminar = (correo) => {
-    setUsuarioAEliminar(correo);
+  const confirmarDesactivar = (usuarioId) => {
+    setUsuarioAEliminar(usuarioId);
     setMostrarModal(true);
   };
 
-  const eliminarUsuario = () => {
+  const desactivarUsuarioConfirmado = async () => {
     if (usuarioAEliminar) {
-      const usuario = usuarios.find(u => u.correo === usuarioAEliminar);
-      const usuariosActualizados = usuarios.filter(u => u.correo !== usuarioAEliminar);
-      localStorage.setItem('usuarios', JSON.stringify(usuariosActualizados));
-      setUsuarios(usuariosActualizados);
+      try {
+        const usuarioEncontrado = usuarios.find(u => u.id === usuarioAEliminar);
+        const token = localStorage.getItem('token');
+        
+        console.log('⚠️ Desactivando usuario ID:', usuarioAEliminar);
+        await eliminarUsuario(usuarioAEliminar, token);
+        
+        // Recargar usuarios desde el backend
+        await cargarUsuarios();
+        
+        registrarLogAdmin(`Desactivó usuario: ${usuarioEncontrado?.nombre || 'Desconocido'} (ID: ${usuarioAEliminar})`);
+        
+        if (window.notificar) {
+          window.notificar('Usuario desactivado exitosamente', 'success', 3000);
+        }
+      } catch (error) {
+        console.error('❌ Error al desactivar usuario:', error);
+        if (window.notificar) {
+          window.notificar('Error al desactivar usuario', 'error', 3000);
+        }
+      } finally {
+        setMostrarModal(false);
+        setUsuarioAEliminar(null);
+      }
+    }
+  };
+
+  const activarUsuario = async (usuario) => {
+    try {
+      const token = localStorage.getItem('token');
       
-      registrarLogAdmin(`Eliminó usuario: ${usuario?.nombre || 'Desconocido'} (${usuarioAEliminar})`);
+      console.log('✅ Activando usuario ID:', usuario.id);
+      
+      // Llamar al endpoint PUT /usuarios/{id}/activar
+      const response = await fetch(`http://localhost:8080/api/usuarios/${usuario.id}/activar`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al activar usuario');
+      }
+
+      // Recargar usuarios desde el backend
+      await cargarUsuarios();
+      
+      registrarLogAdmin(`Activó usuario: ${usuario.nombre} (ID: ${usuario.id})`);
       
       if (window.notificar) {
-        window.notificar('Usuario eliminado exitosamente', 'success', 3000);
+        window.notificar('Usuario activado exitosamente', 'success', 3000);
       }
-      setMostrarModal(false);
-      setUsuarioAEliminar(null);
+    } catch (error) {
+      console.error('❌ Error al activar usuario:', error);
+      if (window.notificar) {
+        window.notificar('Error al activar usuario', 'error', 3000);
+      }
+    }
+  };
+
+  const confirmarEliminarPermanente = (usuarioId) => {
+    setUsuarioAEliminarPermanente(usuarioId);
+    setMostrarModalEliminar(true);
+  };
+
+  const eliminarUsuarioPermanenteConfirmado = async () => {
+    if (usuarioAEliminarPermanente) {
+      try {
+        const usuarioEncontrado = usuarios.find(u => u.id === usuarioAEliminarPermanente);
+        const token = localStorage.getItem('token');
+        
+        console.log('🗑️ Eliminando permanentemente usuario ID:', usuarioAEliminarPermanente);
+        await eliminarUsuarioPermanente(usuarioAEliminarPermanente, token);
+        
+        // Recargar usuarios desde el backend
+        await cargarUsuarios();
+        
+        registrarLogAdmin(`Eliminó permanentemente usuario: ${usuarioEncontrado?.nombre || 'Desconocido'} (ID: ${usuarioAEliminarPermanente})`);
+        
+        if (window.notificar) {
+          window.notificar('Usuario eliminado permanentemente', 'success', 3000);
+        }
+      } catch (error) {
+        console.error('❌ Error al eliminar usuario:', error);
+        const errorMessage = error.message || 'Error al eliminar usuario';
+        if (window.notificar) {
+          window.notificar(errorMessage, 'error', 5000);
+        }
+      } finally {
+        setMostrarModalEliminar(false);
+        setUsuarioAEliminarPermanente(null);
+      }
     }
   };
 
@@ -47,14 +148,26 @@ export default function AdminUsuarios() {
     setUsuarioAEliminar(null);
   };
 
-  const editarUsuario = (correo) => {
-    navigate(`/admin/usuarios/editar/${encodeURIComponent(correo)}`);
+  const cancelarEliminarPermanente = () => {
+    setMostrarModalEliminar(false);
+    setUsuarioAEliminarPermanente(null);
   };
 
+  const editarUsuario = (usuarioId) => {
+    navigate(`/admin/usuarios/editar/${usuarioId}`);
+  };
+
+  // Cargar usuarios al montar el componente
+  useEffect(() => {
+    cargarUsuarios();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const usuariosFiltrados = usuarios.filter(u => 
-    u.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    u.correo.toLowerCase().includes(busqueda.toLowerCase()) ||
-    (u.apellidos && u.apellidos.toLowerCase().includes(busqueda.toLowerCase()))
+    (u.nombre && u.nombre.toLowerCase().includes(busqueda.toLowerCase())) ||
+    (u.correo && u.correo.toLowerCase().includes(busqueda.toLowerCase())) ||
+    (u.apellidos && u.apellidos.toLowerCase().includes(busqueda.toLowerCase())) ||
+    (u.run && u.run.includes(busqueda))
   );
 
   return (
@@ -81,7 +194,14 @@ export default function AdminUsuarios() {
         />
       </div>
 
-      {usuarios.length === 0 ? (
+      {cargando ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <p className="text-secondary mt-3">Cargando usuarios...</p>
+        </div>
+      ) : usuarios.length === 0 ? (
         <div className="text-center py-5">
           <p className="text-secondary mb-4">No hay usuarios registrados</p>
           <Link to="/admin/usuarios/nuevo" className="btn btn-success">
@@ -99,34 +219,65 @@ export default function AdminUsuarios() {
                 <th>Correo</th>
                 <th>Fecha Nacimiento</th>
                 <th>Rol</th>
+                <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {usuariosFiltrados.map((usuario) => (
-                <tr key={usuario.correo}>
+                <tr key={usuario.id || usuario.correo}>
                   <td>{usuario.run || 'N/A'}</td>
                   <td>{usuario.nombre}</td>
                   <td>{usuario.apellidos || 'N/A'}</td>
                   <td>{usuario.correo}</td>
-                  <td>{usuario.fechaNac || 'N/A'}</td>
+                  <td>{usuario.fechaNacimiento ? new Date(usuario.fechaNacimiento).toLocaleDateString('es-CL') : 'N/A'}</td>
                   <td>
                     <span 
-                      className={`badge ${usuario.rol === 'admin' ? 'admin-badge-admin' : 'admin-badge-usuario'}`}
+                      className={`badge ${
+                        usuario.rol === 'ADMIN' ? 'bg-danger' : 
+                        usuario.rol === 'VENDEDOR' ? 'bg-warning text-dark' : 
+                        'bg-primary'
+                      }`}
                     >
-                      {usuario.rol || 'usuario'}
+                      {usuario.rol || 'CLIENTE'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`badge ${usuario.activo ? 'bg-success' : 'bg-danger'}`}>
+                      {usuario.activo ? 'Activo' : 'Inactivo'}
                     </span>
                   </td>
                   <td>
                     <button 
-                      className="btn btn-sm btn-success btn-action"
-                      onClick={() => editarUsuario(usuario.correo)}
+                      className="btn btn-sm btn-primary btn-action"
+                      onClick={() => editarUsuario(usuario.id)}
+                      title="Editar usuario"
                     >
                       Editar
                     </button>
+                    {usuario.activo ? (
+                      <button 
+                        className="btn btn-sm btn-warning btn-action"
+                        onClick={() => confirmarDesactivar(usuario.id)}
+                        disabled={usuario.id === usuarioActual?.id}
+                        title={usuario.id === usuarioActual?.id ? 'No puedes desactivarte a ti mismo' : 'Desactivar usuario'}
+                      >
+                        Desactivar
+                      </button>
+                    ) : (
+                      <button 
+                        className="btn btn-sm btn-success btn-action"
+                        onClick={() => activarUsuario(usuario)}
+                        title="Activar usuario"
+                      >
+                        Activar
+                      </button>
+                    )}
                     <button 
                       className="btn btn-sm btn-danger btn-action"
-                      onClick={() => confirmarEliminar(usuario.correo)}
+                      onClick={() => confirmarEliminarPermanente(usuario.id)}
+                      disabled={usuario.id === usuarioActual?.id}
+                      title={usuario.id === usuarioActual?.id ? 'No puedes eliminarte a ti mismo' : 'Eliminar usuario permanentemente'}
                     >
                       Eliminar
                     </button>
@@ -146,10 +297,18 @@ export default function AdminUsuarios() {
 
       <ModalConfirmacion
         mostrar={mostrarModal}
-        titulo="Eliminar Usuario"
-        mensaje={`¿Estás seguro de que deseas eliminar el usuario ${usuarioAEliminar}? Esta acción no se puede deshacer.`}
-        onConfirmar={eliminarUsuario}
+        titulo="Desactivar Usuario"
+        mensaje="¿Estás seguro de que deseas desactivar este usuario? El usuario no podrá iniciar sesión pero su historial de órdenes se mantendrá."
+        onConfirmar={desactivarUsuarioConfirmado}
         onCancelar={cancelarEliminar}
+      />
+
+      <ModalConfirmacion
+        mostrar={mostrarModalEliminar}
+        titulo="Eliminar Usuario Permanentemente"
+        mensaje="⚠️ ADVERTENCIA: Esta acción es IRREVERSIBLE. El usuario será eliminado permanentemente de la base de datos. Solo se puede eliminar si el usuario NO tiene órdenes asociadas. ¿Estás seguro?"
+        onConfirmar={eliminarUsuarioPermanenteConfirmado}
+        onCancelar={cancelarEliminarPermanente}
       />
     </main>
   );

@@ -24,30 +24,66 @@ public class Producto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false, length = 50)
+    private String codigo;
+
     @NotBlank(message = "El nombre es obligatorio")
-    @Size(max = 100, message = "El nombre debe tener máximo 100 caracteres")
-    @Column(nullable = false, length = 100)
+    @Size(max = 200, message = "El nombre debe tener máximo 200 caracteres")
+    @Column(nullable = false, length = 200)
     private String nombre;
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    @NotNull(message = "El precio es obligatorio")
-    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor a 0")
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal precio;
+    @Column(name = "descripcion_corta", length = 500)
+    private String descripcionCorta;
 
-    @NotBlank(message = "La categoría es obligatoria")
-    @Column(nullable = false, length = 50)
-    private String categoria;
+    @NotNull(message = "La categoría es obligatoria")
+    @Column(name = "categoria_id", nullable = false)
+    private Long categoriaId;
 
-    @NotNull(message = "El stock es obligatorio")
+    @Column(name = "marca_id")
+    private Long marcaId;
+
+    @NotNull(message = "El precio base es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El precio base debe ser >= 0")
+    @Column(name = "precio_base", nullable = false, precision = 12, scale = 2)
+    private BigDecimal precioBase;
+
+    @NotNull(message = "El precio de venta es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El precio de venta debe ser >= 0")
+    @Column(name = "precio_venta", nullable = false, precision = 12, scale = 2)
+    private BigDecimal precioVenta;
+
+    @Column(precision = 12, scale = 2)
+    private BigDecimal costo;
+
+    @Column(precision = 5, scale = 2)
+    @Builder.Default
+    private BigDecimal iva = new BigDecimal("19.00");
+
+    @NotNull(message = "El stock actual es obligatorio")
     @Min(value = 0, message = "El stock no puede ser negativo")
-    @Column(nullable = false)
-    private Integer stock;
+    @Column(name = "stock_actual", nullable = false)
+    @Builder.Default
+    private Integer stockActual = 0;
 
-    @Column(name = "imagen_url", length = 500)
-    private String imagenUrl;
+    @Column(name = "stock_minimo")
+    @Builder.Default
+    private Integer stockMinimo = 5;
+
+    @Column(name = "stock_maximo")
+    @Builder.Default
+    private Integer stockMaximo = 1000;
+
+    @Column(name = "imagen_principal", length = 500)
+    private String imagenPrincipal;
+
+    @Column(name = "peso_gramos")
+    private Integer pesoGramos;
+
+    @Column(length = 100)
+    private String dimensiones;
 
     @Column(nullable = false)
     @Builder.Default
@@ -56,13 +92,6 @@ public class Producto {
     @Column(nullable = false)
     @Builder.Default
     private Boolean activo = true;
-
-    @Column(length = 100)
-    private String marca;
-
-    @Column(name = "descuento", precision = 5, scale = 2)
-    @Builder.Default
-    private BigDecimal descuento = BigDecimal.ZERO;
 
     @CreationTimestamp
     @Column(name = "fecha_creacion", nullable = false, updatable = false)

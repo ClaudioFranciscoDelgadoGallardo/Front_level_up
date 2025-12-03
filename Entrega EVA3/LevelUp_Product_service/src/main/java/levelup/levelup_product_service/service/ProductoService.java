@@ -36,12 +36,18 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public List<Producto> buscarPorCategoria(String categoria) {
-        return productoRepository.findByCategoriaAndActivoTrue(categoria);
+        throw new UnsupportedOperationException("Método buscarPorCategoria() pendiente de migración");
     }
 
     @Transactional(readOnly = true)
     public List<Producto> buscarPorNombre(String nombre) {
         return productoRepository.findByNombreContainingIgnoreCaseAndActivoTrue(nombre);
+    }
+
+    @Transactional(readOnly = true)
+    public Producto obtenerPorCodigo(String codigo) {
+        return productoRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new RuntimeException("Producto con código " + codigo + " no encontrado"));
     }
 
     @Transactional(readOnly = true)
@@ -60,36 +66,33 @@ public class ProductoService {
     public Producto actualizar(Long id, ActualizarProductoRequest request) {
         Producto producto = obtenerPorId(id);
 
-        // Actualizar solo los campos que vienen en el request (no nulos)
         if (request.getNombre() != null && !request.getNombre().isEmpty()) {
             producto.setNombre(request.getNombre());
         }
         if (request.getDescripcion() != null) {
             producto.setDescripcion(request.getDescripcion());
+            producto.setDescripcionCorta(request.getDescripcion().length() > 500 
+                ? request.getDescripcion().substring(0, 500) 
+                : request.getDescripcion());
         }
         if (request.getPrecio() != null) {
-            producto.setPrecio(request.getPrecio());
+            producto.setPrecioVenta(request.getPrecio());
+            producto.setPrecioBase(request.getPrecio());
         }
-        if (request.getCategoria() != null && !request.getCategoria().isEmpty()) {
-            producto.setCategoria(request.getCategoria());
+        if (request.getCategoriaId() != null) {
+            producto.setCategoriaId(request.getCategoriaId());
         }
         if (request.getStock() != null) {
-            producto.setStock(request.getStock());
+            producto.setStockActual(request.getStock());
         }
         if (request.getImagenUrl() != null) {
-            producto.setImagenUrl(request.getImagenUrl());
+            producto.setImagenPrincipal(request.getImagenUrl());
         }
         if (request.getDestacado() != null) {
             producto.setDestacado(request.getDestacado());
         }
         if (request.getActivo() != null) {
             producto.setActivo(request.getActivo());
-        }
-        if (request.getMarca() != null) {
-            producto.setMarca(request.getMarca());
-        }
-        if (request.getDescuento() != null) {
-            producto.setDescuento(request.getDescuento());
         }
 
         logger.info("Actualizando producto: {}", producto.getNombre());
@@ -115,21 +118,52 @@ public class ProductoService {
     @Transactional
     public void eliminarPermanente(Long id) {
         Producto producto = obtenerPorId(id);
-        productoRepository.delete(producto);
-        logger.warn("Producto eliminado permanentemente - ID: {}, Nombre: {}", id, producto.getNombre());
+        
+        try {
+            productoRepository.delete(producto);
+            logger.warn("Producto eliminado permanentemente - ID: {}, Nombre: {}", id, producto.getNombre());
+        } catch (Exception e) {
+            logger.error("Error al eliminar producto ID {}: {}", id, e.getMessage());
+            if (e.getMessage().contains("constraint") || e.getMessage().contains("foreign key")) {
+                throw new RuntimeException("No se puede eliminar el producto porque tiene órdenes asociadas. Usa la opción de desactivar en su lugar.");
+            }
+            throw new RuntimeException("Error al eliminar el producto: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void actualizarStockDelta(String codigo, Integer delta) {
+        Producto producto = obtenerPorCodigo(codigo);
+
+        int nuevoStock = producto.getStockActual() + delta;
+        
+        if (nuevoStock < 0) {
+            throw new RuntimeException("Stock insuficiente. Stock actual: " + producto.getStockActual() + ", intento de restar: " + Math.abs(delta));
+        }
+
+        producto.setStockActual(nuevoStock);
+        productoRepository.save(producto);
+        logger.info("Stock actualizado para producto {} ({}): {} {} = {}", 
+            producto.getCodigo(), producto.getNombre(), producto.getStockActual(), 
+            (delta >= 0 ? "+" : ""), delta, nuevoStock);
+    }
+
+    @Transactional
+    public void actualizarStockPorCodigo(String codigo, Integer nuevaCantidad) {
+        Producto producto = obtenerPorCodigo(codigo);
+
+        if (nuevaCantidad < 0) {
+            throw new RuntimeException("Stock no puede ser negativo");
+        }
+
+        producto.setStockActual(nuevaCantidad);
+        productoRepository.save(producto);
+        logger.info("Stock actualizado para producto {} ({}): {}", producto.getCodigo(), producto.getNombre(), nuevaCantidad);
     }
 
     @Transactional
     public void actualizarStock(Long id, Integer cantidad) {
-        Producto producto = obtenerPorId(id);
-
-        if (producto.getStock() + cantidad < 0) {
-            throw new RuntimeException("Stock insuficiente");
-        }
-
-        producto.setStock(producto.getStock() + cantidad);
-        productoRepository.save(producto);
-        logger.info("Stock actualizado para {}: {}", producto.getNombre(), producto.getStock());
+        throw new UnsupportedOperationException("Método actualizarStock() pendiente de migración a nuevo modelo");
     }
 }
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCarrito } from '../context/CarritoContext';
+import { obtenerProductos } from '../services/productService';
 import '../styles/Productos.css';
 
 const PRODUCTOS_BASE = [
@@ -43,27 +44,56 @@ export default function Productos() {
   const { agregarAlCarrito } = useCarrito();
 
   useEffect(() => {
-    const cargarProductos = () => {
-      const productosLS = JSON.parse(localStorage.getItem('productos') || '[]');
-      
-      const productosValidos = productosLS.length > 0 
-        ? productosLS.filter(p => p.stock > 0).map(p => ({ ...p, id: p.codigo }))
-        : PRODUCTOS_BASE;
-
-      setProductos(productosValidos);
+    const cargarProductos = async () => {
+      try {
+        console.log('🔄 Cargando productos desde backend...');
+        const productosBackend = await obtenerProductos();
+        console.log('✅ Productos recibidos:', productosBackend.length);
+        
+        // Mapeo de IDs de categoría a nombres
+        const categoriasMap = {
+          1: 'Juegos de Mesa',
+          2: 'Accesorios',
+          3: 'Consolas',
+          4: 'Videojuegos',
+          5: 'Figuras',
+          6: 'Otros'
+        };
+        
+        const productosValidos = productosBackend
+          .filter(p => p.stockActual > 0 && p.activo)
+          .map(p => ({ 
+            ...p, 
+            id: p.id || p.codigo,
+            codigo: p.codigo,
+            nombre: p.nombre,
+            descripcion: p.descripcion || p.descripcionCorta || '',
+            categoria: categoriasMap[p.categoriaId] || 'Sin categoría',
+            precio: p.precioVenta || p.precioBase || 0,
+            stock: p.stockActual || 0,
+            imagen: p.imagenPrincipal || '/assets/imgs/producto-default.png',
+            destacado: p.destacado || false
+          }));
+        
+        console.log('📦 Productos válidos procesados:', productosValidos.length);
+        setProductos(productosValidos);
+        
+        if (productosValidos.length === 0) {
+          if (window.notificar) {
+            window.notificar('No hay productos disponibles en este momento.', 'info', 3000);
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error al cargar productos desde backend:', error);
+        // Fallback a productos base si falla el backend
+        if (window.notificar) {
+          window.notificar('Usando catálogo local. Backend no disponible.', 'warning', 3000);
+        }
+        setProductos(PRODUCTOS_BASE);
+      }
     };
 
     cargarProductos();
-
-    const handleStorageChange = () => {
-      cargarProductos();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
   }, []);
 
   const categoriasDisponibles = [

@@ -1,7 +1,2 @@
-services:
-  oracle:
-    image: 'gvenzl/oracle-free:latest'
-    environment:
-      - 'ORACLE_PASSWORD=secret'
-    ports:
-      - '1521'
+# Compose file vacío - el servicio se conecta a Supabase (PostgreSQL)
+# No se necesita base de datos local
