@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { obtenerProductos } from '../services/productService';
+import { obtenerUsuarios } from '../services/userService';
 import '../styles/Admin.css';
 
 export default function AdminHome() {
@@ -25,8 +26,12 @@ export default function AdminHome() {
   const cargarEstadisticas = async () => {
     try {
       const token = localStorage.getItem('token');
-      const productosBackend = await obtenerProductos(token);
-      const usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+      
+      // Obtener productos y usuarios desde el backend
+      const [productosBackend, usuariosBackend] = await Promise.all([
+        obtenerProductos(token),
+        obtenerUsuarios(token)
+      ]);
 
       // Formatear productos
       const productosFormateados = productosBackend.map(p => ({
@@ -50,13 +55,14 @@ export default function AdminHome() {
 
       setStats({
         totalProductos: productosFormateados.length,
-        totalUsuarios: usuarios.length,
+        totalUsuarios: usuariosBackend.length,
         totalDestacados: productosDestacados.length,
         productosDestacados: productosOrdenados.slice(0, 3)
       });
 
       console.log('📊 Estadísticas Admin cargadas:', {
         productos: productosFormateados.length,
+        usuarios: usuariosBackend.length,
         destacados: productosDestacados.length
       });
     } catch (error) {
