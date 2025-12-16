@@ -9,14 +9,13 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
-// CORS deshabilitado - manejado por API Gateway
-//@Configuration
+@Configuration
 public class CorsConfig {
 
     @Value("${allowed.origins}")
     private String allowedOrigins;
 
-    //@Bean
+    @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
